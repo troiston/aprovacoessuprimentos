@@ -1,15 +1,23 @@
-# Swarm + Traefik. Portainer (Git): Compose path = docker-compose.yml
-# Ajuste: image, rede Traefik, Host(), entrypoints e certresolver.
+# Swarm + Traefik + Portainer (Compose path: docker-compose.yml)
+#
+# Alinhado à convenção deste cluster: rede overlay `network_swarm_public`,
+# entrypoint `websecure`, certresolver `letsencryptresolver` (como n8n no mesmo servidor).
+#
+# Ajusta: image e variáveis em Portainer (NEXT_PUBLIC_APP_URL = https://aprovasuprimentos.digaola.com).
 
 version: "3.8"
 
 networks:
-  traefik-public:
+  network_swarm_public:
+    name: network_swarm_public
     external: true
 
 services:
   web:
     image: registry.example.com/aprovacoes-suprimentos:latest
+    hostname: "{{.Service.Name}}.{{.Task.Slot}}"
+    networks:
+      - network_swarm_public
     environment:
       DATABASE_URL: ${DATABASE_URL}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
@@ -21,8 +29,6 @@ services:
       # STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
       # NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
       # SKIP_PRISMA_MIGRATE: "1"
-    networks:
-      - traefik-public
     deploy:
       replicas: 1
       restart_policy:
@@ -30,9 +36,10 @@ services:
         delay: 5s
       labels:
         - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.http.routers.aprovacoes.rule=Host(`aprovacoes.exemplo.com`)
-        - traefik.http.routers.aprovacoes.entrypoints=websecure
-        - traefik.http.routers.aprovacoes.tls.certresolver=letsencrypt
-        - traefik.http.routers.aprovacoes.service=aprovacoes
-        - traefik.http.services.aprovacoes.loadbalancer.server.port=3000
+        - traefik.docker.network=network_swarm_public
+        - traefik.http.routers.aprovasuprimentos.rule=Host(`aprovasuprimentos.digaola.com`)
+        - traefik.http.routers.aprovasuprimentos.entrypoints=websecure
+        - traefik.http.routers.aprovasuprimentos.tls.certresolver=letsencryptresolver
+        - traefik.http.routers.aprovasuprimentos.service=aprovasuprimentos
+        - traefik.http.services.aprovasuprimentos.loadbalancer.server.port=3000
+        - traefik.http.services.aprovasuprimentos.loadbalancer.passHostHeader=true
