@@ -22,31 +22,41 @@ O `docker-compose.yml` declara **`network_swarm_public`** como **external** (igu
 
 4. Volta a fazer deploy da stack no Portainer (ou `docker stack deploy`).
 
-## 1. Build, push e imagem
+## 1. Imagem automática via GitHub Actions (recomendado)
 
-O compose usa **`image: ${APP_IMAGE:-troiston/aprovasuprimentos:latest}`**: há sempre uma referência válida (evita *Invalid image reference: no image specified* quando `APP_IMAGE` não está definida ou o Portainer não interpola variáveis vazias no redeploy).
+O projeto inclui o workflow **`.github/workflows/deploy-image.yml`**, que ao fazer push no `main`:
 
-1. Faz **build e push** para a mesma referência que o compose vai puxar (por omissão **`troiston/aprovasuprimentos:latest`** no Docker Hub — ajusta o default no `docker-compose.yml` se o teu user/registry for outro).
+- faz build da imagem Docker;
+- publica no GHCR em `ghcr.io/<owner>/aprovasuprimentos`;
+- publica as tags `main` e `sha-<commit>`.
 
-```bash
-docker build -t troiston/aprovasuprimentos:latest .
-docker push troiston/aprovasuprimentos:latest
-```
+O `docker-compose.yml` já aponta por omissão para:
 
-2. **Opcional:** no Portainer → **Stack → Environment**, define **`APP_IMAGE`** para sobrescrever sem editar o Git (ex.: `ghcr.io/troiston/aprovasuprimentos:v1.0.0`).
+`image: ${APP_IMAGE:-ghcr.io/troiston/aprovasuprimentos:main}`
 
-Deploy na CLI:
+Assim, no Portainer (GitOps), basta redeploy da stack após push no `main`.
 
-```bash
-docker stack deploy -c docker-compose.yml aprovasuprimentos
-# ou: export APP_IMAGE=outro/repo:tag && docker stack deploy ...
-```
+### Pré-requisito GHCR (importante)
+
+No repositório GitHub, em **Settings → Actions → General**, garante:
+
+- **Workflow permissions**: `Read and write permissions`.
+
+Sem isso, o workflow não consegue fazer push no GHCR.
+
+### Override opcional de imagem
+
+Se quiseres fixar uma tag específica no Portainer, define:
+
+- `APP_IMAGE=ghcr.io/troiston/aprovasuprimentos:sha-<commit>`
+
+ou outra imagem/tag válida.
 
 ## 2. Variáveis obrigatórias em runtime
 
 | Variável | Descrição |
 |----------|-----------|
-| `APP_IMAGE` | Opcional: sobrescreve a imagem do serviço `web` (por omissão no compose: `troiston/aprovasuprimentos:latest`) |
+| `APP_IMAGE` | Opcional: sobrescreve a imagem do serviço `web` (por omissão no compose: `ghcr.io/troiston/aprovasuprimentos:main`) |
 | `DATABASE_URL` | URL Postgres (ex.: `postgresql://user:pass@postgres:5432/db?schema=public`) |
 | `NEXT_PUBLIC_APP_URL` | URL pública HTTPS (ex.: `https://aprovasuprimentos.digaola.com`) |
 | `NEXT_PUBLIC_APP_NAME` | Nome exibido (opcional) |

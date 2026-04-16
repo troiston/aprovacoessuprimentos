@@ -3,8 +3,8 @@
 # Alinhado à convenção deste cluster: rede overlay `network_swarm_public`,
 # entrypoint `websecure`, certresolver `letsencryptresolver` (como n8n no mesmo servidor).
 #
-# Imagem: APP_IMAGE no Portainer sobrepõe; senão usa o default abaixo (evita "no image specified"
-# se APP_IMAGE vier vazio). Edita o default na linha image se o teu registry/user for outro.
+# Imagem: APP_IMAGE no Portainer sobrepõe; senão usa o default abaixo (GHCR).
+# Default recomendado para GitOps: publicação automática via GitHub Actions.
 # NEXT_PUBLIC_APP_URL no Portainer: https://aprovasuprimentos.digaola.com
 
 version: "3.8"
@@ -16,7 +16,7 @@ networks:
 
 services:
   web:
-    image: ${APP_IMAGE:-troiston/aprovasuprimentos:latest}
+    image: ${APP_IMAGE:-ghcr.io/troiston/aprovasuprimentos:main}
     hostname: "{{.Service.Name}}.{{.Task.Slot}}"
     networks:
       - network_swarm_public
