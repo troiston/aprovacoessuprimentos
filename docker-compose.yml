@@ -1,5 +1,5 @@
-# Exemplo para `docker stack deploy -c docker-stack.example.yml aprovacoes`
-# Ajuste: imagem, rede Traefik, Host(), entrypoint TLS e certresolver ao seu ambiente.
+# Swarm + Traefik. Portainer (Git): Compose path = docker-compose.yml
+# Ajuste: image, rede Traefik, Host(), entrypoints e certresolver.
 
 version: "3.8"
 
@@ -15,9 +15,12 @@ services:
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
       NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-AprovacoesSuprimentos}
       NODE_ENV: production
-      # Opcionais (Stripe, cifra SMTP, etc.) — ver .env.example
+      SETTINGS_ENCRYPTION_KEY: ${SETTINGS_ENCRYPTION_KEY:-}
+      # Opcionais — ver .env.example
       # STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      # SETTINGS_ENCRYPTION_KEY: ${SETTINGS_ENCRYPTION_KEY}
+      # STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      # NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+      # SKIP_PRISMA_MIGRATE: "1"
     networks:
       - traefik-public
     deploy:
