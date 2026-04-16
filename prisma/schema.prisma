@@ -1,0 +1,238 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum StageStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TaskStatus {
+  OPEN
+  IN_PROGRESS
+  BLOCKED
+  DONE
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  displayName   String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  /// bcrypt — apenas usuários com login e-mail/senha
+  passwordHash  String?
+  role          UserRole  @default(VIEWER)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  subscriptions Subscription[]
+  usage         Usage[]
+
+  assignedTasks            Task[]             @relation("TaskAssignee")
+  auditLogs                AuditLog[]
+  developmentStagesUpdated DevelopmentStage[] @relation("DevelopmentStageUpdatedBy")
+  systemSettingsUpdated    SystemSetting[]    @relation("SystemSettingUpdatedBy")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id                   String   @id @default(cuid())
+  userId               String
+  stripeCustomerId     String   @unique
+  stripePriceId        String
+  stripeSubscriptionId String   @unique
+  status               String
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Usage {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  quantity  Int
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type, createdAt])
+}
+
+model MacroPhase {
+  id            String  @id @default(cuid())
+  name          String
+  sortOrder     Int     @unique
+  /// Peso da fase no total do empreendimento (0–100), soma das 4 fases = 100
+  weightPercent Float
+
+  stages Stage[]
+}
+
+model Stage {
+  id               String @id @default(cuid())
+  macroPhaseId     String
+  name             String
+  sortOrder        Int
+  impactScore      Int
+  dependencyScore  Int
+  timeScore        Int
+  effortScore      Int
+  /// (2×Impacto + Dep + Tempo + Esforço) / 5
+  rawWeight        Float
+  /// Contribuição no total (0–100), soma de todas as etapas = 100
+  globalWeight     Float
+
+  macroPhase         MacroPhase          @relation(fields: [macroPhaseId], references: [id], onDelete: Restrict)
+  developmentStages  DevelopmentStage[]
+  tasks              Task[]
+  stageSchedules     StageSchedule[]
+
+  @@unique([macroPhaseId, sortOrder])
+  @@index([macroPhaseId, sortOrder])
+}
+
+model Development {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  name      String
+  code      String?
+  isActive  Boolean   @default(true)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  stages         DevelopmentStage[]
+  tasks          Task[]
+  stageSchedules StageSchedule[]
+}
+
+model DevelopmentStage {
+  id            String      @id @default(cuid())
+  developmentId String
+  stageId       String
+  status        StageStatus @default(NOT_STARTED)
+  updatedAt     DateTime    @updatedAt
+  updatedById   String?
+
+  development Development @relation(fields: [developmentId], references: [id], onDelete: Cascade)
+  stage       Stage       @relation(fields: [stageId], references: [id], onDelete: Restrict)
+  updatedBy   User?       @relation("DevelopmentStageUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@unique([developmentId, stageId])
+  @@index([developmentId])
+  @@index([stageId])
+}
+
+model Task {
+  id            String     @id @default(cuid())
+  developmentId String
+  stageId       String
+  assigneeId    String?
+  description   String     @db.Text
+  deadline      DateTime?
+  status        TaskStatus @default(OPEN)
+  notes         String?    @db.Text
+  deletedAt     DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  development Development @relation(fields: [developmentId], references: [id], onDelete: Cascade)
+  stage       Stage       @relation(fields: [stageId], references: [id], onDelete: Restrict)
+  assignee    User?       @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+
+  @@index([developmentId, status])
+  @@index([assigneeId, deadline])
+}
+
+model StageSchedule {
+  id                 String    @id @default(cuid())
+  developmentId      String
+  stageId            String
+  protocolDate       DateTime?
+  estimatedDeadline  DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  development Development @relation(fields: [developmentId], references: [id], onDelete: Cascade)
+  stage       Stage       @relation(fields: [stageId], references: [id], onDelete: Restrict)
+
+  @@unique([developmentId, stageId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  entity    String
+  entityId  String
+  action    String
+  field     String?
+  oldValue  Json?
+  newValue  Json?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@index([userId])
+}
+
+model SystemSetting {
+  id             String   @id @default(cuid())
+  key            String   @unique
+  valueEncrypted String   @db.Text
+  valueMasked    Json?
+  updatedAt      DateTime @updatedAt
+  updatedById    String?
+
+  updatedBy User? @relation("SystemSettingUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+}

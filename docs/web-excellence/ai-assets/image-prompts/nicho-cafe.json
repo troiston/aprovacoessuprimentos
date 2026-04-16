@@ -1,0 +1,207 @@
+{
+  "meta": {
+    "id": "nicho-cafe",
+    "version": "1.0",
+    "description": "5 prompts otimizados para cafeterias, baristas e cultura de cafe",
+    "compatible_tools": ["flux-2", "midjourney-v7", "dall-e-3"],
+    "color_palette": {
+      "saddle_brown": "#8B4513",
+      "chocolate": "#D2691E",
+      "wheat": "#F5DEB3",
+      "dark_roast": "#3E2723",
+      "warm_cream": "#EFEBE9"
+    }
+  },
+  "prompts": [
+    {
+      "id": "hero-steam",
+      "name": "Hero — Vapor do Cafe",
+      "description": "Close-up de cafe recem-preparado com vapor subindo, tons quentes, profundidade de campo rasa",
+      "subject": {
+        "description": "Freshly brewed artisan coffee in a handmade ceramic cup",
+        "position": "center",
+        "details": "Rich dark brown liquid, delicate crema on top, visible steam wisps rising gracefully"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Warm-toned cafe interior with soft bokeh of ambient lights and wooden shelves",
+        "props": "Matte black marble countertop, single coffee bean near saucer, linen napkin"
+      },
+      "camera": {
+        "lens": "85mm",
+        "aperture": "f/1.8",
+        "angle": "eye-level",
+        "distance": "close-up"
+      },
+      "lighting": {
+        "type": "natural-window",
+        "direction": "camera-left",
+        "mood": "warm",
+        "color_temperature": "3200K warm"
+      },
+      "style": "commercial-photography",
+      "color_palette": {
+        "primary": "#8B4513",
+        "secondary": "#D2691E",
+        "accent": "#F5DEB3",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Close-up of freshly brewed artisan coffee in a handmade ceramic cup on matte black marble surface, rich dark brown liquid with delicate crema, wisps of steam rising gracefully in soft natural window light from camera-left, warm color temperature 3200K, shallow depth of field with beautiful bokeh of warm ambient cafe lights in background, wooden shelves softly out of focus, single coffee bean near saucer, linen napkin detail, 85mm lens f/1.8, commercial photography, rich warm tones of saddle brown #8B4513, chocolate #D2691E, and wheat #F5DEB3",
+      "prompt_midjourney": "Close-up freshly brewed artisan coffee in handmade ceramic cup, matte black marble surface, delicate crema, steam rising, natural window light from left, 3200K warm temperature, shallow depth of field, bokeh cafe lights, 85mm f/1.8, commercial food photography, rich browns and warm creams --ar 16:9 --s 200 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, oversaturated, artificial, plastic, deformed, cropped, out of frame, cold tones, blue cast, neon lighting"
+    },
+    {
+      "id": "produto-cup",
+      "name": "Produto — Xicara Isolada",
+      "description": "Xicara de cafe unica em superficie minimalista, iluminacao de estudio, composicao limpa",
+      "subject": {
+        "description": "Single premium coffee cup on minimal matte surface",
+        "position": "center",
+        "details": "Clean white ceramic cup with subtle texture, dark coffee with thin crema ring"
+      },
+      "setting": {
+        "environment": "studio",
+        "background": "Seamless warm cream gradient background, subtle shadow beneath cup",
+        "props": "Small espresso spoon beside cup, single coffee bean as accent"
+      },
+      "camera": {
+        "lens": "50mm",
+        "aperture": "f/2.8",
+        "angle": "high-angle",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "studio-softbox",
+        "direction": "top",
+        "mood": "neutral",
+        "color_temperature": "4000K neutral"
+      },
+      "style": "product",
+      "color_palette": {
+        "primary": "#3E2723",
+        "secondary": "#EFEBE9",
+        "accent": "#D2691E",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "1:1",
+      "prompt_en": "Single premium white ceramic coffee cup on minimal matte surface, clean product photography composition, dark coffee with thin crema ring, seamless warm cream #EFEBE9 gradient background, soft shadow beneath cup, small espresso spoon beside cup, single coffee bean accent, top-down studio softbox lighting at 4000K neutral temperature, 50mm lens f/2.8, high-angle perspective, product photography style, clean minimalist aesthetic, dark roast brown #3E2723, chocolate accent #D2691E",
+      "prompt_midjourney": "Single white ceramic coffee cup on minimal matte surface, product photography, dark coffee with crema, warm cream gradient background, soft shadow, espresso spoon, studio softbox top lighting, 50mm f/2.8, high-angle, clean minimalist, dark brown and cream palette --ar 1:1 --s 150 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, cluttered, messy, multiple cups, busy background, harsh shadows, cold tones"
+    },
+    {
+      "id": "lifestyle-moment",
+      "name": "Lifestyle — Momento de Apreciacao",
+      "description": "Pessoa apreciando cafe junto a janela, estilo editorial, luz dourada quente",
+      "subject": {
+        "description": "Person savoring a cup of coffee by a large window",
+        "position": "left-third",
+        "details": "Relaxed posture, hands wrapped around warm cup, eyes closed in enjoyment, casual knitwear"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Bright window with sheer curtains, morning cityscape softly visible, indoor plants",
+        "props": "Wooden window ledge, open book face-down, reading glasses"
+      },
+      "camera": {
+        "lens": "35mm",
+        "aperture": "f/2.8",
+        "angle": "eye-level",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "golden-hour",
+        "direction": "camera-right",
+        "mood": "warm",
+        "color_temperature": "3500K warm"
+      },
+      "style": "editorial",
+      "color_palette": {
+        "primary": "#D2691E",
+        "secondary": "#F5DEB3",
+        "accent": "#8B4513",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Medium shot of a person savoring a cup of coffee by a large window, relaxed posture with hands wrapped around warm ceramic cup, eyes closed in quiet enjoyment, wearing casual knitwear, golden hour light streaming from camera-right through sheer curtains at 3500K warm temperature, morning cityscape softly visible in background, indoor plants near window, wooden ledge with open book face-down and reading glasses, 35mm lens f/2.8, eye-level editorial photography, warm chocolate #D2691E and wheat #F5DEB3 tones, saddle brown #8B4513 accents",
+      "prompt_midjourney": "Person savoring coffee by large window, hands wrapped around warm cup, eyes closed, casual knitwear, golden hour light from right through sheer curtains, morning city visible, indoor plants, book on wooden ledge, 35mm f/2.8, editorial photography, warm golden tones, chocolate and wheat palette --ar 16:9 --s 250 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, artificial pose, stock photo feel, cold lighting, harsh flash, deformed hands, extra fingers"
+    },
+    {
+      "id": "textura-beans",
+      "name": "Textura — Graos de Cafe",
+      "description": "Close-up de graos de cafe com lente macro, iluminacao lateral dramatica, paleta marrom rica",
+      "subject": {
+        "description": "Coffee beans in extreme close-up detail",
+        "position": "center",
+        "details": "Variety of roast levels visible, oily sheen on dark roast beans, natural cracks and textures"
+      },
+      "setting": {
+        "environment": "studio",
+        "background": "Dark moody background fading to black, few scattered beans at edges",
+        "props": "Burlap coffee sack fabric partially visible at corner"
+      },
+      "camera": {
+        "lens": "100mm macro",
+        "aperture": "f/2.8",
+        "angle": "high-angle",
+        "distance": "extreme-close-up"
+      },
+      "lighting": {
+        "type": "dramatic-rim",
+        "direction": "side",
+        "mood": "dramatic",
+        "color_temperature": "3000K warm"
+      },
+      "style": "fine-art",
+      "color_palette": {
+        "primary": "#3E2723",
+        "secondary": "#8B4513",
+        "accent": "#D2691E",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "3:2",
+      "prompt_en": "Extreme close-up of coffee beans with 100mm macro lens f/2.8, variety of roast levels with oily sheen on dark roast beans, natural cracks and rich surface textures visible, dramatic side rim lighting at 3000K warm color temperature, dark moody background fading to black, few scattered beans at frame edges, burlap coffee sack fabric partially visible in corner, high-angle perspective, fine-art photography, deep dark roast #3E2723, saddle brown #8B4513, chocolate highlight #D2691E",
+      "prompt_midjourney": "Extreme close-up coffee beans, macro photography, variety of roast levels, oily sheen, natural cracks and textures, dramatic side rim lighting, dark moody background fading to black, burlap sack corner detail, 100mm macro f/2.8, fine-art style, deep rich brown palette --ar 3:2 --s 300 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, flat lighting, washed out, artificial, plastic appearance, uniform beans, no texture detail"
+    },
+    {
+      "id": "ambiente-cafe",
+      "name": "Ambiente — Interior de Cafeteria",
+      "description": "Interior de cafeteria em golden hour, plano aberto, atmosfera acolhedora com bokeh",
+      "subject": {
+        "description": "Cozy cafe interior during golden hour",
+        "position": "center",
+        "details": "Warm wood furniture, exposed brick walls, pendant Edison bulb lighting, plants on shelves"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Full cafe interior with bar counter, menu chalkboard, coffee equipment visible",
+        "props": "Vintage espresso machine on counter, pastry display case, mismatched chairs, potted ferns"
+      },
+      "camera": {
+        "lens": "24mm wide",
+        "aperture": "f/4",
+        "angle": "eye-level",
+        "distance": "wide-shot"
+      },
+      "lighting": {
+        "type": "golden-hour",
+        "direction": "back",
+        "mood": "warm",
+        "color_temperature": "2700K warm"
+      },
+      "style": "lifestyle",
+      "color_palette": {
+        "primary": "#8B4513",
+        "secondary": "#F5DEB3",
+        "accent": "#EFEBE9",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Wide-shot cozy cafe interior during golden hour, warm wood furniture with exposed brick walls, pendant Edison bulb string lights casting warm glow, lush green plants on wooden shelves, vintage espresso machine on bar counter, chalkboard menu, pastry display case, mismatched vintage chairs, potted ferns, golden hour backlight streaming through large front windows at 2700K warm temperature, beautiful bokeh from light sources, 24mm wide-angle lens f/4, eye-level lifestyle photography, inviting warm atmosphere, saddle brown #8B4513, wheat #F5DEB3, warm cream #EFEBE9",
+      "prompt_midjourney": "Wide shot cozy cafe interior, golden hour, warm wood furniture, exposed brick, Edison bulb pendant lights, plants on shelves, vintage espresso machine, chalkboard menu, mismatched chairs, golden backlight through windows, beautiful warm bokeh, 24mm f/4, lifestyle photography, inviting atmosphere --ar 16:9 --s 250 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, empty, sterile, clinical, cold lighting, modern minimalist, harsh fluorescent, no people atmosphere without warmth"
+    }
+  ]
+}

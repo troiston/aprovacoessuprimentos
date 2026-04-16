@@ -1,0 +1,48 @@
+---
+description: Padrões para criação e modificação de rotas de API (route handlers)
+alwaysApply: false
+---
+
+# Regras de API (Next.js App Router)
+
+## Contrato de rota
+- Arquivo em `src/app/api/<recurso>/route.ts`.
+- Cada handler deve validar input e output.
+- Não acessar camada de dados direto no handler se houver service dedicado.
+- Nomear arquivos de service em `src/lib/<recurso>.service.ts`.
+
+## Validação e segurança
+- Validar request com Zod antes de qualquer processamento.
+- Exigir autenticação e autorização explícitas em rotas protegidas.
+- Padronizar erros sem vazar detalhes internos (nunca expor stack trace).
+- Aplicar rate limiting em rotas expostas publicamente.
+- Aplicar ownership check por recurso em endpoints com ID do usuário/tenant.
+- Evitar over-posting: aceitar apenas campos permitidos no schema Zod.
+- Definir idempotency-key para operações suscetíveis a retry duplicado.
+- IDOR: nunca confiar em ID vindo do body sem verificar ownership no banco.
+
+## Códigos HTTP esperados
+- `400`: payload inválido (Zod parse falhou)
+- `401`: não autenticado
+- `403`: autenticado sem permissão
+- `404`: recurso inexistente
+- `409`: conflito de estado
+- `422`: regra de negócio violada
+- `429`: rate limit atingido
+- `500`: erro interno controlado
+
+## LGPD / privacidade
+- Não retornar campos desnecessários (CPF, email, telefone completo) em respostas de listagem.
+- Ações de exclusão de dados pessoais devem emitir evento de auditoria.
+- Endpoints que recebem dados sensíveis devem estar documentados em `docs/10_THREAT_MODEL.md`.
+
+## Observabilidade
+- Log estruturado por request id / correlation id.
+- Nunca logar segredo, token, CPF, email completo ou dados sensíveis.
+- Emitir eventos de auditoria para ações sensíveis (auth, permissão, exclusão, pagamento).
+- Erros inesperados devem logar `error.message` e `error.code` — nunca `error.stack` em produção.
+
+## Referências
+- Skills ativas nesta área: ver `docs/S03_SKILLS_INDEX.md` → Fase 3B
+- Contratos de API: `docs/03_SPECIFICATION.md`
+- Checklist de segurança: `docs/06_SECURITY.md` + `@security` rule

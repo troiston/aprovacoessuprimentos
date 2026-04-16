@@ -1,0 +1,184 @@
+---
+description: "Regras de tipografia fluida com clamp() e escala modular"
+globs: []
+alwaysApply: false
+---
+
+# Tipografia — Fluida com clamp() e Escala Modular
+
+## Princípio
+
+Tipografia fluida com `clamp()` elimina media queries para font-size. O texto escala suavemente entre viewport mínimo (320px) e máximo (1280px).
+
+Fórmula: `clamp(min, preferred, max)`
+- `min`: tamanho no viewport 320px
+- `preferred`: valor base + coeficiente vw
+- `max`: tamanho no viewport 1280px+
+
+## Escala Tipográfica — Ratio Major Third (1.25)
+
+```css
+@theme {
+  /* Body — escala lenta (coeficiente ~0.5vw) */
+  --text-xs: clamp(0.694rem, 0.665rem + 0.15vw, 0.8rem);
+  --text-sm: clamp(0.833rem, 0.796rem + 0.19vw, 0.96rem);
+  --text-base: clamp(1rem, 0.956rem + 0.22vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1.065rem + 0.30vw, 1.313rem);
+  --text-xl: clamp(1.25rem, 1.163rem + 0.44vw, 1.5rem);
+
+  /* Headlines — escala agressiva (coeficiente ~2-4vw) */
+  --text-2xl: clamp(1.5rem, 1.275rem + 1.13vw, 2rem);
+  --text-3xl: clamp(1.875rem, 1.463rem + 2.06vw, 2.5rem);
+  --text-4xl: clamp(2.25rem, 1.575rem + 3.38vw, 3.25rem);
+  --text-5xl: clamp(2.75rem, 1.700rem + 4.00vw, 4rem);
+  --text-6xl: clamp(3.25rem, 1.850rem + 4.50vw, 5rem);
+
+  /* Line Heights */
+  --leading-none: 1;
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 1.8;
+
+  /* Letter Spacing */
+  --tracking-tighter: -0.04em;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.02em;
+  --tracking-wider: 0.05em;
+}
+```
+
+## Line-Height por Contexto
+
+| Tipo | line-height | Quando usar |
+|------|-------------|-------------|
+| Heading h1-h2 | `1.1` (leading-none + tight) | Títulos grandes, impacto visual |
+| Heading h3-h4 | `1.15-1.2` (leading-tight) | Subtítulos |
+| Body text | `1.5` (leading-normal) | Parágrafos, leitura contínua |
+| Body longo | `1.6-1.625` (leading-relaxed) | Artigos, documentação |
+| UI labels | `1.3` (leading-snug) | Botões, badges, pills |
+
+```tsx
+<h1 className="text-5xl leading-none tracking-tighter font-bold">
+  Headline Principal
+</h1>
+<p className="text-base leading-normal">
+  Corpo do texto com line-height para leitura confortável.
+</p>
+```
+
+## Font Stack
+
+```tsx
+// src/app/layout.tsx
+import { Inter, Instrument_Serif } from 'next/font/google'
+
+const sans = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sans',
+  preload: true,
+  fallback: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+  adjustFontFallback: true,
+})
+
+const serif = Instrument_Serif({
+  subsets: ['latin'],
+  weight: '400',
+  display: 'optional',          // heading decorativa pode falhar silenciosamente
+  variable: '--font-serif',
+  preload: false,                // preload apenas a mais usada
+  fallback: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
+  adjustFontFallback: true,
+})
+```
+
+```css
+@theme {
+  --font-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-serif), Georgia, Cambria, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+}
+```
+
+### Regras de Font Loading
+
+- `font-display: swap` para body (texto visível imediato, troca quando carrega)
+- `font-display: optional` para heading decorativa (sem FOUT se demorar)
+- `preload: true` apenas na font body (1-2 files máximo)
+- `subsets: ['latin']` SEMPRE — reduz ~200KB para ~6KB
+- `adjustFontFallback: true` gera `size-adjust` automático — CLS zero
+
+## Font Weights
+
+| Weight | Token | Uso |
+|--------|-------|-----|
+| 400 | `font-normal` | Body text, parágrafos |
+| 500 | `font-medium` | Ênfase sutil, labels, nav links |
+| 600 | `font-semibold` | Subheadings h3-h6, botões |
+| 700 | `font-bold` | Headings h1-h2 |
+| 800 | `font-extrabold` | Hero headlines, destaque máximo |
+
+- NUNCA usar font-weight 100-300 para texto funcional (legibilidade ruim em telas pequenas)
+- Variable fonts incluem todos os pesos em um arquivo — preferir quando disponível
+
+## Padrões de Uso
+
+```tsx
+// Hero headline
+<h1 className="text-5xl font-bold leading-none tracking-tighter text-foreground">
+  Transforme suas ideias
+</h1>
+
+// Section heading
+<h2 className="text-3xl font-bold leading-tight tracking-tight text-foreground">
+  Recursos Principais
+</h2>
+
+// Subheading
+<h3 className="text-xl font-semibold leading-snug text-foreground">
+  Performance Otimizada
+</h3>
+
+// Body
+<p className="text-base font-normal leading-normal text-muted">
+  Descrição com line-height confortável para leitura.
+</p>
+
+// Small / caption
+<span className="text-sm font-medium leading-snug text-muted">
+  Atualizado há 3 horas
+</span>
+
+// Code inline
+<code className="font-mono text-sm bg-surface px-1.5 py-0.5 rounded-sm">
+  npm install
+</code>
+```
+
+## Measure (Largura da Linha)
+
+- Texto body: **45-75 caracteres** por linha (ideal ~65ch)
+- Headlines: sem limite, mas evitar mais de 2 linhas
+- Usar `max-w-prose` (65ch) para blocos de texto
+
+```tsx
+<article className="max-w-prose mx-auto">
+  <p className="text-base leading-relaxed">
+    Conteúdo longo com largura ideal para leitura.
+  </p>
+</article>
+```
+
+## Regras Fundamentais
+
+- `clamp()` para TODOS os font-sizes — NUNCA media queries para tipografia
+- Ratio Major Third (1.25) entre níveis adjacentes
+- Body escala lento (~0.5vw), headlines escalam agressivo (~3-4vw)
+- Heading: `leading-none` a `leading-tight` (1.1-1.2)
+- Body: `leading-normal` a `leading-relaxed` (1.5-1.625)
+- Máximo 2 famílias tipográficas
+- `adjustFontFallback` SEMPRE true para CLS zero
+- PROIBIDO font-size em px ou rem fixo — usar tokens clamp()

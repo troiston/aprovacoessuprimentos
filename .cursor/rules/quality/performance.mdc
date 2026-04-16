@@ -1,0 +1,185 @@
+---
+description: "Regras de performance — Core Web Vitals, images, fonts, bundle, lazy loading"
+globs: ["src/**/*.tsx", "src/**/*.ts", "next.config.*"]
+alwaysApply: false
+---
+
+# Performance — Core Web Vitals & Otimização
+
+## Budget Obrigatório
+
+| Métrica | Limite | Impacto |
+|---------|--------|---------|
+| LCP | < 2.5s | Cada segundo extra = **-7% conversão** |
+| CLS | < 0.1 | Layout shift causa abandono |
+| INP | < 200ms | Responsividade percebida |
+| First Load JS | < 200KB | Tempo de parse + execução |
+| Total Bundle | < 300KB gzipped | Inclui vendor + app |
+
+Medir com dados de campo (CrUX, web-vitals package) SEMPRE. Lighthouse sintético é referência, não verdade.
+
+```tsx
+// src/lib/web-vitals.ts
+import { onCLS, onINP, onLCP } from 'web-vitals'
+
+function sendToAnalytics(metric: { name: string; value: number; id: string }) {
+  const body = JSON.stringify(metric)
+  if (navigator.sendBeacon) navigator.sendBeacon('/api/vitals', body)
+}
+
+onCLS(sendToAnalytics)
+onINP(sendToAnalytics)
+onLCP(sendToAnalytics)
+```
+
+## Imagens
+
+`next/image` é OBRIGATÓRIO para toda imagem renderizada.
+
+```tsx
+// LCP image — hero, above-fold
+<Image src={hero} alt="..." priority sizes="100vw" quality={75} />
+
+// Below-fold — lazy por padrão
+<Image src={card} alt="..." sizes="(max-width: 768px) 100vw, 33vw" quality={75} />
+```
+
+### Regras de Imagens
+
+- `priority` APENAS no elemento LCP (1-2 imagens por página no máximo)
+- `sizes` OBRIGATÓRIO — sem ele, o browser baixa o tamanho maior
+- Formato: AVIF primeiro, WebP fallback (Next.js faz automático com `formats: ['image/avif', 'image/webp']`)
+- `quality`: 75 para fotos, 90 para UI/ícones com detalhes finos
+- Dimensões explícitas `width` e `height` OU `fill` com container — NUNCA omitir (causa CLS)
+- Placeholder: `blur` para imagens estáticas importadas, `blurDataURL` para remotas
+
+## Fontes
+
+```tsx
+// src/app/layout.tsx
+import { Inter } from 'next/font/google'
+
+const inter = Inter({
+  subsets: ['latin'],          // subsetting reduz até 97%
+  display: 'swap',             // swap para body, optional para heading decorativa
+  variable: '--font-sans',
+  preload: true,
+  fallback: ['system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+  adjustFontFallback: true,    // size-adjust automático para CLS zero
+})
+```
+
+### Regras de Fontes
+
+- Máximo **2 famílias** (body + heading OU body only com weight variation)
+- `font-display: swap` para body (texto visível imediato)
+- `font-display: optional` para heading decorativa (evita FOIT se lento)
+- `preload` apenas 1-2 font files (os mais usados)
+- Subsetting: `subsets: ['latin']` reduz de ~200KB para ~6KB
+- `adjustFontFallback: true` gera `size-adjust` automático — CLS zero durante swap
+
+## JavaScript
+
+### Dynamic Import
+
+```tsx
+// Heavy libs — carrega apenas quando necessário
+const Chart = dynamic(() => import('@/components/chart'), {
+  loading: () => <ChartSkeleton />,
+  ssr: false,
+})
+
+// Modal/dialog — carrega no trigger
+const Modal = dynamic(() => import('@/components/modal'))
+```
+
+### Substituições Obrigatórias
+
+| Pesado | Leve | Economia |
+|--------|------|----------|
+| moment (330KB) | date-fns (tree-shake) | ~300KB |
+| lodash (72KB) | lodash-es (tree-shake) ou nativo | ~60KB |
+| axios (29KB) | fetch nativo | ~29KB |
+| uuid (11KB) | crypto.randomUUID() | ~11KB |
+
+### Análise de Bundle
+
+```bash
+ANALYZE=true next build  # com @next/bundle-analyzer
+```
+
+Rodar em TODA PR que adiciona dependência.
+
+## CSS
+
+- Tailwind CSS purge é automático — NUNCA usar CSS-in-JS runtime (styled-components, emotion)
+- CSS-in-JS runtime adiciona ~12KB e bloqueia render
+- Inline critical CSS via Next.js automático para pages
+
+## Data Fetching
+
+```tsx
+// Server Component — fetch no servidor, zero JS no client
+async function ProductList() {
+  const products = await db.product.findMany({
+    select: { id: true, name: true, price: true, image: true },
+  })
+  return <Grid items={products} />
+}
+```
+
+- Server Components por padrão para fetch de dados
+- `cache` + `revalidate` para dados semi-estáticos
+- Request memoization: React deduplica fetches iguais no mesmo render
+- `unstable_cache` para dados de banco com revalidation tag-based
+
+## Long Tasks (>50ms)
+
+```tsx
+// Operação pesada no client — não bloqueia input
+function HeavyFilter() {
+  const [query, setQuery] = useState('')
+  const deferredQuery = useDeferredValue(query)
+
+  return (
+    <>
+      <input value={query} onChange={(e) => setQuery(e.target.value)} />
+      <Suspense fallback={<Skeleton />}>
+        <FilteredResults query={deferredQuery} />
+      </Suspense>
+    </>
+  )
+}
+```
+
+- `useTransition` para state updates que podem ser deferidas
+- `useDeferredValue` para valores derivados pesados
+- `scheduler.yield()` para dividir long tasks (>50ms) e liberar main thread
+- Virtualizar listas com `@tanstack/virtual` quando >50 itens
+
+## Third-Party Scripts
+
+```tsx
+import Script from 'next/script'
+
+// Analytics — carrega DEPOIS de tudo
+<Script src="https://analytics.example.com/script.js" strategy="lazyOnload" />
+
+// Widget interativo — carrega quando idle
+<Script src="https://widget.example.com/embed.js" strategy="afterInteractive" />
+```
+
+- `lazyOnload` para analytics, tracking, chat widgets
+- `afterInteractive` para scripts que o user precisa interagir
+- NUNCA `beforeInteractive` exceto para polyfills críticos
+- `next/third-parties` para Google Analytics, GTM com otimização built-in
+
+## Checklist Pré-Deploy
+
+1. `next build` sem warnings de bundle size
+2. `@next/bundle-analyzer` — nenhum chunk >150KB
+3. Lighthouse Performance >90 em mobile 4G throttled
+4. Imagens LCP com `priority`, restantes lazy
+5. Fontes com subsetting e `adjustFontFallback`
+6. Zero CSS-in-JS runtime
+7. web-vitals reportando para analytics

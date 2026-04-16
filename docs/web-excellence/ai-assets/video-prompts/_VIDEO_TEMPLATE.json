@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "id": "video-prompt-template",
+    "version": "1.0",
+    "description": "Template base para prompts de video — adaptar por tipo e nicho",
+    "compatible_tools": ["runway-gen3-turbo", "sora-2", "kling-3"]
+  },
+  "template": {
+    "scene": "Detailed description of the scene",
+    "motion": {
+      "subject_action": "What the main subject does",
+      "background_movement": "Background motion (particles, clouds, people)",
+      "speed": "slow-motion | normal | timelapse"
+    },
+    "camera": {
+      "movement": "static | dolly-in | dolly-out | pan-left | pan-right | tilt-up | tilt-down | tracking | orbit | drone-rise | handheld | steadicam",
+      "speed": "subtle(0.1-2) | moderate(2-5) | dynamic(5-8) | hyperspeed(8-10)",
+      "framing": "extreme-close-up | close-up | medium-shot | wide-shot | bird-eye",
+      "depth_of_field": "shallow | medium | deep"
+    },
+    "duration": 5,
+    "style": "cinematic | documentary | commercial | editorial | abstract | lifestyle",
+    "atmosphere": {
+      "lighting": "natural | studio | golden-hour | neon | dramatic",
+      "mood": "energetic | calm | luxurious | playful | mysterious",
+      "color_grade": "warm | cool | neutral | desaturated | high-contrast"
+    },
+    "runway_json": {
+      "model": "gen3_alpha_turbo",
+      "promptText": "",
+      "duration": 5,
+      "ratio": "16:9",
+      "camera_motion": {
+        "pan": 0,
+        "zoom": 0,
+        "tilt": 0,
+        "roll": 0
+      }
+    },
+    "sora_prompt": "Temporal narrative: [beginning] → [middle] → [end]",
+    "kling_prompt": "VISUAL: [description] | AUDIO: [sound description]"
+  }
+}

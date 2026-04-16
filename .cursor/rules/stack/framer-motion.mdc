@@ -1,0 +1,173 @@
+---
+description: "Padroes de animacao com Framer Motion — spring physics, scroll animations, page transitions, micro-interacoes"
+globs: ["**/*.tsx"]
+alwaysApply: false
+---
+
+> **Dependencia:** `framer-motion` so deve ser usado quando estiver em `package.json` / aprovado em `docs/06_SPECIFICATION.md`. Se o pacote nao estiver instalado, nao importar Motion; use CSS transitions ou adicione a dep com justificativa.
+
+# Padroes Framer Motion
+
+## Core Props
+- `initial`: estado antes da animacao (offscreen state)
+- `animate`: estado final (onscreen state)
+- `exit`: estado de saida (requer AnimatePresence pai)
+- `transition`: configuracao de timing/physics
+- `variants`: mapa nomeado de estados para orquestrar filhos
+
+## Spring Physics (padrao para tudo)
+Preferir springs sobre duracoes fixas — resultado mais natural.
+
+```tsx
+const springDefault = { type: "spring", stiffness: 200, damping: 20 };
+const springSnappy = { type: "spring", stiffness: 300, damping: 25 };
+const springGentle = { type: "spring", stiffness: 100, damping: 15 };
+const springBouncy = { type: "spring", stiffness: 250, damping: 12 };
+```
+
+- stiffness 100-300: quanto menor, mais lenta e suave
+- damping 12-30: quanto menor, mais bounce
+- mass: manter em 1 (padrao) na maioria dos casos
+
+## Timing Guidelines
+- Micro-interacoes (hover, tap, toggle): 120-220ms
+- Entrance (fade in, slide in): 300-600ms
+- Exit (fade out, slide out): 200-400ms
+- Stagger entre filhos: 50-100ms
+- MAXIMO absoluto: 400ms para qualquer animacao de UI (exceto scroll-linked)
+
+## GPU-Only — Regra Inquebravel
+Animar SOMENTE `transform` e `opacity`. Nunca:
+- ❌ width, height, top, left, margin, padding
+- ❌ border-radius, box-shadow (compositing caro)
+- ❌ background-color (exceto em opacity crossfade)
+- ✅ x, y, scale, rotate, opacity
+- ✅ clipPath (para reveals)
+
+## Scroll Animations — whileInView
+```tsx
+<motion.div
+  initial={{ opacity: 0, y: 40 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, margin: "-100px", amount: 0.2 }}
+  transition={{ type: "spring", stiffness: 200, damping: 20 }}
+>
+  {children}
+</motion.div>
+```
+- `once: true` SEMPRE (animar apenas na primeira vez)
+- `margin: "-100px"` para disparar antes de entrar no viewport
+- `amount: 0.2` para disparar quando 20% visivel
+
+## Scroll-Linked (Parallax / Progress)
+```tsx
+const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
+```
+- useScroll para obter progresso normalizado 0-1
+- useTransform para mapear progresso em valores de animacao
+- Ideal para parallax, progress bars, reveal sections
+
+## Page Transitions
+```tsx
+<AnimatePresence mode="wait">
+  <motion.main
+    key={pathname}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.3 }}
+  >
+    {children}
+  </motion.main>
+</AnimatePresence>
+```
+- `mode="wait"`: exit completa antes de enter comecar
+- key DEVE mudar entre paginas (usar pathname)
+- Exit deve ser mais rapido que enter
+
+## Variants — Orquestrar Filhos
+```tsx
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 200, damping: 20 } }
+};
+
+<motion.ul variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+  {items.map((item) => (
+    <motion.li key={item.id} variants={itemVariants}>{item.name}</motion.li>
+  ))}
+</motion.ul>
+```
+
+## Padroes Comuns Reutilizaveis
+```tsx
+export const fadeUp = {
+  initial: { opacity: 0, y: 40 },
+  animate: { opacity: 1, y: 0 },
+  transition: { type: "spring", stiffness: 200, damping: 20 }
+};
+
+export const fadeIn = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  transition: { duration: 0.4 }
+};
+
+export const scaleIn = {
+  initial: { opacity: 0, scale: 0.9 },
+  animate: { opacity: 1, scale: 1 },
+  transition: { type: "spring", stiffness: 250, damping: 20 }
+};
+
+export const slideInLeft = {
+  initial: { opacity: 0, x: -60 },
+  animate: { opacity: 1, x: 0 },
+  transition: { type: "spring", stiffness: 200, damping: 22 }
+};
+
+export const slideInRight = {
+  initial: { opacity: 0, x: 60 },
+  animate: { opacity: 1, x: 0 },
+  transition: { type: "spring", stiffness: 200, damping: 22 }
+};
+```
+
+## Acessibilidade — prefers-reduced-motion
+```tsx
+import { useReducedMotion } from "framer-motion";
+
+function AnimatedComponent({ children }: { children: React.ReactNode }) {
+  const shouldReduce = useReducedMotion();
+
+  return (
+    <motion.div
+      initial={shouldReduce ? false : { opacity: 0, y: 40 }}
+      whileInView={shouldReduce ? {} : { opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+```
+- SEMPRE verificar prefers-reduced-motion
+- Quando ativado: sem movimento, apenas fade suave ou nenhuma animacao
+- Hook useReducedMotion retorna boolean
+
+## Performance
+- Nunca animar propriedades de layout (width, height, top, left)
+- Usar will-change: transform apenas se necessario (browser hint)
+- Testar animacoes com CPU 4x throttle no DevTools
+- layout prop APENAS quando realmente precisa de layout animation (caro)
+- Evitar AnimatePresence em listas longas (>20 itens)
+- Profile com React DevTools antes de fazer ship

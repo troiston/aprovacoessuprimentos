@@ -1,0 +1,52 @@
+---
+description: Regras gerais de arquitetura, qualidade e execução no projeto.
+alwaysApply: true
+---
+
+# Regra Geral do Projeto
+
+## Primeiro passo em toda sessão
+- Ativar `/using-superpowers` antes de qualquer ação.
+- Consultar `docs/S03_SKILLS_INDEX.md` para ver quais skills ativar na fase atual.
+- Consultar `docs/DOCS_INDEX.md` para status e fase atual.
+
+## Qualidade mínima por mudança
+- Rodar `npm run typecheck` após alterações estruturais.
+- Rodar `npm run lint` para o escopo alterado.
+- Rodar testes relevantes para o fluxo afetado.
+- Atualizar documentação da fase quando houver decisão nova.
+- Rodar `bash scripts/verify-docs.sh` antes de fechar qualquer fase.
+
+## Convenções técnicas
+- TypeScript strict, sem `any`.
+- Validação de entrada com Zod em pontos externos.
+- Sem secrets hardcoded; usar env vars.
+- Não vazar dados sensíveis em logs.
+- Em fluxos sensíveis, registrar trilha de auditoria e ownership checks.
+- `/secrets-management` antes de todo commit na Fase 3.
+
+## Convenções UI/UX
+- Toda tela deve explicitar estado de loading, empty, error e sucesso.
+- Formulários com feedback acionável e foco no primeiro erro.
+- Componentes interativos devem ser acessíveis por teclado.
+- Não depender apenas de cor para indicar estado/gravidade.
+- Evitar estética genérica; consultar `docs/S05_DESIGN_REFERENCES.md` para paleta e tipografia.
+
+## Estrutura base
+- `app/`: rotas, layouts, route handlers.
+- `src/components/`: componentes por domínio/camada.
+- `src/lib/`: serviços, utilitários e adaptadores.
+- `src/hooks/`: hooks customizados.
+- `src/types/`: tipos compartilhados.
+
+## Limites Cursor-friendly
+- Arquivos: 300–500 linhas máx; acima disso, considerar split.
+- Index files: `index.ts` em pastas para Cursor entender exports.
+- README em pastas complexas: breve descrição do propósito.
+
+## Fluxo de trabalho
+- Seguir `docs/06_SPECIFICATION.md` como contrato de implementação.
+- Evitar PRs de escopo misturado.
+- Priorizar mudanças pequenas e rastreáveis.
+- Decisões arquiteturais relevantes → ADR em `docs/decisions/`.
+- Não abrir PR sem `docs/13_RELEASE_READINESS.md` preenchido.

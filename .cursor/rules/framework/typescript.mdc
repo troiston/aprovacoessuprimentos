@@ -1,0 +1,37 @@
+---
+description: Regras TypeScript e React para arquivos .ts e .tsx
+globs:
+  - "src/**/*.ts"
+  - "src/**/*.tsx"
+  - "app/**/*.ts"
+  - "app/**/*.tsx"
+alwaysApply: false
+---
+
+# TypeScript
+
+- Strict mode obrigatório.
+- Proibido `any`; usar `unknown` + narrowing.
+- Tipos explícitos em fronteiras (API, services, hooks, componentes).
+- Usar `type` ou `interface` com consistência por domínio.
+- Priorizar exports nomeados (exceto convenções de framework).
+- Zod schemas são a fonte de verdade de tipos externos — derivar tipos com `z.infer<typeof Schema>`.
+- Erros sempre tipados: nunca capturar `catch (e)` sem narrowing (`e instanceof Error`).
+
+# React / Next.js
+
+- Server Components por padrão; usar `"use client"` só quando houver necessidade real.
+- Tipar props explicitamente; evitar `React.FC`.
+- Hooks customizados em `src/hooks/` com prefixo `use`.
+- Evitar `useEffect` para data fetching quando houver alternativa de server/data layer.
+- Tratar estados de erro/loading de forma explícita (nunca renderizar sem fallback).
+- Garantir semântica HTML e hierarquia de heading coerente.
+- Tipar objetos de erro e nunca usar `unknown` sem narrowing antes de renderizar mensagem.
+- Suspense boundaries explícitos em rotas com data fetching assíncrono.
+- Error boundaries em seções críticas da UI (auth, pagamento, dashboard).
+
+# Acessibilidade (WCAG AA)
+- `aria-label` obrigatório em ícones interativos sem texto visível.
+- `role` explícito em componentes que simulam elementos nativos.
+- Foco visível em todos os elementos interativos (não remover `outline` sem substituto).
+- Ordem de tab coerente com a ordem visual.

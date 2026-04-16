@@ -1,0 +1,1666 @@
+{
+  "version": "2.1.0",
+  "generatedAt": "2026-04-13T20:13:51.299Z",
+  "skills": [
+    {
+      "id": "skill-audit-a11y",
+      "title": "Audit Accessibility",
+      "path": ".cursor/skills-web-excellence/accessibility/audit-a11y.md",
+      "category": "accessibility",
+      "agent": "06-qa-auditor",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "checklist WCAG 2.2 AA completo",
+        "setup de testes automatizados com axe-core",
+        "protocolo de teste manual (teclado, leitor de tela, zoom, contraste)"
+      ]
+    },
+    {
+      "id": "skill-audit-conversion-checklist",
+      "title": "Checklist de conversão (CRO ético)",
+      "path": ".cursor/skills-web-excellence/quality/audit-conversion-checklist.md",
+      "category": "quality",
+      "agent": "06-qa-auditor",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-form"
+        }
+      ],
+      "provides": [
+        "Relatório de fricção e confiança na página"
+      ]
+    },
+    {
+      "id": "skill-audit-security",
+      "title": "Audit Security",
+      "path": ".cursor/skills-web-excellence/quality/audit-security.md",
+      "category": "quality",
+      "agent": "06-qa-auditor",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "headers de segurança verificados",
+        "CSP configurado e testado",
+        "dependências vulneráveis identificadas",
+        "checklist OWASP Top 10 para web apps"
+      ]
+    },
+    {
+      "id": "skill-build-announcement-bar",
+      "title": "Announcement bar",
+      "path": ".cursor/skills-web-excellence/components/build-announcement-bar.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/accessibility"
+        }
+      ],
+      "provides": [
+        "Barra dismissível, foco e anúncio para screen readers"
+      ]
+    },
+    {
+      "id": "skill-build-article-layout",
+      "title": "Layout de artigo / blog",
+      "path": ".cursor/skills-web-excellence/layout/build-article-layout.md",
+      "category": "layout",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "skill",
+          "ref": "skill-write-meta-tags"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/seo"
+        }
+      ],
+      "provides": [
+        "Article layout com TOC, tempo de leitura, schema Article"
+      ]
+    },
+    {
+      "id": "skill-build-auth-flow",
+      "title": "Build Auth Flow",
+      "path": ".cursor/skills-web-excellence/saas/build-auth-flow.md",
+      "category": "saas",
+      "agent": "03-builder",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "auth-screens",
+        "login-signup-flow",
+        "protected-routes"
+      ]
+    },
+    {
+      "id": "skill-build-billing-page",
+      "title": "Build Billing Page",
+      "path": ".cursor/skills-web-excellence/saas/build-billing-page.md",
+      "category": "saas",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-dashboard-layout"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "pricing-tiers",
+        "billing-management",
+        "invoice-history"
+      ]
+    },
+    {
+      "id": "skill-build-brand-voice-microcopy",
+      "title": "Voz de marca e microcopy",
+      "path": ".cursor/skills-web-excellence/ai-assets/build-brand-voice-microcopy.md",
+      "category": "ai-assets",
+      "agent": "05-asset-creator",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-gen-copy-headline"
+        }
+      ],
+      "provides": [
+        "Tom por persona, padrões de botão e erro"
+      ]
+    },
+    {
+      "id": "skill-build-breadcrumbs",
+      "title": "Build Breadcrumbs",
+      "path": ".cursor/skills-web-excellence/seo/build-breadcrumbs.md",
+      "category": "seo",
+      "agent": "04-seo-specialist",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-generate-schema"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "breadcrumb-navigation",
+        "breadcrumb-json-ld"
+      ]
+    },
+    {
+      "id": "skill-build-color-system",
+      "title": "Build Color System",
+      "path": ".cursor/skills-web-excellence/foundations/build-color-system.md",
+      "category": "foundations",
+      "agent": "02-designer",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "rule",
+          "ref": "design/tokens"
+        }
+      ],
+      "provides": [
+        "paleta de cores OKLCH completa"
+      ]
+    },
+    {
+      "id": "skill-build-comparison-table",
+      "title": "Build Comparison Table",
+      "path": ".cursor/skills-web-excellence/components/build-comparison-table.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-cta"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "tabela comparativa \"vs concorrentes\" responsiva com sticky header"
+      ]
+    },
+    {
+      "id": "skill-build-consent-analytics",
+      "title": "Consent Mode e Analytics",
+      "path": ".cursor/skills-web-excellence/quality/build-consent-analytics.md",
+      "category": "quality",
+      "agent": "06-qa-auditor",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-write-meta-tags"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/security"
+        }
+      ],
+      "provides": [
+        "Carregamento tardio de scripts de medição pós-consent"
+      ]
+    },
+    {
+      "id": "skill-build-cta",
+      "title": "Build CTA",
+      "path": ".cursor/skills-web-excellence/components/build-cta.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "componente CTA reutilizável com variantes e micro-interações"
+      ]
+    },
+    {
+      "id": "skill-build-dashboard-layout",
+      "title": "Build Dashboard Layout",
+      "path": ".cursor/skills-web-excellence/saas/build-dashboard-layout.md",
+      "category": "saas",
+      "agent": "03-builder",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-auth-flow"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "dashboard-layout",
+        "sidebar-navigation",
+        "f-pattern-hierarchy"
+      ]
+    },
+    {
+      "id": "skill-build-design-tokens",
+      "title": "Build Design Tokens",
+      "path": ".cursor/skills-web-excellence/foundations/build-design-tokens.md",
+      "category": "foundations",
+      "agent": "02-designer",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "core/00-constitution"
+        }
+      ],
+      "provides": [
+        "globals.css com @theme",
+        "sistema completo de tokens"
+      ]
+    },
+    {
+      "id": "skill-build-empty-states",
+      "title": "Build Empty States",
+      "path": ".cursor/skills-web-excellence/saas/build-empty-states.md",
+      "category": "saas",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "empty-state-components",
+        "skeleton-previews"
+      ]
+    },
+    {
+      "id": "skill-build-error-pages",
+      "title": "Error Pages (404 / 500)",
+      "path": ".cursor/skills-web-excellence/layout/build-error-pages.md",
+      "category": "layout",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "rule",
+          "ref": "design/tokens"
+        }
+      ],
+      "provides": [
+        "not-found.tsx e error.tsx alinhados à marca"
+      ]
+    },
+    {
+      "id": "skill-build-faq",
+      "title": "Build FAQ",
+      "path": ".cursor/skills-web-excellence/components/build-faq.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-cta"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "accordion FAQ acessível com JSON-LD FAQPage auto-gerado"
+      ]
+    },
+    {
+      "id": "skill-build-feature-grid",
+      "title": "Build Feature Grid",
+      "path": ".cursor/skills-web-excellence/components/build-feature-grid.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-cta"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "grid de features com hover, bento layout e animações staggered"
+      ]
+    },
+    {
+      "id": "skill-build-footer",
+      "title": "Build Footer",
+      "path": ".cursor/skills-web-excellence/layout/build-footer.md",
+      "category": "layout",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        }
+      ],
+      "provides": [
+        "componente footer"
+      ]
+    },
+    {
+      "id": "skill-build-form",
+      "title": "Build Form",
+      "path": ".cursor/skills-web-excellence/components/build-form.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-cta"
+        },
+        {
+          "type": "rule",
+          "ref": "01-typescript"
+        }
+      ],
+      "provides": [
+        "formulários acessíveis com validação Zod e floating labels"
+      ]
+    },
+    {
+      "id": "skill-build-grid-layout",
+      "title": "Build Grid Layout",
+      "path": ".cursor/skills-web-excellence/layout/build-grid-layout.md",
+      "category": "layout",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "skill",
+          "ref": "skill-build-spacing-grid"
+        }
+      ],
+      "provides": [
+        "componente bento grid layout"
+      ]
+    },
+    {
+      "id": "skill-build-hero",
+      "title": "Build Hero Section",
+      "path": ".cursor/skills-web-excellence/layout/build-hero.md",
+      "category": "layout",
+      "agent": "03-builder",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "skill",
+          "ref": "skill-build-typography-scale"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/seo"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/performance"
+        }
+      ],
+      "provides": [
+        "Hero component com 4 variantes"
+      ]
+    },
+    {
+      "id": "skill-build-i18n-routing",
+      "title": "i18n routing e metadata",
+      "path": ".cursor/skills-web-excellence/seo/build-i18n-routing.md",
+      "category": "seo",
+      "agent": "04-seo-specialist",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-write-meta-tags"
+        },
+        {
+          "type": "rule",
+          "ref": "stack/nextjs"
+        }
+      ],
+      "provides": [
+        "Estrutura de locale, alternates e hreflang"
+      ]
+    },
+    {
+      "id": "skill-build-legal-pages",
+      "title": "Legal Pages (Privacidade, Termos)",
+      "path": ".cursor/skills-web-excellence/components/build-legal-pages.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-cta"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/security"
+        }
+      ],
+      "provides": [
+        "Rotas legais com leitura clara e last_updated"
+      ]
+    },
+    {
+      "id": "skill-build-loading-state",
+      "title": "Build Loading State",
+      "path": ".cursor/skills-web-excellence/motion/build-loading-state.md",
+      "category": "motion",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "skeleton screens, spinners, progress bars e shimmer effects"
+      ]
+    },
+    {
+      "id": "skill-build-loading-strategy",
+      "title": "Build Loading Strategy",
+      "path": ".cursor/skills-web-excellence/performance/build-loading-strategy.md",
+      "category": "performance",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "loading states em todas as rotas",
+        "streaming SSR para dados lentos",
+        "progressive loading do conteúdo"
+      ]
+    },
+    {
+      "id": "skill-build-micro-interaction",
+      "title": "Build Micro Interaction",
+      "path": ".cursor/skills-web-excellence/motion/build-micro-interaction.md",
+      "category": "motion",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "micro-interações reutilizáveis (hover, click, focus, toggle, tooltip)"
+      ]
+    },
+    {
+      "id": "skill-build-navbar",
+      "title": "Build Navbar",
+      "path": ".cursor/skills-web-excellence/layout/build-navbar.md",
+      "category": "layout",
+      "agent": "03-builder",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/accessibility"
+        }
+      ],
+      "provides": [
+        "componente navbar responsivo"
+      ]
+    },
+    {
+      "id": "skill-build-notification-system",
+      "title": "Build Notification System",
+      "path": ".cursor/skills-web-excellence/saas/build-notification-system.md",
+      "category": "saas",
+      "agent": "03-builder",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "toast-notifications",
+        "notification-center",
+        "badge-counter"
+      ]
+    },
+    {
+      "id": "skill-build-onboarding",
+      "title": "Build Onboarding",
+      "path": ".cursor/skills-web-excellence/saas/build-onboarding.md",
+      "category": "saas",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-auth-flow"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "onboarding-wizard",
+        "activation-flow"
+      ]
+    },
+    {
+      "id": "skill-build-page-transition",
+      "title": "Build Page Transition",
+      "path": ".cursor/skills-web-excellence/motion/build-page-transition.md",
+      "category": "motion",
+      "agent": "03-builder",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-scroll-animation"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "transições de página com AnimatePresence no Next.js App Router"
+      ]
+    },
+    {
+      "id": "skill-build-preview-seo",
+      "title": "SEO em preview deploys",
+      "path": ".cursor/skills-web-excellence/seo/build-preview-seo.md",
+      "category": "seo",
+      "agent": "07-deploy-manager",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-write-meta-tags"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/seo"
+        }
+      ],
+      "provides": [
+        "noindex em previews, canonical para produção"
+      ]
+    },
+    {
+      "id": "skill-build-pricing-table",
+      "title": "Build Pricing Table",
+      "path": ".cursor/skills-web-excellence/components/build-pricing-table.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-cta"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "tabela de preços com toggle anual/mensal e psicologia de conversão"
+      ]
+    },
+    {
+      "id": "skill-build-role-based-access",
+      "title": "Build Role Based Access",
+      "path": ".cursor/skills-web-excellence/saas/build-role-based-access.md",
+      "category": "saas",
+      "agent": "03-builder",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-auth-flow"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "rbac-middleware",
+        "conditional-ui-by-role",
+        "server-action-authorization"
+      ]
+    },
+    {
+      "id": "skill-build-rss-feed",
+      "title": "RSS / Atom feed",
+      "path": ".cursor/skills-web-excellence/seo/build-rss-feed.md",
+      "category": "seo",
+      "agent": "04-seo-specialist",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-write-sitemap"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/seo"
+        }
+      ],
+      "provides": [
+        "route.xml ou feed.ts para agregadores"
+      ]
+    },
+    {
+      "id": "skill-build-rtl-layout",
+      "title": "Layout RTL (árabe, hebraico)",
+      "path": ".cursor/skills-web-excellence/seo/build-rtl-layout.md",
+      "category": "seo",
+      "agent": "03-builder",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-i18n-routing"
+        },
+        {
+          "type": "rule",
+          "ref": "design/responsive"
+        }
+      ],
+      "provides": [
+        "dir=rtl, mirroring e tipografia compatível"
+      ]
+    },
+    {
+      "id": "skill-build-scroll-animation",
+      "title": "Build Scroll Animation",
+      "path": ".cursor/skills-web-excellence/motion/build-scroll-animation.md",
+      "category": "motion",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "animações scroll-triggered reutilizáveis (fade-up, stagger, parallax)"
+      ]
+    },
+    {
+      "id": "skill-build-settings-page",
+      "title": "Build Settings Page",
+      "path": ".cursor/skills-web-excellence/saas/build-settings-page.md",
+      "category": "saas",
+      "agent": "03-builder",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-dashboard-layout"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "settings-tabs",
+        "profile-management",
+        "danger-zone"
+      ]
+    },
+    {
+      "id": "skill-build-sidebar",
+      "title": "Build Sidebar",
+      "path": ".cursor/skills-web-excellence/layout/build-sidebar.md",
+      "category": "layout",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        }
+      ],
+      "provides": [
+        "sidebar de navegação para dashboards SaaS"
+      ]
+    },
+    {
+      "id": "skill-build-skip-navigation",
+      "title": "Build Skip Navigation",
+      "path": ".cursor/skills-web-excellence/accessibility/build-skip-navigation.md",
+      "category": "accessibility",
+      "agent": "03-builder",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "skip navigation como primeiro elemento focável",
+        "navegação rápida por teclado para conteúdo principal",
+        "skip links adicionais para páginas complexas"
+      ]
+    },
+    {
+      "id": "skill-build-social-proof",
+      "title": "Build Social Proof",
+      "path": ".cursor/skills-web-excellence/components/build-social-proof.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-cta"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "componentes de prova social (logo bar, badges, counters)"
+      ]
+    },
+    {
+      "id": "skill-build-spacing-grid",
+      "title": "Build Spacing Grid",
+      "path": ".cursor/skills-web-excellence/foundations/build-spacing-grid.md",
+      "category": "foundations",
+      "agent": "02-designer",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        }
+      ],
+      "provides": [
+        "sistema de grid e escala de espaçamento"
+      ]
+    },
+    {
+      "id": "skill-build-story-section",
+      "title": "Secção narrativa (PAS / hero's journey)",
+      "path": ".cursor/skills-web-excellence/components/build-story-section.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-cta"
+        },
+        {
+          "type": "skill",
+          "ref": "skill-build-scroll-animation"
+        }
+      ],
+      "provides": [
+        "Blocos problema → tensão → solução → prova → CTA"
+      ]
+    },
+    {
+      "id": "skill-build-testimonials",
+      "title": "Build Testimonials",
+      "path": ".cursor/skills-web-excellence/components/build-testimonials.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-social-proof"
+        },
+        {
+          "type": "rule",
+          "ref": "02-code-style"
+        }
+      ],
+      "provides": [
+        "3 padrões de testimonials (featured, strip, wall of love)"
+      ]
+    },
+    {
+      "id": "skill-build-typography-scale",
+      "title": "Build Typography Scale",
+      "path": ".cursor/skills-web-excellence/foundations/build-typography-scale.md",
+      "category": "foundations",
+      "agent": "02-designer",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "rule",
+          "ref": "design/typography"
+        }
+      ],
+      "provides": [
+        "escala tipográfica fluida"
+      ]
+    },
+    {
+      "id": "skill-build-visual-direction",
+      "title": "Direção visual e anti-genérico",
+      "path": ".cursor/skills-web-excellence/design/build-visual-direction.md",
+      "category": "design",
+      "agent": "02-designer",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-design-tokens"
+        },
+        {
+          "type": "rule",
+          "ref": "design/tokens"
+        }
+      ],
+      "provides": [
+        "Brief visual: referências, restrições, assimetria controlada"
+      ]
+    },
+    {
+      "id": "skill-build-waitlist-flow",
+      "title": "Waitlist e lead capture",
+      "path": ".cursor/skills-web-excellence/components/build-waitlist-flow.md",
+      "category": "components",
+      "agent": "03-builder",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-build-form"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/security"
+        }
+      ],
+      "provides": [
+        "Fluxo waitlist com estados sucesso/erro e anti-spam básico"
+      ]
+    },
+    {
+      "id": "skill-fix-aria-labels",
+      "title": "Fix ARIA Labels",
+      "path": ".cursor/skills-web-excellence/accessibility/fix-aria-labels.md",
+      "category": "accessibility",
+      "agent": "06-qa-auditor",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-audit-a11y"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "elementos interativos com labels corretos",
+        "landmarks semânticos em toda página",
+        "aria-live para conteúdo dinâmico"
+      ]
+    },
+    {
+      "id": "skill-fix-contrast",
+      "title": "Fix Contrast",
+      "path": ".cursor/skills-web-excellence/accessibility/fix-contrast.md",
+      "category": "accessibility",
+      "agent": "06-qa-auditor",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-audit-a11y"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        },
+        {
+          "type": "rule",
+          "ref": "design/tokens"
+        }
+      ],
+      "provides": [
+        "todos os pares texto/fundo com contraste WCAG AA",
+        "contraste verificado em light e dark mode",
+        "uso de OKLCH para ajustes perceptuais"
+      ]
+    },
+    {
+      "id": "skill-form-rate-limit-spam",
+      "title": "Rate limit e anti-spam em formulários",
+      "path": ".cursor/skills-web-excellence/quality/form-rate-limit-spam.md",
+      "category": "quality",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-audit-security"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/security"
+        }
+      ],
+      "provides": [
+        "Padrões honeypot, tempo mínimo, limit por IP"
+      ]
+    },
+    {
+      "id": "skill-gen-copy-description",
+      "title": "Generate Copy Description",
+      "path": ".cursor/skills-web-excellence/ai-assets/gen-copy-description.md",
+      "category": "ai-assets",
+      "agent": "05-asset-creator",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-gen-copy-headline"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "meta-descriptions",
+        "subheadlines",
+        "feature-descriptions",
+        "cta-copy"
+      ]
+    },
+    {
+      "id": "skill-gen-copy-headline",
+      "title": "Generate Copy Headline",
+      "path": ".cursor/skills-web-excellence/ai-assets/gen-copy-headline.md",
+      "category": "ai-assets",
+      "agent": "05-asset-creator",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "conversion-headlines",
+        "ab-test-variants"
+      ]
+    },
+    {
+      "id": "skill-gen-image-prompt",
+      "title": "Generate Image Prompt",
+      "path": ".cursor/skills-web-excellence/ai-assets/gen-image-prompt.md",
+      "category": "ai-assets",
+      "agent": "05-asset-creator",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "structured-image-prompts",
+        "flux-midjourney-prompts"
+      ]
+    },
+    {
+      "id": "skill-gen-og-image-prompt",
+      "title": "Generate OG Image Prompt",
+      "path": ".cursor/skills-web-excellence/ai-assets/gen-og-image-prompt.md",
+      "category": "ai-assets",
+      "agent": "05-asset-creator",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-generate-og-image"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "og-image-jsx-templates",
+        "satori-compatible-designs"
+      ]
+    },
+    {
+      "id": "skill-gen-professional-portrait",
+      "title": "Generate Professional Portrait",
+      "path": ".cursor/skills-web-excellence/ai-assets/gen-professional-portrait.md",
+      "category": "ai-assets",
+      "agent": "05-asset-creator",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        },
+        {
+          "type": "skill",
+          "ref": "skill-gen-image-prompt"
+        }
+      ],
+      "provides": [
+        "studio-quality-portrait-prompts",
+        "executive-editorial-portrait-assets"
+      ]
+    },
+    {
+      "id": "skill-gen-video-prompt",
+      "title": "Generate Video Prompt",
+      "path": ".cursor/skills-web-excellence/ai-assets/gen-video-prompt.md",
+      "category": "ai-assets",
+      "agent": "05-asset-creator",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-gen-image-prompt"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "structured-video-prompts",
+        "runway-sora-kling-prompts"
+      ]
+    },
+    {
+      "id": "skill-generate-og-image",
+      "title": "Generate OG Image",
+      "path": ".cursor/skills-web-excellence/seo/generate-og-image.md",
+      "category": "seo",
+      "agent": "04-seo-specialist",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-write-meta-tags"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "dynamic-og-images",
+        "social-share-previews"
+      ]
+    },
+    {
+      "id": "skill-generate-schema",
+      "title": "Generate Schema",
+      "path": ".cursor/skills-web-excellence/seo/generate-schema.md",
+      "category": "seo",
+      "agent": "04-seo-specialist",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "json-ld-structured-data",
+        "rich-results-eligibility"
+      ]
+    },
+    {
+      "id": "skill-optimize-bundle",
+      "title": "Optimize Bundle",
+      "path": ".cursor/skills-web-excellence/performance/optimize-bundle.md",
+      "category": "performance",
+      "agent": "06-qa-auditor",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "bundle size dentro do budget (<200KB first load JS)",
+        "code splitting otimizado",
+        "tree shaking verificado"
+      ]
+    },
+    {
+      "id": "skill-optimize-fonts",
+      "title": "Optimize Fonts",
+      "path": ".cursor/skills-web-excellence/performance/optimize-fonts.md",
+      "category": "performance",
+      "agent": "06-qa-auditor",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "fontes otimizadas com zero CLS",
+        "subsetting automático via next/font",
+        "carregamento performático de tipografia"
+      ]
+    },
+    {
+      "id": "skill-optimize-images",
+      "title": "Optimize Images",
+      "path": ".cursor/skills-web-excellence/performance/optimize-images.md",
+      "category": "performance",
+      "agent": "06-qa-auditor",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "imagens otimizadas com AVIF/WebP",
+        "LCP abaixo de 2.5s",
+        "CLS zero em carregamento de imagens"
+      ]
+    },
+    {
+      "id": "skill-optimize-lcp",
+      "title": "Optimize LCP",
+      "path": ".cursor/skills-web-excellence/performance/optimize-lcp.md",
+      "category": "performance",
+      "agent": "06-qa-auditor",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-optimize-images"
+        },
+        {
+          "type": "skill",
+          "ref": "skill-optimize-fonts"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "LCP abaixo de 2.5s",
+        "above-the-fold renderizado no primeiro paint",
+        "diagnóstico completo de LCP"
+      ]
+    },
+    {
+      "id": "skill-optimize-video-embeds",
+      "title": "Otimizar vídeo e embeds",
+      "path": ".cursor/skills-web-excellence/performance/optimize-video-embeds.md",
+      "category": "performance",
+      "agent": "03-builder",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-optimize-images"
+        },
+        {
+          "type": "rule",
+          "ref": "quality/performance"
+        }
+      ],
+      "provides": [
+        "Embeds com poster, lazy, sem LCP regressivo"
+      ]
+    },
+    {
+      "id": "skill-pre-deploy-check",
+      "title": "Pre Deploy Check",
+      "path": ".cursor/skills-web-excellence/quality/pre-deploy-check.md",
+      "category": "quality",
+      "agent": "06-qa-auditor",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-audit-a11y"
+        },
+        {
+          "type": "skill",
+          "ref": "skill-audit-security"
+        },
+        {
+          "type": "skill",
+          "ref": "skill-optimize-lcp"
+        },
+        {
+          "type": "skill",
+          "ref": "skill-optimize-bundle"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "checklist completo pré-deploy",
+        "scores Lighthouse dentro dos targets",
+        "decisão go/no-go fundamentada"
+      ]
+    },
+    {
+      "id": "skill-upscale-image-web-pipeline",
+      "title": "Upscale & Web Image Pipeline",
+      "path": ".cursor/skills-web-excellence/ai-assets/upscale-image-web-pipeline.md",
+      "category": "ai-assets",
+      "agent": "05-asset-creator",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        },
+        {
+          "type": "skill",
+          "ref": "skill-optimize-images"
+        }
+      ],
+      "provides": [
+        "image-upscale-workflow",
+        "web-format-conversion-pipeline",
+        "optimized-web-assets"
+      ]
+    },
+    {
+      "id": "skill-visual-regression-checklist",
+      "title": "Checklist QA visual",
+      "path": ".cursor/skills-web-excellence/quality/visual-regression-checklist.md",
+      "category": "quality",
+      "agent": "06-qa-auditor",
+      "priority": "standard",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-audit-a11y"
+        }
+      ],
+      "provides": [
+        "Lista verificável pré-merge (hierarquia, ritmo, dark mode)"
+      ]
+    },
+    {
+      "id": "skill-write-e2e-tests",
+      "title": "Write E2E Tests",
+      "path": ".cursor/skills-web-excellence/quality/write-e2e-tests.md",
+      "category": "quality",
+      "agent": "06-qa-auditor",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "skill",
+          "ref": "skill-write-unit-tests"
+        },
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "testes E2E com Playwright para fluxos críticos",
+        "Page Object Model para manutenibilidade",
+        "integração CI com GitHub Actions"
+      ]
+    },
+    {
+      "id": "skill-write-meta-tags",
+      "title": "Write Meta Tags",
+      "path": ".cursor/skills-web-excellence/seo/write-meta-tags.md",
+      "category": "seo",
+      "agent": "04-seo-specialist",
+      "priority": "critical",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "metadata-completa-next",
+        "open-graph-tags",
+        "twitter-cards"
+      ]
+    },
+    {
+      "id": "skill-write-sitemap",
+      "title": "Write Sitemap",
+      "path": ".cursor/skills-web-excellence/seo/write-sitemap.md",
+      "category": "seo",
+      "agent": "04-seo-specialist",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        }
+      ],
+      "provides": [
+        "sitemap-xml",
+        "robots-txt"
+      ]
+    },
+    {
+      "id": "skill-write-unit-tests",
+      "title": "Write Unit Tests",
+      "path": ".cursor/skills-web-excellence/quality/write-unit-tests.md",
+      "category": "quality",
+      "agent": "06-qa-auditor",
+      "priority": "important",
+      "requires": [
+        {
+          "type": "rule",
+          "ref": "00-constitution"
+        },
+        {
+          "type": "rule",
+          "ref": "01-typescript"
+        }
+      ],
+      "provides": [
+        "testes unitários com Vitest + Testing Library",
+        "mocks de API com MSW",
+        "padrões de teste para componentes React"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "id": "cmd-audit-a11y",
+      "title": "Auditoria de Acessibilidade",
+      "path": ".cursor/commands/audit/audit-a11y.md",
+      "category": "audit",
+      "agent": "06-qa-auditor"
+    },
+    {
+      "id": "cmd-audit-conversion",
+      "title": "Auditoria de conversão e confiança",
+      "path": ".cursor/commands/audit/audit-conversion.md",
+      "category": "audit",
+      "agent": "06-qa-auditor"
+    },
+    {
+      "id": "cmd-audit-full",
+      "title": "Auditoria Completa",
+      "path": ".cursor/commands/audit/audit-full.md",
+      "category": "audit",
+      "agent": "06-qa-auditor"
+    },
+    {
+      "id": "cmd-audit-perf",
+      "title": "Auditoria de Performance",
+      "path": ".cursor/commands/audit/audit-perf.md",
+      "category": "audit",
+      "agent": "06-qa-auditor"
+    },
+    {
+      "id": "cmd-audit-seo",
+      "title": "Auditoria de SEO",
+      "path": ".cursor/commands/audit/audit-seo.md",
+      "category": "audit",
+      "agent": "06-qa-auditor"
+    },
+    {
+      "id": "cmd-new-component",
+      "title": "Criar componente reutilizável",
+      "path": ".cursor/commands/build/new-component.md",
+      "category": "build",
+      "agent": "03-builder"
+    },
+    {
+      "id": "cmd-new-page",
+      "title": "Criar página completa",
+      "path": ".cursor/commands/build/new-page.md",
+      "category": "build",
+      "agent": "03-builder"
+    },
+    {
+      "id": "cmd-new-section",
+      "title": "Criar secção de página",
+      "path": ".cursor/commands/build/new-section.md",
+      "category": "build",
+      "agent": "03-builder"
+    },
+    {
+      "id": "",
+      "title": "",
+      "path": ".cursor/commands/deploy.md",
+      "category": "",
+      "agent": ""
+    },
+    {
+      "id": "",
+      "title": "",
+      "path": ".cursor/commands/fix-issue.md",
+      "category": "",
+      "agent": ""
+    },
+    {
+      "id": "cmd-gen-copy",
+      "title": "Gerar Copy e Textos",
+      "path": ".cursor/commands/generate/gen-copy.md",
+      "category": "generate",
+      "agent": "05-asset-creator"
+    },
+    {
+      "id": "cmd-gen-image",
+      "title": "Gerar Prompt de Imagem",
+      "path": ".cursor/commands/generate/gen-image.md",
+      "category": "generate",
+      "agent": "05-asset-creator"
+    },
+    {
+      "id": "cmd-gen-schema",
+      "title": "Gerar JSON-LD Schema",
+      "path": ".cursor/commands/generate/gen-schema.md",
+      "category": "generate",
+      "agent": "04-seo-specialist"
+    },
+    {
+      "id": "cmd-gen-video",
+      "title": "Gerar Prompt de Vídeo",
+      "path": ".cursor/commands/generate/gen-video.md",
+      "category": "generate",
+      "agent": "05-asset-creator"
+    },
+    {
+      "id": "",
+      "title": "",
+      "path": ".cursor/commands/hotfix.md",
+      "category": "",
+      "agent": ""
+    },
+    {
+      "id": "",
+      "title": "",
+      "path": ".cursor/commands/monetization-check.md",
+      "category": "",
+      "agent": ""
+    },
+    {
+      "id": "",
+      "title": "",
+      "path": ".cursor/commands/onboard.md",
+      "category": "",
+      "agent": ""
+    },
+    {
+      "id": "",
+      "title": "",
+      "path": ".cursor/commands/pr.md",
+      "category": "",
+      "agent": ""
+    },
+    {
+      "id": "cmd-init-project",
+      "title": "Inicializar Projeto Web",
+      "path": ".cursor/commands/project/init-project.md",
+      "category": "project",
+      "agent": "01-architect"
+    },
+    {
+      "id": "cmd-init-seo",
+      "title": "Configurar Infraestrutura SEO",
+      "path": ".cursor/commands/project/init-seo.md",
+      "category": "project",
+      "agent": "04-seo-specialist"
+    },
+    {
+      "id": "cmd-init-tokens",
+      "title": "Gerar Design Tokens",
+      "path": ".cursor/commands/project/init-tokens.md",
+      "category": "project",
+      "agent": "02-designer"
+    },
+    {
+      "id": "",
+      "title": "",
+      "path": ".cursor/commands/review.md",
+      "category": "",
+      "agent": ""
+    },
+    {
+      "id": "",
+      "title": "",
+      "path": ".cursor/commands/test.md",
+      "category": "",
+      "agent": ""
+    }
+  ]
+}

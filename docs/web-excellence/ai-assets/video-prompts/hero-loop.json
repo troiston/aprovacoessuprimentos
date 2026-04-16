@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "id": "hero-loop",
+    "version": "1.0",
+    "description": "3 prompts para loops de video em hero sections — ambient, product orbit, abstract",
+    "compatible_tools": ["runway-gen3-turbo", "sora-2", "kling-3"]
+  },
+  "prompts": [
+    {
+      "id": "ambient-atmosphere",
+      "name": "Ambient — Atmosfera Imersiva",
+      "description": "Dolly lento por cena atmosferica com particulas e nevoa, loop seamless de 5s",
+      "scene": "Slow dolly forward through an ethereal atmospheric space filled with soft floating particles and gentle mist, volumetric light rays cutting through the haze from above, subtle dust motes drifting lazily, deep cinematic color grading with warm amber undertones, seamless loop transition where the end blends perfectly back to the beginning",
+      "motion": {
+        "subject_action": "Particles drift slowly and continuously in random organic paths",
+        "background_movement": "Mist swirls gently, volumetric light rays shift subtly",
+        "speed": "slow-motion"
+      },
+      "camera": {
+        "movement": "dolly-in",
+        "speed": "subtle(1.5)",
+        "framing": "wide-shot",
+        "depth_of_field": "medium"
+      },
+      "duration": 5,
+      "style": "cinematic",
+      "atmosphere": {
+        "lighting": "dramatic",
+        "mood": "mysterious",
+        "color_grade": "warm"
+      },
+      "runway_json": {
+        "model": "gen3_alpha_turbo",
+        "promptText": "Slow cinematic dolly forward through ethereal atmospheric space with soft floating particles and gentle mist, volumetric light rays from above cutting through haze, dust motes drifting, warm amber color grading, seamless loop, mysterious cinematic mood",
+        "duration": 5,
+        "ratio": "16:9",
+        "camera_motion": {
+          "pan": 0,
+          "zoom": 2,
+          "tilt": 0,
+          "roll": 0
+        }
+      },
+      "sora_prompt": "Beginning: Camera begins moving slowly forward through a dark atmospheric space, mist swirling at ground level, faint volumetric light rays appearing from above. Middle: Floating particles become more visible as camera pushes deeper into the mist, warm amber light intensifies, dust motes drift through light beams. End: Scene dissolves seamlessly into the same starting atmosphere, creating a perfect loop, particles and mist reset to original positions.",
+      "kling_prompt": "VISUAL: Slow dolly forward through ethereal misty atmospheric space, soft floating particles, volumetric light rays from above, warm amber color grading, seamless 5-second loop, cinematic mysterious mood | AUDIO: Deep ambient drone, soft wind whisper, subtle crystalline tones, low frequency hum"
+    },
+    {
+      "id": "product-orbit",
+      "name": "Product — Orbita 360°",
+      "description": "Orbita lenta de 360° ao redor de produto com iluminacao dramatica, fundo escuro, 5s",
+      "scene": "Slow smooth 360-degree orbit around a premium product floating in center of frame against deep dark background, dramatic three-point lighting creating strong highlights and deep shadows, subtle particles floating in air, product casting clean shadow below, studio-quality cinematic lighting",
+      "motion": {
+        "subject_action": "Product remains perfectly still and centered, rotating appearance comes from camera orbit",
+        "background_movement": "Subtle floating particles drift slowly in background",
+        "speed": "slow-motion"
+      },
+      "camera": {
+        "movement": "orbit",
+        "speed": "moderate(3)",
+        "framing": "medium-shot",
+        "depth_of_field": "shallow"
+      },
+      "duration": 5,
+      "style": "commercial",
+      "atmosphere": {
+        "lighting": "studio",
+        "mood": "luxurious",
+        "color_grade": "high-contrast"
+      },
+      "runway_json": {
+        "model": "gen3_alpha_turbo",
+        "promptText": "Slow smooth 360-degree orbit around premium product floating against deep dark background, dramatic studio three-point lighting, strong highlights and deep shadows, subtle particles in air, clean shadow beneath product, luxurious cinematic commercial style",
+        "duration": 5,
+        "ratio": "16:9",
+        "camera_motion": {
+          "pan": 6,
+          "zoom": 0,
+          "tilt": 0,
+          "roll": 0
+        }
+      },
+      "sora_prompt": "Beginning: Camera begins slow orbit from front angle of premium product floating in dark void, dramatic side key light creates strong highlight on product surface. Middle: Camera continues smooth orbit revealing product details from new angle, fill light subtly illuminates shadow side, floating particles catch light. End: Camera completes orbit returning to starting front position, seamless loop, luxurious commercial feel.",
+      "kling_prompt": "VISUAL: Slow 360-degree orbit around floating premium product, deep dark background, dramatic three-point studio lighting, strong highlights and shadows, subtle particles in air, 5-second seamless loop, luxurious commercial style | AUDIO: Subtle electronic ambient pad, soft mechanical whoosh as camera moves, crystalline high-frequency shimmer"
+    },
+    {
+      "id": "kinetic-abstract",
+      "name": "Kinetic — Abstrato Geometrico",
+      "description": "Formas abstratas se transformando com cores da marca, movimento sutil, loop de 5s",
+      "scene": "Abstract geometric shapes slowly morphing and transforming in a dark infinite space, brand-colored gradients flowing across surfaces, soft glow emanating from shape edges, minimal kinetic motion with organic easing, clean modern aesthetic with depth",
+      "motion": {
+        "subject_action": "Geometric shapes morph slowly between forms, surfaces shift with gradient flow",
+        "background_movement": "Ambient glow pulses subtly, tiny particles orbit shapes",
+        "speed": "slow-motion"
+      },
+      "camera": {
+        "movement": "static",
+        "speed": "subtle(0.5)",
+        "framing": "medium-shot",
+        "depth_of_field": "shallow"
+      },
+      "duration": 5,
+      "style": "abstract",
+      "atmosphere": {
+        "lighting": "neon",
+        "mood": "calm",
+        "color_grade": "high-contrast"
+      },
+      "runway_json": {
+        "model": "gen3_alpha_turbo",
+        "promptText": "Abstract geometric shapes slowly morphing and transforming in dark infinite space, brand-colored indigo and cyan gradients flowing across surfaces, soft glow from edges, minimal kinetic motion, organic easing, tiny orbiting particles, clean modern aesthetic, seamless 5-second loop",
+        "duration": 5,
+        "ratio": "16:9",
+        "camera_motion": {
+          "pan": 0,
+          "zoom": 0,
+          "tilt": 0,
+          "roll": 0
+        }
+      },
+      "sora_prompt": "Beginning: Clean geometric shapes rest in dark space with soft indigo and cyan gradient surfaces, subtle ambient glow at edges. Middle: Shapes begin slow organic morphing transformation, gradient colors flow across surfaces like liquid, tiny particles orbit the forms, edges pulse with soft light. End: Shapes return smoothly to their original forms completing the cycle, seamless loop back to beginning, calm meditative rhythm.",
+      "kling_prompt": "VISUAL: Abstract geometric shapes slowly morphing in dark space, indigo and cyan gradient surfaces, soft edge glow, minimal kinetic motion, organic easing, orbiting particles, 5-second seamless loop, clean modern abstract | AUDIO: Ambient synthesizer pad, soft granular texture, subtle bass pulse in rhythm with shape morphing, calm meditative"
+    }
+  ]
+}

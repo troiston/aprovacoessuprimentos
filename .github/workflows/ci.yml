@@ -1,0 +1,181 @@
+# CI — VibeCoding Next.js SaaS Framework
+# Jobs: quality (typecheck, lint, test, audit, verify-docs) + build + e2e
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
+  DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci?schema=public"
+  NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+  NEXT_PUBLIC_APP_NAME: "VibeCoding CI"
+  NEXT_TELEMETRY_DISABLED: 1
+  SEED_ADMIN_PASSWORD: "ci-admin-password"
+  E2E_PASSWORD: "ci-admin-password"
+
+jobs:
+  quality:
+    name: Quality Gates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Typecheck
+        run: |
+          npx next typegen 2>/dev/null || true
+          npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
+      - name: Security Audit
+        run: npm audit --audit-level=critical
+        continue-on-error: true
+
+      - name: Verify Docs (VibeCoding)
+        run: bash scripts/verify-docs.sh
+
+      - name: Framework manifest (Web Excellence)
+        run: npm run manifest
+
+      - name: Verify framework graph
+        run: npm run verify:framework
+
+      - name: Verify docs integrity (scoped)
+        run: bash scripts/verify-docs-integrity.sh
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: quality
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.ts','**/*.tsx','**/*.js','**/*.jsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+            ${{ runner.os }}-nextjs-
+
+      - name: Install
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build
+        run: npm run build
+
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: build
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for Playwright config
+        id: check_playwright
+        run: |
+          if [ -f "playwright.config.ts" ] || [ -f "playwright.config.js" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node
+        if: steps.check_playwright.outputs.exists == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install
+        if: steps.check_playwright.outputs.exists == 'true'
+        run: npm ci
+
+      - name: Generate Prisma Client
+        if: steps.check_playwright.outputs.exists == 'true'
+        run: npx prisma generate
+
+      - name: Apply Prisma migrations
+        if: steps.check_playwright.outputs.exists == 'true'
+        run: npx prisma migrate deploy
+
+      - name: Seed database
+        if: steps.check_playwright.outputs.exists == 'true'
+        run: npx prisma db seed
+
+      - name: Install Playwright browsers
+        if: steps.check_playwright.outputs.exists == 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E
+        if: steps.check_playwright.outputs.exists == 'true'
+        env:
+          REQUIRE_E2E_LOGIN: "true"
+        run: npx playwright test
+
+      - name: Upload Playwright report
+        if: steps.check_playwright.outputs.exists == 'true' && failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Skip notice
+        if: steps.check_playwright.outputs.exists != 'true'
+        run: echo "Playwright config not found — skipping E2E tests"

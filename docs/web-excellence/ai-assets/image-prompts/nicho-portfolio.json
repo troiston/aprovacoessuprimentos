@@ -1,0 +1,207 @@
+{
+  "meta": {
+    "id": "nicho-portfolio",
+    "version": "1.0",
+    "description": "5 prompts otimizados para portfolios criativos, designers e freelancers",
+    "compatible_tools": ["flux-2", "midjourney-v7", "dall-e-3"],
+    "color_palette": {
+      "ink_black": "#0A0A0A",
+      "warm_gray": "#78716C",
+      "stone": "#D6D3D1",
+      "terracotta": "#C2410C",
+      "parchment": "#FEFCE8"
+    }
+  },
+  "prompts": [
+    {
+      "id": "projeto-mockup",
+      "name": "Projeto — Mockup em Contexto",
+      "description": "Trabalho apresentado em contexto real (laptop, frame de celular), perspectiva, sombras suaves",
+      "subject": {
+        "description": "Laptop and phone displaying portfolio work on screen in perspective view",
+        "position": "center",
+        "details": "Modern MacBook and iPhone showing clean UI design on screens, screens slightly angled toward viewer"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Minimal warm-toned desk with subtle wood grain texture, clean negative space",
+        "props": "Wireless mouse, small succulent plant, cup of coffee, single pencil"
+      },
+      "camera": {
+        "lens": "35mm",
+        "aperture": "f/2.8",
+        "angle": "high-angle",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "natural-window",
+        "direction": "camera-left",
+        "mood": "warm",
+        "color_temperature": "4500K neutral"
+      },
+      "style": "lifestyle",
+      "color_palette": {
+        "primary": "#D6D3D1",
+        "secondary": "#0A0A0A",
+        "accent": "#C2410C",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "High-angle medium shot of modern MacBook and iPhone on minimal warm-toned wooden desk displaying clean UI design on their screens, devices slightly angled toward viewer in natural perspective, subtle wood grain desk texture, clean negative space around devices, wireless mouse, small succulent plant, coffee cup, single pencil, natural window light from camera-left at 4500K neutral temperature, warm subtle mood, 35mm lens f/2.8, lifestyle portfolio photography, stone #D6D3D1 desk tones, ink black #0A0A0A screens, terracotta #C2410C UI accent on screen",
+      "prompt_midjourney": "High-angle MacBook and iPhone on warm wooden desk showing clean UI design, natural perspective, wood grain texture, negative space, succulent, coffee, pencil, natural window light from left, warm mood, 35mm f/2.8, lifestyle portfolio mockup style --ar 16:9 --s 200 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, cluttered desk, harsh shadows, dated devices, messy cables, dark room, cold tones"
+    },
+    {
+      "id": "retrato-profissional",
+      "name": "Retrato — Profissional",
+      "description": "Retrato profissional em estudio, profundidade de campo rasa, iluminacao sofisticada",
+      "subject": {
+        "description": "Professional creative portrait with confident approachable expression",
+        "position": "center",
+        "details": "Natural skin texture, genuine subtle smile, eyes sharp and engaging, smart creative attire"
+      },
+      "setting": {
+        "environment": "studio",
+        "background": "Warm neutral gradient from stone #D6D3D1 to soft parchment #FEFCE8",
+        "props": "None — clean portrait focus"
+      },
+      "camera": {
+        "lens": "85mm",
+        "aperture": "f/1.8",
+        "angle": "eye-level",
+        "distance": "close-up"
+      },
+      "lighting": {
+        "type": "studio-softbox",
+        "direction": "camera-left",
+        "mood": "warm",
+        "color_temperature": "4000K neutral"
+      },
+      "style": "editorial",
+      "color_palette": {
+        "primary": "#D6D3D1",
+        "secondary": "#78716C",
+        "accent": "#FEFCE8",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "3:2",
+      "prompt_en": "Close-up professional creative portrait with confident approachable expression, natural skin texture with genuine subtle smile, eyes sharp and engaging, smart creative attire in warm gray #78716C tones, warm neutral gradient background from stone #D6D3D1 to soft parchment #FEFCE8, studio softbox lighting from camera-left at 4000K neutral temperature, subtle warm fill light from opposite side, beautiful shallow depth of field, 85mm lens f/1.8, editorial portrait photography, natural warm skin tones, professional yet personable",
+      "prompt_midjourney": "Professional creative portrait, confident approachable expression, natural skin, genuine smile, sharp engaging eyes, smart creative attire, warm neutral gradient background, softbox from left, warm fill light, 85mm f/1.8 shallow DOF, editorial portrait style, warm natural tones --ar 3:2 --s 200 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, over-retouched skin, plastic look, forced smile, harsh shadows, corporate sterile, cold tones, unflattering angle"
+    },
+    {
+      "id": "workspace-creative",
+      "name": "Workspace — Mesa Criativa",
+      "description": "Mesa criativa organizada, ferramentas de trabalho, luz ambiente quente",
+      "subject": {
+        "description": "Organized creative workspace desk from above showing tools of the trade",
+        "position": "center",
+        "details": "Curated arrangement of sketchbook, tablet with stylus, color swatches, typography prints"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Rich dark walnut desk surface with warm patina, slightly worn texture",
+        "props": "Mechanical pencils, ruler, Pantone fan deck, small mood board, plant, coffee"
+      },
+      "camera": {
+        "lens": "35mm",
+        "aperture": "f/4",
+        "angle": "bird-eye",
+        "distance": "wide-shot"
+      },
+      "lighting": {
+        "type": "natural-window",
+        "direction": "top",
+        "mood": "warm",
+        "color_temperature": "3500K warm"
+      },
+      "style": "lifestyle",
+      "color_palette": {
+        "primary": "#0A0A0A",
+        "secondary": "#78716C",
+        "accent": "#C2410C",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "1:1",
+      "prompt_en": "Bird-eye wide shot of organized creative workspace on rich dark walnut desk with warm patina, curated arrangement of open sketchbook with hand-drawn wireframes, drawing tablet with stylus, scattered color swatches, typography specimen prints, mechanical pencils, metal ruler, Pantone fan deck partially open, small cork mood board with reference images pinned, small potted plant, ceramic coffee mug, natural warm window light from top at 3500K, inviting creative atmosphere, 35mm lens f/4, lifestyle flat-lay style, ink black #0A0A0A tools, warm gray #78716C accents, terracotta #C2410C pops of color",
+      "prompt_midjourney": "Bird-eye creative workspace on dark walnut desk, sketchbook with wireframes, drawing tablet, color swatches, typography prints, pencils, ruler, Pantone deck, mood board, plant, coffee mug, warm window light, 35mm f/4, creative lifestyle flat-lay, warm earthy tones --ar 1:1 --s 250 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, messy cluttered, dirty, harsh lighting, cold tones, modern plastic desk, empty uninteresting"
+    },
+    {
+      "id": "detalhe-craft",
+      "name": "Detalhe — Artesanato e Textura",
+      "description": "Close-up de detalhe artesanal, textura, lente macro, iluminacao lateral",
+      "subject": {
+        "description": "Extreme close-up of handcrafted detail showing material texture and craftsmanship",
+        "position": "center",
+        "details": "Visible grain, stitching, or brush strokes, tactile quality emphasized, natural imperfections"
+      },
+      "setting": {
+        "environment": "studio",
+        "background": "Soft blurred continuation of the material itself, shallow focus falloff",
+        "props": "None — pure texture and detail focus"
+      },
+      "camera": {
+        "lens": "100mm macro",
+        "aperture": "f/2.8",
+        "angle": "eye-level",
+        "distance": "extreme-close-up"
+      },
+      "lighting": {
+        "type": "dramatic-rim",
+        "direction": "side",
+        "mood": "dramatic",
+        "color_temperature": "3500K warm"
+      },
+      "style": "fine-art",
+      "color_palette": {
+        "primary": "#78716C",
+        "secondary": "#D6D3D1",
+        "accent": "#C2410C",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "3:2",
+      "prompt_en": "Extreme close-up of handcrafted detail with 100mm macro lens f/2.8, visible material grain and tactile quality with natural imperfections that show human craftsmanship, dramatic side rim lighting at 3500K warm temperature creating long shadows across surface texture, soft blurred background as shallow focus falloff into the material itself, fine-art photography style, warm gray #78716C material, stone #D6D3D1 highlights, terracotta #C2410C warm undertones in shadows",
+      "prompt_midjourney": "Extreme close-up handcrafted detail, macro photography, visible material grain, tactile natural imperfections, dramatic side rim lighting casting texture shadows, shallow focus falloff, 100mm macro f/2.8, fine-art style, warm gray and terracotta tones --ar 3:2 --s 300 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, smooth plastic surface, machine-made uniformity, flat lighting, cold tones, no texture detail"
+    },
+    {
+      "id": "processo-behind",
+      "name": "Processo — Bastidores",
+      "description": "Bastidores do processo criativo, estilo documental, luz natural ambiente",
+      "subject": {
+        "description": "Creative professional immersed in their work process",
+        "position": "left-third",
+        "details": "Focused concentration, hands actively working, authentic messy creative moment, natural posture"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Real creative studio space with works-in-progress visible, shelves with materials",
+        "props": "Reference materials pinned to wall, tools of the craft, work-in-progress pieces"
+      },
+      "camera": {
+        "lens": "35mm",
+        "aperture": "f/2.8",
+        "angle": "eye-level",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "natural-window",
+        "direction": "camera-right",
+        "mood": "warm",
+        "color_temperature": "4000K neutral"
+      },
+      "style": "documentary",
+      "color_palette": {
+        "primary": "#78716C",
+        "secondary": "#FEFCE8",
+        "accent": "#C2410C",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Medium shot of creative professional immersed in work process, positioned in left-third composition, focused concentration with hands actively working, authentic creative moment with natural posture, real creative studio space with works-in-progress visible on shelves, reference materials pinned to wall, tools of the craft scattered naturally, work-in-progress pieces visible, natural window light streaming from camera-right at 4000K, warm documentary mood, 35mm lens f/2.8 with environmental context, documentary photography style, warm gray #78716C studio tones, parchment #FEFCE8 warm light, terracotta #C2410C accent elements",
+      "prompt_midjourney": "Creative professional immersed in work, left-third composition, focused hands actively working, authentic messy creative studio, works-in-progress on shelves, references pinned to wall, natural window light from right, warm documentary style, 35mm f/2.8, behind-the-scenes feel --ar 16:9 --s 200 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, posed stock photo, clean sterile space, harsh flash, looking at camera, staged, deformed hands"
+    }
+  ]
+}

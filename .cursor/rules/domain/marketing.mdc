@@ -1,0 +1,31 @@
+---
+description: "Landing page and marketing components conventions"
+globs: ["src/app/(marketing)/**", "src/components/marketing/**"]
+alwaysApply: false
+---
+# Marketing & Landing Page Conventions
+
+## Performance (obrigatorio)
+- LCP < 2.5s (cada segundo adicional = -7% conversao)
+- Imagens otimizadas com next/image, formatos WebP/AVIF
+- Fontes com `next/font` (sem flash of unstyled text)
+- Minimizar JavaScript no client (Server Components sempre que possivel)
+
+## Estrutura de Landing Page
+- Hero com CTA ACIMA DO FOLD (5 segundos para convencer)
+- Headline focada em BENEFICIO, nao feature (< 10 palavras)
+- Social proof visivel (logos, depoimentos, numeros)
+- Pricing com maximo 3 tiers (evitar choice paralysis)
+- Navegacao minima (1 CTA no navbar)
+
+## SEO
+- Metadata completa em cada pagina (title, description, og:image)
+- Heading hierarchy (h1 > h2 > h3, sem pular niveis)
+- Links semanticos com texto descritivo
+- Schema.org markup para pricing e FAQ
+
+## Anti-AI-Slop
+- Tipografia distintiva (nao usar Inter/Roboto para tudo)
+- Paleta OKLCH com personalidade (evitar gradiente roxo-azul generico)
+- Layouts com assimetria intencional
+- Micro-interacoes com proposito funcional

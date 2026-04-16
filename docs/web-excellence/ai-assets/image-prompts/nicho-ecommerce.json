@@ -1,0 +1,207 @@
+{
+  "meta": {
+    "id": "nicho-ecommerce",
+    "version": "1.0",
+    "description": "5 prompts otimizados para lojas virtuais, marketplaces e produtos fisicos",
+    "compatible_tools": ["flux-2", "midjourney-v7", "dall-e-3"],
+    "color_palette": {
+      "coral": "#FF6B6B",
+      "gold": "#F59E0B",
+      "emerald": "#10B981",
+      "charcoal": "#1F2937",
+      "off_white": "#FAFAF9"
+    }
+  },
+  "prompts": [
+    {
+      "id": "produto-clean",
+      "name": "Produto — Fundo Limpo",
+      "description": "Produto em fundo branco limpo, sombras suaves, estudio softbox, ideal para catalogo",
+      "subject": {
+        "description": "Premium product centered on pure white background",
+        "position": "center",
+        "details": "Sharp product detail, clean edges, true-to-life colors, slight reflection on surface"
+      },
+      "setting": {
+        "environment": "studio",
+        "background": "Pure seamless white #FAFAF9 background, soft ground shadow",
+        "props": "None — isolated product only for maximum clarity"
+      },
+      "camera": {
+        "lens": "85mm",
+        "aperture": "f/4",
+        "angle": "eye-level",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "studio-softbox",
+        "direction": "front",
+        "mood": "neutral",
+        "color_temperature": "5500K daylight"
+      },
+      "style": "product",
+      "color_palette": {
+        "primary": "#FAFAF9",
+        "secondary": "#1F2937",
+        "accent": "#F59E0B",
+        "dominant_tone": "neutral"
+      },
+      "aspect_ratio": "1:1",
+      "prompt_en": "Premium product centered on pure seamless white #FAFAF9 background, sharp detail with clean edges, true-to-life colors, soft subtle ground shadow, slight reflection on glossy surface beneath, front studio softbox lighting at 5500K daylight color temperature, neutral mood, 85mm lens f/4, eye-level perspective, clean professional product photography for e-commerce catalog, no distracting elements, maximum clarity and crispness",
+      "prompt_midjourney": "Premium product on pure white seamless background, sharp detail, clean edges, soft ground shadow, slight surface reflection, studio softbox front lighting, 85mm f/4, professional product photography, e-commerce catalog style, clean and crisp --ar 1:1 --s 100 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, busy background, props, shadows too harsh, color cast, tilted, off-center, dust, scratches"
+    },
+    {
+      "id": "modelo-lifestyle",
+      "name": "Modelo — Lifestyle com Produto",
+      "description": "Modelo usando produto em contexto de vida real, luz natural, estilo editorial",
+      "subject": {
+        "description": "Model naturally using product in lifestyle context",
+        "position": "left-third",
+        "details": "Authentic expression, natural pose, product clearly visible and in use, stylish casual attire"
+      },
+      "setting": {
+        "environment": "outdoor",
+        "background": "Trendy urban street with soft architectural bokeh, warm sunlit tones",
+        "props": "Complementary accessories, urban greenery, natural street elements"
+      },
+      "camera": {
+        "lens": "50mm",
+        "aperture": "f/2.8",
+        "angle": "eye-level",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "golden-hour",
+        "direction": "camera-right",
+        "mood": "warm",
+        "color_temperature": "4000K neutral"
+      },
+      "style": "editorial",
+      "color_palette": {
+        "primary": "#F59E0B",
+        "secondary": "#1F2937",
+        "accent": "#10B981",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "4:3",
+      "prompt_en": "Medium shot of model naturally using product in urban lifestyle context, positioned in left-third composition, authentic relaxed expression, natural candid pose with product clearly visible and in use, stylish casual attire, trendy urban street background with soft architectural bokeh, golden hour light from camera-right at 4000K, warm sunlit tones, urban greenery and natural street elements, 50mm lens f/2.8, eye-level editorial photography, warm inviting mood, gold #F59E0B warm tones, emerald #10B981 greenery accents, charcoal #1F2937 attire contrast",
+      "prompt_midjourney": "Model naturally using product on urban street, authentic relaxed pose, product clearly visible, stylish casual, soft architectural bokeh, golden hour light from right, warm tones, urban greenery, 50mm f/2.8, editorial lifestyle photography, warm inviting mood --ar 4:3 --s 200 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, posed stock photo, fake smile, studio backdrop, harsh lighting, deformed hands, extra fingers, product obscured"
+    },
+    {
+      "id": "flat-lay",
+      "name": "Flat-Lay — Grade Organizada",
+      "description": "Vista aerea de grade organizada de produtos, iluminacao uniforme, aspecto quadrado",
+      "subject": {
+        "description": "Organized grid arrangement of complementary products in flat-lay composition",
+        "position": "center",
+        "details": "Symmetrical spacing, each item clearly visible, cohesive color story, satisfying alignment"
+      },
+      "setting": {
+        "environment": "studio",
+        "background": "Clean matte surface in off-white #FAFAF9, uniform flat background",
+        "props": "Decorative botanical elements, texture swatches, brand color accent objects"
+      },
+      "camera": {
+        "lens": "35mm",
+        "aperture": "f/8",
+        "angle": "bird-eye",
+        "distance": "wide-shot"
+      },
+      "lighting": {
+        "type": "studio-softbox",
+        "direction": "top",
+        "mood": "neutral",
+        "color_temperature": "5500K daylight"
+      },
+      "style": "commercial-photography",
+      "color_palette": {
+        "primary": "#FAFAF9",
+        "secondary": "#FF6B6B",
+        "accent": "#10B981",
+        "dominant_tone": "neutral"
+      },
+      "aspect_ratio": "1:1",
+      "prompt_en": "Bird-eye flat-lay of organized product grid arrangement on clean matte off-white #FAFAF9 surface, symmetrical spacing with satisfying alignment, each item clearly visible, cohesive color story with coral #FF6B6B and emerald #10B981 accent objects, decorative botanical elements and texture swatches between products, even top studio softbox lighting at 5500K, no harsh shadows, 35mm lens f/8 for maximum sharpness across entire frame, commercial flat-lay photography style, clean organized aesthetic",
+      "prompt_midjourney": "Bird-eye flat-lay product grid on off-white surface, symmetrical organized layout, each item visible, botanical decorations, coral and emerald accent objects, even top softbox lighting, no harsh shadows, 35mm f/8 everything sharp, commercial flat-lay style --ar 1:1 --s 150 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, messy arrangement, uneven spacing, harsh shadows, perspective distortion, angled view, cluttered"
+    },
+    {
+      "id": "banner-dynamic",
+      "name": "Banner — Composicao Dinamica",
+      "description": "Composicao dinamica com produto, espaco reservado para tipografia, cores vibrantes",
+      "subject": {
+        "description": "Hero product floating dynamically with energy and motion",
+        "position": "right-third",
+        "details": "Product at dramatic angle, slight motion blur trail, vibrant color splashes around it"
+      },
+      "setting": {
+        "environment": "abstract",
+        "background": "Bold gradient from charcoal #1F2937 to deep coral, clear left-side space for headline text",
+        "props": "Abstract color splashes, geometric accent shapes, subtle particle effects"
+      },
+      "camera": {
+        "lens": "50mm",
+        "aperture": "f/4",
+        "angle": "low-angle",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "dramatic-rim",
+        "direction": "back",
+        "mood": "dramatic",
+        "color_temperature": "5500K daylight"
+      },
+      "style": "commercial-photography",
+      "color_palette": {
+        "primary": "#FF6B6B",
+        "secondary": "#1F2937",
+        "accent": "#F59E0B",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Dynamic hero product floating at dramatic angle in right-third composition, slight motion energy trail, vibrant color splashes of coral #FF6B6B and gold #F59E0B around product, bold gradient background from charcoal #1F2937 to deep coral, clear open space on left side reserved for headline text overlay, abstract geometric accent shapes, subtle particle effects, dramatic rim backlighting at 5500K, low-angle perspective, 50mm lens f/4, commercial e-commerce banner photography style, vibrant energetic mood",
+      "prompt_midjourney": "Dynamic hero product floating dramatically in right-third, motion energy, vibrant coral and gold color splashes, gradient background charcoal to coral, clear left space for text, geometric accents, particles, dramatic rim backlight, low-angle, 50mm f/4, vibrant commercial banner style --ar 16:9 --s 250 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, static boring composition, centered product, flat background, no energy, dull colors, cluttered left side"
+    },
+    {
+      "id": "unboxing-excitement",
+      "name": "Unboxing — Momento de Excitacao",
+      "description": "Maos abrindo embalagem, close-up, antecipacao e excitacao, luz quente",
+      "subject": {
+        "description": "Hands opening a beautifully designed product package",
+        "position": "center",
+        "details": "Well-manicured hands pulling tissue paper, revealing product beneath, anticipation captured"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Warm cozy home surface, soft out-of-focus living room elements",
+        "props": "Premium packaging box with ribbon, tissue paper, small thank-you card visible"
+      },
+      "camera": {
+        "lens": "50mm",
+        "aperture": "f/2.8",
+        "angle": "high-angle",
+        "distance": "close-up"
+      },
+      "lighting": {
+        "type": "natural-window",
+        "direction": "camera-left",
+        "mood": "warm",
+        "color_temperature": "4000K neutral"
+      },
+      "style": "lifestyle",
+      "color_palette": {
+        "primary": "#FAFAF9",
+        "secondary": "#F59E0B",
+        "accent": "#FF6B6B",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "4:3",
+      "prompt_en": "Close-up high-angle of hands opening a beautifully designed premium product package, well-manicured hands pulling back tissue paper revealing product beneath, moment of anticipation and excitement captured, premium box with satin ribbon, small thank-you card visible, warm cozy home surface, soft out-of-focus living room in background, natural window light from camera-left at 4000K, warm inviting mood, 50mm lens f/2.8, lifestyle unboxing photography, off-white #FAFAF9 packaging, gold #F59E0B ribbon accent, coral #FF6B6B card detail",
+      "prompt_midjourney": "Close-up hands opening premium product package, tissue paper pulled back revealing product, anticipation moment, satin ribbon, thank-you card, cozy home surface, soft bokeh living room, natural window light from left, warm mood, 50mm f/2.8, lifestyle unboxing photography --ar 4:3 --s 200 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, deformed hands, extra fingers, cheap packaging, harsh flash, cold lighting, messy surroundings"
+    }
+  ]
+}

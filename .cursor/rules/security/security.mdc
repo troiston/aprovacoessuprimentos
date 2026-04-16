@@ -1,0 +1,52 @@
+---
+description: Checklist de segurança OWASP — ativar manualmente com @security em revisões
+alwaysApply: false
+---
+
+# Revisão de Segurança (OWASP Top 10 + Stack-específico)
+
+## Autenticação e autorização
+- [ ] Todas as rotas de API checam autenticação (getServerSession / better-auth)
+- [ ] Ownership check por recurso em endpoints com ID (anti-IDOR)
+- [ ] Fluxos de authz testados para escalação indevida de privilégio
+- [ ] Recuperação de conta e reset de senha sem enumeração de usuários
+- [ ] Proteção contra brute force em endpoints sensíveis
+- [ ] Política de expiração e revogação de token definida
+- [ ] 2FA implementado conforme `docs/10_THREAT_MODEL.md`
+
+## Inputs e outputs
+- [ ] Todos os inputs validados com Zod antes de usar
+- [ ] Queries parametrizadas — sem string interpolation em SQL
+- [ ] Uploads validam tipo MIME e tamanho máximo
+- [ ] Nenhuma variável de ambiente exposta ao client bundle (sem `NEXT_PUBLIC_` em secrets)
+- [ ] Dados sensíveis minimizados em response payloads (sem CPF, token, PII desnecessário)
+
+## Infra e dependências
+- [ ] Rate limiting ativo em rotas públicas
+- [ ] CORS configurado corretamente (sem wildcard em produção)
+- [ ] Headers de segurança: CSP, X-Frame-Options, HSTS
+- [ ] `npm audit` sem vulnerabilidades críticas
+- [ ] Segredos fora de versionamento (`.env*` no `.gitignore` e `.cursorignore`)
+- [ ] Dependências OSS avaliadas quanto a manutenção, licença e CVEs
+
+## Docker Swarm / Traefik (infra)
+- [ ] Secrets Docker não expostos em environment variables públicas
+- [ ] Traefik com TLS obrigatório (sem HTTP em produção)
+- [ ] Redes Docker isoladas por serviço (backend não exposto diretamente)
+- [ ] Healthcheck configurado em todos os serviços críticos
+
+## LGPD / privacidade
+- [ ] Dados pessoais classificados (comum / sensível) em `docs/10_THREAT_MODEL.md`
+- [ ] Política de retenção e exclusão de dados pessoais definida
+- [ ] Logs não expõem dados sensíveis (sem logar senhas, tokens, CPF, PII)
+- [ ] Ações de exclusão de dados com trilha de auditoria
+- [ ] Base legal de tratamento documentada para cada categoria de dado
+
+## Auditoria e observabilidade
+- [ ] Ações destrutivas com confirmação e trilha de auditoria
+- [ ] Logs sem dados sensíveis (sem logar senhas, tokens, PII)
+- [ ] Threat model resumido atualizado para features novas
+
+> Ver `docs/06_SECURITY.md` para auditoria completa da Fase 4  
+> Ver `docs/10_THREAT_MODEL.md` para modelo STRIDE e controles  
+> Skills ativas nesta área: ver `docs/S03_SKILLS_INDEX.md` → Fase 4a e 4e

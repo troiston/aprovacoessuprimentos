@@ -1,0 +1,232 @@
+---
+description: "Regras de segurança — headers, CSP, validação, auth, CORS"
+globs: ["src/app/api/**/*", "src/middleware.*", "next.config.*"]
+alwaysApply: false
+---
+
+# Segurança — Headers, CSP, Validação, Auth
+
+## Security Headers
+
+Configurar em `next.config.ts` via `headers()`:
+
+```ts
+// next.config.ts
+const securityHeaders = [
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()' },
+  { key: 'X-DNS-Prefetch-Control', value: 'on' },
+]
+
+export default {
+  async headers() {
+    return [{ source: '/(.*)', headers: securityHeaders }]
+  },
+} satisfies NextConfig
+```
+
+### Headers Obrigatórios
+
+| Header | Valor | Protege Contra |
+|--------|-------|----------------|
+| `X-Frame-Options` | `DENY` | Clickjacking |
+| `X-Content-Type-Options` | `nosniff` | MIME sniffing attacks |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | Vazamento de URL em referrer |
+| `HSTS` | `max-age=63072000; includeSubDomains; preload` | Downgrade para HTTP |
+| `Permissions-Policy` | `camera=() microphone=() geolocation=()` | Acesso indevido a APIs do device |
+
+## Content Security Policy (CSP)
+
+CSP nonce-based via middleware para máxima segurança:
+
+```ts
+// src/middleware.ts
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+export function middleware(request: NextRequest) {
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
+  const csp = [
+    `default-src 'self'`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    `style-src 'self' 'nonce-${nonce}'`,
+    `img-src 'self' data: blob: https:`,
+    `font-src 'self'`,
+    `connect-src 'self' https://api.example.com`,
+    `frame-ancestors 'none'`,
+    `base-uri 'self'`,
+    `form-action 'self'`,
+    `object-src 'none'`,
+    `upgrade-insecure-requests`,
+  ].join('; ')
+
+  const response = NextResponse.next()
+  response.headers.set('Content-Security-Policy', csp)
+  response.headers.set('x-nonce', nonce)
+  return response
+}
+```
+
+### Regras de CSP
+
+- `default-src 'self'` como base restritiva
+- `script-src` com nonce + `strict-dynamic` (permite scripts carregados por scripts nonced)
+- `frame-ancestors 'none'` substitui X-Frame-Options em browsers modernos
+- `object-src 'none'` bloqueia Flash/Java embeds
+- `upgrade-insecure-requests` força HTTPS em mixed content
+- NUNCA usar `'unsafe-inline'` ou `'unsafe-eval'` em produção
+- Reportar violações com `report-uri` ou `report-to`
+
+## Validação de Input
+
+**Zod é OBRIGATÓRIO** para toda entrada do usuário.
+
+```ts
+import { z } from 'zod'
+
+const ContactSchema = z.object({
+  name: z.string().min(2).max(100).trim(),
+  email: z.string().email().toLowerCase(),
+  message: z.string().min(10).max(5000).trim(),
+  honeypot: z.string().max(0),  // anti-spam
+})
+
+// Server Action
+export async function submitContact(formData: FormData) {
+  'use server'
+  const result = ContactSchema.safeParse(Object.fromEntries(formData))
+
+  if (!result.success) {
+    return { error: result.error.flatten().fieldErrors }
+  }
+
+  // result.data é tipado e sanitizado
+  await saveContact(result.data)
+}
+```
+
+### Onde Validar
+
+- **Server Actions**: validar ANTES de qualquer operação
+- **Route Handlers (API)**: validar body, query params, headers
+- **Formulários client-side**: validar para UX, MAS revalidar no servidor
+- **URL params**: `z.coerce.number()` para IDs, `z.string().uuid()` para UUIDs
+- NUNCA confiar em dados do client — validação server-side é a fonte de verdade
+
+## Variáveis de Ambiente
+
+```
+# .env.local (NUNCA committar)
+DATABASE_URL="postgresql://..."
+AUTH_SECRET="..."
+STRIPE_SECRET_KEY="..."
+
+# Público (incluído no bundle do client)
+NEXT_PUBLIC_SITE_URL="https://example.com"
+NEXT_PUBLIC_ANALYTICS_ID="G-XXXXX"
+```
+
+### Regras
+
+- `NEXT_PUBLIC_` APENAS para valores genuinamente públicos (URLs de site, IDs de analytics)
+- Secrets (API keys, DB URLs, auth secrets) NUNCA com prefixo `NEXT_PUBLIC_`
+- `.env.local` no `.gitignore` SEMPRE
+- Validar env vars no startup com Zod:
+
+```ts
+// src/env.ts
+import { z } from 'zod'
+
+const envSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  AUTH_SECRET: z.string().min(32),
+  NEXT_PUBLIC_SITE_URL: z.string().url(),
+})
+
+export const env = envSchema.parse(process.env)
+```
+
+## Autenticação e Autorização
+
+```ts
+// Server Action — SEMPRE verificar sessão
+export async function updateProfile(data: FormData) {
+  'use server'
+  const session = await getSession()
+  if (!session?.user) throw new Error('Unauthorized')
+
+  const validated = ProfileSchema.safeParse(Object.fromEntries(data))
+  if (!validated.success) throw new Error('Invalid input')
+
+  await db.user.update({
+    where: { id: session.user.id },  // NUNCA usar ID do input
+    data: validated.data,
+  })
+}
+```
+
+### Regras de Auth
+
+- Verificar sessão em TODA Server Action que modifica dados
+- Middleware para proteger rotas inteiras (`/dashboard/*`, `/admin/*`)
+- NUNCA confiar em IDs vindo do client para autorização (IDOR vulnerability)
+- Usar `session.user.id` do server-side, NUNCA `request.body.userId`
+
+## CSRF Protection
+
+```tsx
+// Em formulários — token CSRF
+import { getCsrfToken } from '@/lib/csrf'
+
+<form action={submitAction}>
+  <input type="hidden" name="csrf" value={getCsrfToken()} />
+  {/* campos */}
+</form>
+```
+
+- Cookies com `SameSite=Strict` (ou `Lax` para OAuth callbacks)
+- `HttpOnly` e `Secure` em cookies de sessão
+- Token CSRF em formulários que modificam dados
+
+## Rate Limiting
+
+```ts
+// src/app/api/contact/route.ts
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, '60 s'),
+  analytics: true,
+})
+
+export async function POST(request: Request) {
+  const ip = request.headers.get('x-forwarded-for') ?? '127.0.0.1'
+  const { success, remaining } = await ratelimit.limit(ip)
+
+  if (!success) {
+    return Response.json({ error: 'Too many requests' }, { status: 429 })
+  }
+  // processar request...
+}
+```
+
+### Endpoints Que DEVEM Ter Rate Limiting
+
+- Login / signup
+- Formulários de contato
+- API routes públicas
+- Endpoints de reset de password
+- Qualquer endpoint que envie email/SMS
+
+## Dependências
+
+- `npm audit` em TODO build de CI
+- Renovate/Dependabot para updates automáticos de security patches
+- NUNCA ignorar vulnerabilidades high/critical
+- Lock files (`package-lock.json`) SEMPRE committados
+- Auditar novos pacotes antes de adicionar: verificar manutenção, popularidade, segurança

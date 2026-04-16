@@ -1,0 +1,102 @@
+---
+description: "Padroes Tailwind CSS v4 — @theme directive, design tokens como CSS variables, dark mode, container queries"
+globs: ["**/*.css", "**/*.tsx", "tailwind.config.*"]
+alwaysApply: false
+---
+
+# Padroes Tailwind CSS v4
+
+## @theme — Single Source of Truth
+Tailwind v4 usa a diretiva @theme no CSS para definir tokens. Isso SUBSTITUI tailwind.config.js.
+
+```css
+@import "tailwindcss";
+
+@theme {
+  /* Cores em OKLCH */
+  --color-primary-50: oklch(97% 0.02 255);
+  --color-primary-100: oklch(94% 0.04 255);
+  --color-primary-200: oklch(88% 0.08 255);
+  --color-primary-300: oklch(78% 0.12 255);
+  --color-primary-400: oklch(68% 0.18 255);
+  --color-primary-500: oklch(59% 0.24 255);
+  --color-primary-600: oklch(50% 0.22 255);
+  --color-primary-700: oklch(42% 0.18 255);
+  --color-primary-800: oklch(35% 0.14 255);
+  --color-primary-900: oklch(28% 0.10 255);
+  --color-primary-950: oklch(20% 0.06 255);
+
+  /* Neutros */
+  --color-neutral-50: oklch(98% 0.005 250);
+  --color-neutral-900: oklch(15% 0.005 250);
+
+  /* Tipografia Fluida */
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.8rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 0.95rem);
+  --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 0.95rem + 0.875vw, 1.35rem);
+  --text-xl: clamp(1.25rem, 1rem + 1.25vw, 1.6rem);
+  --text-2xl: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+  --text-3xl: clamp(1.875rem, 1rem + 3vw, 3rem);
+  --text-4xl: clamp(2.25rem, 1rem + 4vw, 4rem);
+  --text-5xl: clamp(2.75rem, 0.75rem + 5vw, 5rem);
+  --text-6xl: clamp(3rem, 0.5rem + 6vw, 6rem);
+
+  /* Espacamentos */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.05);
+  --shadow-md: 0 4px 6px oklch(0% 0 0 / 0.07);
+  --shadow-lg: 0 10px 15px oklch(0% 0 0 / 0.1);
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  /* Font families */
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+}
+```
+
+## Dark Mode
+- Implementar via classe .dark (nao media query)
+- Variaveis semanticas que mudam com dark mode:
+```css
+:root {
+  --color-surface: var(--color-neutral-50);
+  --color-on-surface: var(--color-neutral-900);
+}
+.dark {
+  --color-surface: var(--color-neutral-900);
+  --color-on-surface: var(--color-neutral-50);
+}
+```
+- NUNCA usar dark: prefix para cada utility individualmente se houver muitas — usar variaveis
+
+## Container Queries
+- Usar @container para componentes que vivem em contextos diferentes
+- Definir container com `@container` name em componentes wrapper
+- Ideal para cards, sidebars, widgets que mudam de tamanho
+
+## Regras
+- NUNCA usar @apply (compor classes no JSX)
+- Classes na mesma ordem: layout → spacing → sizing → typography → colors → effects
+- Extrair classes repetidas em componentes React, nao em @apply
+- Responsivo: sm: md: lg: xl: 2xl: (mobile-first)

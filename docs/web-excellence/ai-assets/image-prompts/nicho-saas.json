@@ -1,0 +1,207 @@
+{
+  "meta": {
+    "id": "nicho-saas",
+    "version": "1.0",
+    "description": "5 prompts otimizados para SaaS, startups de tecnologia e produtos digitais",
+    "compatible_tools": ["flux-2", "midjourney-v7", "dall-e-3"],
+    "color_palette": {
+      "indigo": "#6366F1",
+      "violet": "#8B5CF6",
+      "slate_dark": "#0F172A",
+      "slate_light": "#F8FAFC",
+      "cyan": "#22D3EE"
+    }
+  },
+  "prompts": [
+    {
+      "id": "dashboard-mockup",
+      "name": "Dashboard — Mockup Isometrico",
+      "description": "Mockup isometrico de UI com fundo gradiente limpo, sombras suaves, perspectiva 3D",
+      "subject": {
+        "description": "Isometric 3D dashboard UI mockup with data visualizations",
+        "position": "center",
+        "details": "Clean card-based layout, charts, graphs, metric tiles, rounded corners, subtle glass morphism"
+      },
+      "setting": {
+        "environment": "abstract",
+        "background": "Smooth gradient from deep slate #0F172A to indigo #6366F1, subtle grid pattern",
+        "props": "Floating notification badges, small decorative 3D geometric shapes around UI"
+      },
+      "camera": {
+        "lens": "50mm",
+        "aperture": "f/4",
+        "angle": "high-angle",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "studio-softbox",
+        "direction": "top",
+        "mood": "cool",
+        "color_temperature": "6500K cool"
+      },
+      "style": "commercial-photography",
+      "color_palette": {
+        "primary": "#6366F1",
+        "secondary": "#0F172A",
+        "accent": "#22D3EE",
+        "dominant_tone": "cool"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Isometric 3D dashboard UI mockup floating in space, clean card-based layout with data visualization charts and metric tiles, rounded corners with subtle glass morphism effect, smooth gradient background from deep slate #0F172A to indigo #6366F1, subtle grid pattern, floating notification badges, small decorative 3D geometric shapes, soft top lighting casting clean shadows beneath floating elements, cool 6500K color temperature, 50mm lens perspective, commercial technology style, indigo #6366F1 primary, cyan #22D3EE accent highlights, slate light #F8FAFC card surfaces",
+      "prompt_midjourney": "Isometric 3D dashboard UI mockup floating in space, clean card layout, data visualization charts, metric tiles, glass morphism, gradient background deep slate to indigo, subtle grid, floating geometric decorations, soft shadows, cool lighting, tech commercial style, indigo and cyan accent palette --ar 16:9 --s 200 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, realistic photo, cluttered UI, too many elements, pixelated, low resolution, flat design without depth"
+    },
+    {
+      "id": "team-collaboration",
+      "name": "Equipe — Colaboracao",
+      "description": "Equipe diversa em escritorio moderno, luz natural, estilo editorial",
+      "subject": {
+        "description": "Diverse team of four collaborating around a modern standing desk with screens",
+        "position": "center",
+        "details": "Natural expressions, genuine interaction, smart casual attire, gesturing at screen content"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Modern open-plan office with floor-to-ceiling windows, indoor plants, clean workspace",
+        "props": "Large monitor showing dashboard UI, sticky notes on glass wall, laptops, coffee cups"
+      },
+      "camera": {
+        "lens": "50mm",
+        "aperture": "f/2.8",
+        "angle": "eye-level",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "natural-window",
+        "direction": "camera-right",
+        "mood": "neutral",
+        "color_temperature": "5500K daylight"
+      },
+      "style": "editorial",
+      "color_palette": {
+        "primary": "#F8FAFC",
+        "secondary": "#0F172A",
+        "accent": "#6366F1",
+        "dominant_tone": "neutral"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Medium shot of diverse team of four people collaborating around modern standing desk, natural genuine expressions and interaction, smart casual attire, one person gesturing at large monitor showing clean dashboard UI, modern open-plan office with floor-to-ceiling windows flooding natural daylight from camera-right at 5500K, lush indoor plants, clean minimal workspace, sticky notes on glass partition wall, laptops and coffee cups on desk, 50mm lens f/2.8, eye-level editorial photography, bright airy atmosphere, slate light #F8FAFC environment, indigo #6366F1 accent on screen UI",
+      "prompt_midjourney": "Diverse team of four collaborating at modern standing desk, genuine natural expressions, smart casual, monitor showing dashboard UI, open-plan office, floor-to-ceiling windows, indoor plants, natural daylight, sticky notes on glass wall, 50mm f/2.8, editorial photography, bright airy modern workspace --ar 16:9 --s 200 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, stock photo pose, fake smiles, dated office, fluorescent lighting, cluttered, deformed hands, extra fingers"
+    },
+    {
+      "id": "abstract-tech",
+      "name": "Abstrato — Tecnologia",
+      "description": "Formas geometricas com cores da marca, profundidade de campo, estetica futurista",
+      "subject": {
+        "description": "Abstract geometric composition of floating crystalline shapes and light trails",
+        "position": "center",
+        "details": "Translucent polyhedrons, glowing edges, light refraction, connected by thin luminous lines"
+      },
+      "setting": {
+        "environment": "abstract",
+        "background": "Deep dark slate #0F172A void with subtle violet #8B5CF6 nebula glow",
+        "props": "Tiny floating particles, lens flare accents, volumetric light beams"
+      },
+      "camera": {
+        "lens": "85mm",
+        "aperture": "f/2.8",
+        "angle": "eye-level",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "neon",
+        "direction": "back",
+        "mood": "ethereal",
+        "color_temperature": "6500K cool"
+      },
+      "style": "fine-art",
+      "color_palette": {
+        "primary": "#8B5CF6",
+        "secondary": "#6366F1",
+        "accent": "#22D3EE",
+        "dominant_tone": "cool"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Abstract geometric composition of floating translucent crystalline polyhedrons with glowing edges and light refraction, connected by thin luminous lines, deep dark slate #0F172A void background with subtle violet #8B5CF6 nebula glow, tiny floating particles, lens flare accents, volumetric light beams from behind, neon backlighting at cool 6500K, ethereal futuristic mood, 85mm lens f/2.8, shallow depth of field, fine-art style, violet #8B5CF6, indigo #6366F1, and cyan #22D3EE color scheme",
+      "prompt_midjourney": "Abstract floating translucent crystalline geometric shapes with glowing edges, light refraction, connected by luminous lines, deep dark background with violet nebula glow, floating particles, volumetric light, neon backlighting, ethereal futuristic, 85mm f/2.8 shallow DOF, violet indigo and cyan palette --ar 16:9 --s 400 --v 7",
+      "negative_prompt": "blurry, low quality, text, watermark, realistic scene, people, organic shapes, warm tones, cluttered, noisy, grainy"
+    },
+    {
+      "id": "features-cards",
+      "name": "Features — Cards Flutuantes",
+      "description": "Cards de UI flutuando em espaco 3D, gradiente suave, sombras limpas",
+      "subject": {
+        "description": "Three floating UI feature cards arranged in perspective depth",
+        "position": "center",
+        "details": "Rounded corner cards with icons, clean typography space, subtle frosted glass effect"
+      },
+      "setting": {
+        "environment": "abstract",
+        "background": "Soft gradient from slate light #F8FAFC to pale indigo, subtle dot grid pattern",
+        "props": "Small floating badges, decorative circles, thin connecting lines between cards"
+      },
+      "camera": {
+        "lens": "50mm",
+        "aperture": "f/4",
+        "angle": "eye-level",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "studio-softbox",
+        "direction": "front",
+        "mood": "neutral",
+        "color_temperature": "5500K daylight"
+      },
+      "style": "commercial-photography",
+      "color_palette": {
+        "primary": "#F8FAFC",
+        "secondary": "#6366F1",
+        "accent": "#8B5CF6",
+        "dominant_tone": "cool"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Three floating UI feature cards arranged in 3D perspective depth, rounded corners with subtle frosted glass morphism effect, clean surfaces with icon placeholders and typography space, soft gradient background from slate light #F8FAFC to pale indigo tint, subtle dot grid pattern, small floating badge accents, decorative circles and thin connecting lines between cards, soft front studio lighting at 5500K daylight, clean drop shadows beneath each card, commercial technology style, slate light #F8FAFC card surfaces, indigo #6366F1 and violet #8B5CF6 accent elements",
+      "prompt_midjourney": "Three floating 3D UI feature cards in perspective, frosted glass morphism, rounded corners, icon placeholders, soft gradient background slate white to pale indigo, dot grid, floating decorative elements, clean shadows, studio lighting, commercial tech style, indigo and violet accents --ar 16:9 --s 150 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, realistic photo, too detailed, cluttered, dark background, harsh shadows, pixelated"
+    },
+    {
+      "id": "integrations-network",
+      "name": "Integracoes — Rede Conectada",
+      "description": "Nos conectados com estetica tech, tema escuro, acentos neon",
+      "subject": {
+        "description": "Network of interconnected nodes representing app integrations",
+        "position": "center",
+        "details": "Central hub node glowing brightly, satellite nodes with subtle app-like icons, pulsing connection lines"
+      },
+      "setting": {
+        "environment": "abstract",
+        "background": "Deep dark slate #0F172A with subtle radial gradient to dark indigo center glow",
+        "props": "Data flow particles traveling along connection lines, ambient light orbs"
+      },
+      "camera": {
+        "lens": "35mm",
+        "aperture": "f/4",
+        "angle": "bird-eye",
+        "distance": "wide-shot"
+      },
+      "lighting": {
+        "type": "neon",
+        "direction": "front",
+        "mood": "dramatic",
+        "color_temperature": "6500K cool"
+      },
+      "style": "commercial-photography",
+      "color_palette": {
+        "primary": "#0F172A",
+        "secondary": "#6366F1",
+        "accent": "#22D3EE",
+        "dominant_tone": "cool"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Bird-eye wide shot of a network of interconnected glowing nodes representing app integrations, central hub node glowing brightly in cyan #22D3EE, satellite nodes with subtle icon shapes connected by pulsing indigo #6366F1 lines, data flow particles traveling along connections, deep dark slate #0F172A background with subtle radial gradient to dark indigo center glow, ambient light orbs floating, neon front lighting, dramatic cool mood at 6500K, 35mm wide lens f/4, commercial technology visualization style, dark theme with neon cyan and indigo accents",
+      "prompt_midjourney": "Bird-eye view network of interconnected glowing nodes, central hub bright cyan, satellite nodes with icons, pulsing indigo connection lines, data particles flowing, deep dark slate background with indigo radial glow, neon lighting, dramatic dark theme, 35mm f/4, tech visualization style --ar 16:9 --s 300 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, realistic photo, bright background, warm colors, cluttered, organic shapes, light theme"
+    }
+  ]
+}

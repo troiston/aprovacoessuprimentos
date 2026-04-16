@@ -1,0 +1,91 @@
+import { NextResponse } from "next/server";
+import { requireAdminForApi } from "@/lib/api/route-auth";
+import { db } from "@/lib/db";
+import { patchStagesCatalogBodySchema } from "@/lib/validations/stage-catalog";
+import {
+  getStagesCatalogPayload,
+  recalculateAllStageGlobalWeights,
+  scoresToRawWeight,
+} from "@/lib/services/stage-catalog";
+
+export async function GET() {
+  const userOrRes = await requireAdminForApi();
+  if (userOrRes instanceof NextResponse) {
+    return userOrRes;
+  }
+
+  const payload = await getStagesCatalogPayload();
+  return NextResponse.json(payload);
+}
+
+export async function PATCH(request: Request) {
+  const userOrRes = await requireAdminForApi();
+  if (userOrRes instanceof NextResponse) {
+    return userOrRes;
+  }
+
+  let json: unknown;
+  try {
+    json = await request.json();
+  } catch {
+    return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
+  }
+
+  const parsed = patchStagesCatalogBodySchema.safeParse(json);
+  if (!parsed.success) {
+    const first = parsed.error.issues[0];
+    return NextResponse.json(
+      { error: first?.message ?? "Dados inválidos" },
+      { status: 422 },
+    );
+  }
+
+  const ids = new Set(parsed.data.stages.map((s) => s.id));
+  const existingCount = await db.stage.count({ where: { id: { in: [...ids] } } });
+  if (existingCount !== ids.size) {
+    return NextResponse.json(
+      { error: "Uma ou mais etapas não existem no catálogo." },
+      { status: 422 },
+    );
+  }
+
+  await db.$transaction(async (tx) => {
+    for (const row of parsed.data.stages) {
+      const rawWeight = scoresToRawWeight(
+        row.impactScore,
+        row.dependencyScore,
+        row.timeScore,
+        row.effortScore,
+      );
+      await tx.stage.update({
+        where: { id: row.id },
+        data: {
+          impactScore: row.impactScore,
+          dependencyScore: row.dependencyScore,
+          timeScore: row.timeScore,
+          effortScore: row.effortScore,
+          rawWeight,
+        },
+      });
+    }
+    await recalculateAllStageGlobalWeights(tx);
+  });
+
+  const stages = await db.stage.findMany({
+    orderBy: { sortOrder: "asc" },
+    select: {
+      id: true,
+      macroPhaseId: true,
+      name: true,
+      sortOrder: true,
+      impactScore: true,
+      dependencyScore: true,
+      timeScore: true,
+      effortScore: true,
+      rawWeight: true,
+      globalWeight: true,
+    },
+  });
+
+  return NextResponse.json({ ok: true, stages });
+}

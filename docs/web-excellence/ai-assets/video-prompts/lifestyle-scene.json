@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "id": "lifestyle-scene",
+    "version": "1.0",
+    "description": "3 prompts para cenas lifestyle — ritual matinal, fluxo de trabalho, convivio social",
+    "compatible_tools": ["runway-gen3-turbo", "sora-2", "kling-3"]
+  },
+  "prompts": [
+    {
+      "id": "morning-ritual",
+      "name": "Morning — Ritual Matinal",
+      "description": "Rotina matinal com produto, luz quente de manha, slow-motion, steadicam, 5s",
+      "scene": "Steadicam following person through morning ritual in sun-drenched home, warm golden morning light flooding through windows, person naturally interacting with product as part of their calm routine, slow deliberate movements, peaceful atmosphere, steam or mist visible in warm light",
+      "motion": {
+        "subject_action": "Person moves calmly through morning routine, picks up product, uses it with intention",
+        "background_movement": "Morning light shifts subtly, steam rises from coffee or shower, curtains sway gently",
+        "speed": "slow-motion"
+      },
+      "camera": {
+        "movement": "steadicam",
+        "speed": "subtle(2)",
+        "framing": "medium-shot",
+        "depth_of_field": "medium"
+      },
+      "duration": 5,
+      "style": "lifestyle",
+      "atmosphere": {
+        "lighting": "golden-hour",
+        "mood": "calm",
+        "color_grade": "warm"
+      },
+      "runway_json": {
+        "model": "gen3_alpha_turbo",
+        "promptText": "Steadicam following person through calm morning ritual in sun-drenched home, warm golden morning light through windows, natural interaction with product as part of routine, slow deliberate movements, steam visible in warm light, peaceful lifestyle commercial, warm color grading",
+        "duration": 5,
+        "ratio": "16:9",
+        "camera_motion": {
+          "pan": 2,
+          "zoom": 0,
+          "tilt": 0,
+          "roll": 0
+        }
+      },
+      "sora_prompt": "Beginning: Warm golden morning light floods through sheer curtains into a peaceful home, camera follows person on steadicam as they begin their morning routine, slow deliberate movements, calm atmosphere. Middle: Person picks up the product with intention, interacting naturally, steam from a morning coffee catches the golden light beautifully, shallow depth creates dreamy background softness. End: Person uses the product comfortably, gentle satisfied expression, morning light continues to warm the scene, peaceful ritual complete.",
+      "kling_prompt": "VISUAL: Steadicam following person through morning ritual in sun-drenched home, golden morning light through windows, calm interaction with product, slow deliberate movements, steam in warm light, 5 seconds, lifestyle | AUDIO: Soft morning ambiance, distant birds singing, gentle footsteps, water running, coffee maker bubbling, peaceful acoustic guitar"
+    },
+    {
+      "id": "workspace-flow",
+      "name": "Workspace — Fluxo Criativo",
+      "description": "Processo criativo na mesa de trabalho, sensacao de timelapse, overhead, 5s",
+      "scene": "Overhead view of creative workspace showing hands working productively, tools and materials being used with purpose, organized desk with character, timelapse-inspired energy while maintaining smooth motion, focused creative flow state",
+      "motion": {
+        "subject_action": "Hands work with purpose — typing, sketching, arranging, creating — smooth focused movements",
+        "background_movement": "Shadows shift subtly as if time is passing, screen content changes, coffee level decreases",
+        "speed": "timelapse"
+      },
+      "camera": {
+        "movement": "static",
+        "speed": "subtle(1)",
+        "framing": "bird-eye",
+        "depth_of_field": "deep"
+      },
+      "duration": 5,
+      "style": "editorial",
+      "atmosphere": {
+        "lighting": "natural",
+        "mood": "energetic",
+        "color_grade": "neutral"
+      },
+      "runway_json": {
+        "model": "gen3_alpha_turbo",
+        "promptText": "Overhead bird-eye view of creative workspace, hands working productively with tools and materials, organized desk, timelapse-inspired smooth energy, focused creative flow, natural daylight, editorial style, neutral clean color grading, 5-second creative process condensed",
+        "duration": 5,
+        "ratio": "16:9",
+        "camera_motion": {
+          "pan": 0,
+          "zoom": 0,
+          "tilt": 0,
+          "roll": 0
+        }
+      },
+      "sora_prompt": "Beginning: Bird-eye overhead view of organized creative desk with tools and materials, hands enter frame and begin working with purpose, natural daylight illuminates workspace, slight timelapse feeling. Middle: Hands move efficiently between tasks — sketching, typing, arranging materials, creative flow state captured, shadows shift subtly implying passing time, product visible and integrated into workflow. End: Work reaches a satisfying point, hands pause on completed piece, tools rest in organized positions, condensed creative session complete.",
+      "kling_prompt": "VISUAL: Overhead bird-eye creative workspace, hands working productively, sketching typing arranging, organized desk, timelapse-inspired energy, natural daylight, shadows shifting, 5 seconds, editorial | AUDIO: Soft keyboard clicking, pencil on paper, gentle desk activity sounds, ambient lo-fi music, creative energy rhythm"
+    },
+    {
+      "id": "social-gathering",
+      "name": "Social — Convivio em Grupo",
+      "description": "Pessoas usando produto juntas, tons quentes, handheld organico, 5s",
+      "scene": "Small group of friends naturally using product together in warm social setting, genuine laughter and interaction, handheld camera creating intimate documentary feel, warm ambient lighting with golden tones, authentic candid moment of connection",
+      "motion": {
+        "subject_action": "Friends interact naturally, passing product between them, laughing, genuine social engagement",
+        "background_movement": "Ambient environment — other people in soft background, string lights twinkling, slight movement",
+        "speed": "normal"
+      },
+      "camera": {
+        "movement": "handheld",
+        "speed": "moderate(3)",
+        "framing": "medium-shot",
+        "depth_of_field": "shallow"
+      },
+      "duration": 5,
+      "style": "documentary",
+      "atmosphere": {
+        "lighting": "golden-hour",
+        "mood": "playful",
+        "color_grade": "warm"
+      },
+      "runway_json": {
+        "model": "gen3_alpha_turbo",
+        "promptText": "Handheld medium shot of friends naturally using product together in warm social setting, genuine laughter and interaction, intimate documentary feel, warm golden ambient lighting, authentic candid connection moment, shallow depth of field, warm color grading, lifestyle commercial",
+        "duration": 5,
+        "ratio": "16:9",
+        "camera_motion": {
+          "pan": 2,
+          "zoom": 0,
+          "tilt": 1,
+          "roll": 0
+        }
+      },
+      "sora_prompt": "Beginning: Handheld camera captures small group of friends in warm social setting, golden ambient light, one person introduces the product to the group with a smile, intimate documentary feel. Middle: Friends interact naturally with the product, passing it between them, genuine laughter and delight, shallow depth of field isolates the group from warm background bokeh, candid authentic energy. End: Group shares a moment of connection around the product, warm smiles, golden light wraps the scene, organic handheld movement settles, genuine social warmth.",
+      "kling_prompt": "VISUAL: Handheld shot friends naturally using product together, warm social setting, genuine laughter, intimate documentary feel, golden ambient lighting, shallow DOF, authentic candid moment, 5 seconds | AUDIO: Genuine laughter and conversation, warm ambient chatter, clinking glasses, soft background music, joyful social atmosphere"
+    }
+  ]
+}

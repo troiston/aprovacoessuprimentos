@@ -1,0 +1,207 @@
+{
+  "meta": {
+    "id": "nicho-restaurante",
+    "version": "1.0",
+    "description": "5 prompts otimizados para restaurantes, gastronomia e food photography",
+    "compatible_tools": ["flux-2", "midjourney-v7", "dall-e-3"],
+    "color_palette": {
+      "tomato": "#D32F2F",
+      "amber": "#FF8F00",
+      "herb": "#2E7D32",
+      "wood": "#4E342E",
+      "cream": "#FFF8E1"
+    }
+  },
+  "prompts": [
+    {
+      "id": "prato-overhead",
+      "name": "Prato — Vista Aerea",
+      "description": "Prato em vista bird-eye com detalhes de guarnicao, tons quentes, composicao estilizada",
+      "subject": {
+        "description": "Beautifully plated gourmet dish shot from directly overhead",
+        "position": "center",
+        "details": "Artistic plating with microgreens, sauce drizzle, color contrast between elements, circular plate"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Dark rustic wood #4E342E table surface with natural grain texture",
+        "props": "Linen napkin at edge, vintage fork and knife, small herb sprig, cracked pepper scattered"
+      },
+      "camera": {
+        "lens": "50mm",
+        "aperture": "f/4",
+        "angle": "bird-eye",
+        "distance": "close-up"
+      },
+      "lighting": {
+        "type": "natural-window",
+        "direction": "camera-left",
+        "mood": "warm",
+        "color_temperature": "3500K warm"
+      },
+      "style": "commercial-photography",
+      "color_palette": {
+        "primary": "#D32F2F",
+        "secondary": "#2E7D32",
+        "accent": "#FFF8E1",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "1:1",
+      "prompt_en": "Bird-eye close-up of beautifully plated gourmet dish on white circular plate, artistic plating with vibrant microgreens #2E7D32, elegant sauce drizzle, color contrast between tomato red #D32F2F and herb green elements, dark rustic wood #4E342E table surface with natural grain texture, linen napkin at frame edge, vintage fork and knife placed elegantly, small fresh herb sprig, cracked black pepper scattered on table, natural window light from camera-left at 3500K warm temperature, commercial food photography style, warm inviting mood, cream #FFF8E1 plate surface",
+      "prompt_midjourney": "Bird-eye gourmet dish on white plate, artistic plating, microgreens, sauce drizzle, tomato red and herb green contrast, dark rustic wood table, linen napkin, vintage cutlery, herb sprig, cracked pepper, natural window light from left, warm food photography, inviting --ar 1:1 --s 250 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, unappetizing, messy plate, harsh flash, cold lighting, plastic tableware, food looks artificial"
+    },
+    {
+      "id": "ambiente-interior",
+      "name": "Ambiente — Interior do Restaurante",
+      "description": "Interior do restaurante com velas, bokeh, plano aberto, atmosfera noturna",
+      "subject": {
+        "description": "Elegant restaurant interior in the evening with warm ambient glow",
+        "position": "center",
+        "details": "Candlelit tables, warm wood accents, soft fabric seating, intimate atmosphere"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Full restaurant interior depth showing bar area in soft focus, exposed brick or stone walls",
+        "props": "Wine glasses on tables catching candlelight, fresh flowers in small vases, breadbaskets"
+      },
+      "camera": {
+        "lens": "24mm wide",
+        "aperture": "f/2.8",
+        "angle": "eye-level",
+        "distance": "wide-shot"
+      },
+      "lighting": {
+        "type": "candlelight",
+        "direction": "front",
+        "mood": "warm",
+        "color_temperature": "2700K warm"
+      },
+      "style": "lifestyle",
+      "color_palette": {
+        "primary": "#4E342E",
+        "secondary": "#FF8F00",
+        "accent": "#FFF8E1",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Wide-shot elegant restaurant interior in evening, candlelit tables casting warm amber #FF8F00 glow, warm wood #4E342E accents, soft fabric seating, intimate welcoming atmosphere, bar area visible in soft background focus, exposed brick or stone walls, wine glasses on tables catching candlelight reflections, fresh flowers in small vases, breadbaskets, beautiful bokeh from multiple candle and pendant light points, 24mm wide-angle lens f/2.8, eye-level perspective, 2700K warm candlelight temperature, lifestyle photography, cream #FFF8E1 tablecloth highlights, romantic evening dining mood",
+      "prompt_midjourney": "Wide shot elegant restaurant interior, candlelit tables, warm amber glow, wood accents, soft seating, intimate atmosphere, bar in background bokeh, exposed brick, wine glasses catching light, flowers, breadbaskets, multiple light bokeh, 24mm f/2.8, warm candlelight, romantic evening mood --ar 16:9 --s 300 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, empty restaurant, harsh fluorescent, cold tones, fast food aesthetic, messy, cheap decor"
+    },
+    {
+      "id": "chef-action",
+      "name": "Chef — Em Acao",
+      "description": "Chef em acao na cozinha, vapor, iluminacao dramatica, plano medio",
+      "subject": {
+        "description": "Chef in focused action while cooking in professional kitchen",
+        "position": "center",
+        "details": "White chef coat, concentrated expression, flames from pan or steam rising, hands in motion"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Professional kitchen with stainless steel surfaces, other chefs softly out of focus",
+        "props": "Flames from saute pan, copper pots, fresh ingredients on prep station"
+      },
+      "camera": {
+        "lens": "50mm",
+        "aperture": "f/2.8",
+        "angle": "eye-level",
+        "distance": "medium-shot"
+      },
+      "lighting": {
+        "type": "dramatic-rim",
+        "direction": "back",
+        "mood": "dramatic",
+        "color_temperature": "4000K neutral"
+      },
+      "style": "documentary",
+      "color_palette": {
+        "primary": "#FF8F00",
+        "secondary": "#4E342E",
+        "accent": "#FFF8E1",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Medium shot of chef in focused action in professional kitchen, white chef coat, deeply concentrated expression, flames from saute pan casting amber #FF8F00 light on face, hands in motion, steam rising, stainless steel professional kitchen background with other chefs softly out of focus, copper pots hanging, fresh ingredients on prep station, dramatic rim backlighting at 4000K creating silhouette edge on chef, documentary photography style, 50mm lens f/2.8, dramatic energetic mood, wood #4E342E warm tones in shadows, cream #FFF8E1 highlights from fire",
+      "prompt_midjourney": "Chef in focused action in professional kitchen, white coat, concentrated, pan flames casting amber light, steam rising, hands in motion, stainless steel background, other chefs in bokeh, copper pots, ingredients, dramatic rim backlight, 50mm f/2.8, documentary style, dramatic energy --ar 16:9 --s 250 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, posed, looking at camera, dirty kitchen, messy, cold harsh lighting, deformed hands, extra fingers"
+    },
+    {
+      "id": "ingrediente-fresh",
+      "name": "Ingrediente — Frescor",
+      "description": "Ingredientes frescos em close-up, cores vibrantes, luz natural",
+      "subject": {
+        "description": "Fresh vibrant ingredients arranged as still life composition",
+        "position": "center",
+        "details": "Ripe tomatoes, fresh basil, olive oil, garlic, water droplets on surfaces, vibrant natural colors"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Light marble or stone surface with natural variation, clean and bright",
+        "props": "Olive wood cutting board, rustic linen cloth, small ceramic bowl with oil"
+      },
+      "camera": {
+        "lens": "50mm",
+        "aperture": "f/2.8",
+        "angle": "high-angle",
+        "distance": "close-up"
+      },
+      "lighting": {
+        "type": "natural-window",
+        "direction": "camera-right",
+        "mood": "warm",
+        "color_temperature": "5500K daylight"
+      },
+      "style": "commercial-photography",
+      "color_palette": {
+        "primary": "#D32F2F",
+        "secondary": "#2E7D32",
+        "accent": "#FF8F00",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "4:3",
+      "prompt_en": "High-angle close-up of fresh vibrant ingredients arranged as still life, ripe tomatoes #D32F2F with water droplets glistening, fresh basil leaves #2E7D32, golden olive oil #FF8F00 in small ceramic bowl, whole garlic cloves, on light marble surface with natural variation, olive wood cutting board partially visible, rustic linen cloth, natural daylight window from camera-right at 5500K, bright airy mood, 50mm lens f/2.8, commercial food photography style, farm-fresh vibrant quality",
+      "prompt_midjourney": "High-angle fresh ingredients still life, ripe tomatoes with water droplets, basil leaves, olive oil in ceramic bowl, garlic, light marble surface, olive wood board, rustic linen, natural daylight from right, bright airy, 50mm f/2.8, commercial food photography --ar 4:3 --s 200 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, wilted, rotten, unappetizing, harsh flash, cold blue lighting, plastic surfaces, artificial food"
+    },
+    {
+      "id": "mesa-setting",
+      "name": "Mesa — Arranjo Elegante",
+      "description": "Mesa elegantemente posta com luz de velas suave, profundidade de campo rasa",
+      "subject": {
+        "description": "Elegantly set dining table ready for intimate dinner",
+        "position": "center",
+        "details": "Fine china, crystal wine glasses, polished silverware, linen napkins folded artfully"
+      },
+      "setting": {
+        "environment": "indoor",
+        "background": "Soft candlelit restaurant ambiance fading into warm bokeh",
+        "props": "Tall taper candles lit, small floral centerpiece, bread plate with artisan roll"
+      },
+      "camera": {
+        "lens": "85mm",
+        "aperture": "f/1.8",
+        "angle": "eye-level",
+        "distance": "close-up"
+      },
+      "lighting": {
+        "type": "candlelight",
+        "direction": "front",
+        "mood": "warm",
+        "color_temperature": "2700K warm"
+      },
+      "style": "editorial",
+      "color_palette": {
+        "primary": "#FFF8E1",
+        "secondary": "#4E342E",
+        "accent": "#FF8F00",
+        "dominant_tone": "warm"
+      },
+      "aspect_ratio": "16:9",
+      "prompt_en": "Close-up eye-level of elegantly set dining table ready for intimate dinner, fine white china on cream #FFF8E1 linen tablecloth, crystal wine glasses catching candlelight with amber #FF8F00 reflections, polished silverware, artfully folded linen napkins, tall taper candles lit, small fresh floral centerpiece, artisan bread roll on side plate, restaurant ambiance fading into warm bokeh background, 2700K candlelight from front, extremely shallow depth of field, 85mm lens f/1.8, editorial food photography, romantic luxurious mood, wood #4E342E warm undertones in shadows",
+      "prompt_midjourney": "Close-up elegant table setting, fine china, crystal wine glasses catching candlelight, polished silverware, folded napkins, taper candles, floral centerpiece, bread roll, warm restaurant bokeh, candlelight, extreme shallow DOF, 85mm f/1.8, editorial style, romantic luxurious --ar 16:9 --s 300 --v 7",
+      "negative_prompt": "blurry, distorted, low quality, text, watermark, cheap tableware, paper napkins, harsh lighting, cold tones, empty plain table, fast food"
+    }
+  ]
+}

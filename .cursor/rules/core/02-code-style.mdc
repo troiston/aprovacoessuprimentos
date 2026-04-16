@@ -1,0 +1,63 @@
+---
+description: "Padroes de formatacao, nomenclatura e organizacao de codigo"
+globs: ["**/*.ts", "**/*.tsx", "**/*.css"]
+alwaysApply: true
+---
+
+# Code Style
+
+## Nomenclatura
+- Arquivos: kebab-case → my-component.tsx, use-auth.ts, types.ts
+- Componentes React: PascalCase → export function MyComponent()
+- Funcoes/variaveis: camelCase → const userName, function getUserData()
+- Constantes: UPPER_SNAKE_CASE → const MAX_RETRIES = 3
+- Tipos/Interfaces: PascalCase → type UserProfile, interface AuthConfig
+- CSS classes: kebab-case via Tailwind utilities
+- Env vars: UPPER_SNAKE_CASE com prefixo → NEXT_PUBLIC_API_URL, DATABASE_URL
+
+## Estrutura de Pastas
+```
+src/
+  app/                    # Next.js App Router (routes, layouts, pages)
+    (marketing)/          # Route group: landing, pricing, about
+    (app)/                # Route group: dashboard, settings
+    api/                  # Route handlers
+  components/
+    ui/                   # Primitivos reutilizaveis (Button, Input, Card)
+    layout/               # Layout components (Navbar, Footer, Sidebar)
+    sections/             # Page sections (Hero, Features, Pricing)
+  features/               # Feature modules (auth, billing, onboarding)
+    auth/
+      components/
+      hooks/
+      actions/
+      types.ts
+  lib/                    # Utilitarios compartilhados
+    utils.ts              # Funcoes helper
+    constants.ts          # Constantes globais
+    db.ts                 # Prisma client singleton
+    validations.ts        # Zod schemas compartilhados
+  styles/
+    globals.css           # @theme tokens + global styles
+```
+
+## Formatacao
+- Indentacao: 2 espacos
+- Aspas: double quotes para JSX, single quotes para JS/TS
+- Semicolons: obrigatorios
+- Trailing commas: obrigatorios em multiline
+- Max line length: 100 caracteres (soft limit)
+- Blank lines: 1 entre secoes logicas, 0 entre imports relacionados
+
+## Componentes React
+- 1 componente por arquivo
+- Props type definido acima do componente
+- Desestruturar props no parametro da funcao
+- Retorno JSX: parenteses para multiline
+- Hooks no topo do componente, antes de qualquer logica
+- Event handlers com prefixo handle: handleClick, handleSubmit
+
+## Exports
+- Named exports por padrao (nao default exports)
+- Excecao: page.tsx e layout.tsx exportam default (Next.js requirement)
+- Re-exports via index.ts apenas em ui/ e sections/

@@ -1,0 +1,58 @@
+# Docker Swarm — modelo para Incorporação (Diga Olá)
+# Ajustar imagem, domínio e secrets antes do deploy.
+version: "3.8"
+
+services:
+  app:
+    image: ${REGISTRY:-registry.example.com}/incorporacao-digaola:${TAG:-latest}
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      SETTINGS_ENCRYPTION_KEY: ${SETTINGS_ENCRYPTION_KEY}
+    secrets:
+      - stripe_secret
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+      - internal
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.incorp.rule=Host(`${APP_HOST}`)"
+      - "traefik.http.routers.incorp.entrypoints=websecure"
+      - "traefik.http.routers.incorp.tls.certresolver=letsencrypt"
+      - "traefik.http.services.incorp.loadbalancer.server.port=3000"
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-incorporacao}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - internal
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  internal:
+    driver: overlay
+  traefik:
+    external: true
+
+volumes:
+  pgdata:
+
+secrets:
+  stripe_secret:
+    external: true

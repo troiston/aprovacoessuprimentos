@@ -1,0 +1,11 @@
+---
+description: "Pointer — convencoes Next.js vivem em stack/nextjs"
+globs: ["src/app/**/*"]
+alwaysApply: false
+---
+
+# Next.js (legado)
+
+As convencoes detalhadas do App Router estao em **`.cursor/rules/stack/nextjs.mdc`** (globs `src/app/**/*`, `next.config.*`).
+
+Regras deste ficheiro: nao duplicar conteudo; seguir `stack/nextjs.mdc` + `domain/api.mdc` para handlers e Prisma.

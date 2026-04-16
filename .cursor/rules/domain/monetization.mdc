@@ -1,0 +1,30 @@
+---
+description: "Stripe billing, webhooks and monetization patterns"
+globs: ["**/stripe/**", "**/billing/**", "**/webhooks/**", "src/lib/stripe*"]
+alwaysApply: false
+---
+# Monetization & Stripe Patterns
+
+## Webhook Security (obrigatorio)
+- Verificar assinatura com `stripe.webhooks.constructEvent()` usando raw body
+- NUNCA usar `req.json()` para webhooks — usar `req.text()` para preservar bytes
+- Retornar 200 OK IMEDIATAMENTE, processar async
+- Implementar idempotency (webhooks podem chegar duplicados)
+
+## Events Criticos
+Sempre tratar estes eventos:
+- `checkout.session.completed` — conceder acesso apos compra
+- `customer.subscription.updated` — tratar mudancas de plano e trial
+- `customer.subscription.deleted` — revogar acesso
+- `invoice.payment_succeeded` — estender periodo
+- `invoice.payment_failed` — alertar usuario e marcar conta
+
+## Subscription Lifecycle
+Tratar TODOS os estados: trial → active → past_due → cancelled → expired
+Nao implementar apenas o happy path.
+
+## Seguranca
+- Stripe keys em variaveis de ambiente (nunca hardcoded)
+- Webhook secret separado por ambiente (test vs production)
+- Logar eventos sem dados sensiveis de pagamento
+- Customer ID armazenado no banco ao criar primeiro checkout

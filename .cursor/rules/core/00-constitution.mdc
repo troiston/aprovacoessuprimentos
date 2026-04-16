@@ -1,0 +1,79 @@
+---
+description: "Principios fundamentais do Web Excellence Framework — regras inviolaveis que se aplicam a todo codigo"
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Constituicao — Web Excellence Framework v2.0
+
+Estes sao os 10 principios INVIOLAVEIS. Nenhuma outra regra, skill ou comando pode sobrepo-los.
+
+## 1. Semantic HTML
+- Usar elementos semanticos: header, nav, main, section, article, aside, footer
+- Heading hierarchy: exatamente 1 h1 por pagina, h2-h6 em ordem estrita
+- Listas para conteudo de lista (ul/ol), nao divs
+- Botoes para acoes (button), links para navegacao (a href)
+- Formularios com label associado a cada input via htmlFor
+
+## 2. Mobile-First
+- Design começa em 320px e expande
+- Breakpoints: sm(640px), md(768px), lg(1024px), xl(1280px), 2xl(1536px)
+- Touch targets minimo 44x44px
+- Testar em dispositivos reais, não apenas resize de browser
+
+## 3. Performance Budget
+- LCP (Largest Contentful Paint) < 2.5 segundos
+- CLS (Cumulative Layout Shift) < 0.1
+- INP (Interaction to Next Paint) < 200ms
+- First Load JS bundle < 200KB
+- Cada segundo adicional de carregamento = -7% conversao
+
+## 4. SEO-First
+- TODA pagina deve ter: title unico (<60 chars), meta description (<160 chars), canonical URL
+- JSON-LD obrigatorio: Organization (root), BreadcrumbList (todas as paginas)
+- Open Graph: og:title, og:description, og:image (1200x630), og:type, og:url
+- sitemap.ts programatico (nunca XML hardcoded)
+- Exatamente 1 h1 por pagina com keyword relevante
+
+## 5. Accessibility-First (WCAG 2.2 AA)
+- Contraste: 4.5:1 texto normal, 3:1 texto grande (>=18pt ou bold >=14pt)
+- Keyboard navigation: tab order logico, focus visible, skip navigation
+- Imagens: alt descritivo para informativas, alt="" para decorativas
+- ARIA: role, aria-label, aria-describedby onde necessario
+- Touch targets: minimo 44x44px
+- prefers-reduced-motion: desabilitar animacoes decorativas
+
+## 6. Server Components por Padrao
+- Todo componente e Server Component ate prova em contrario
+- "use client" APENAS para: event handlers, browser APIs, useState, useEffect
+- Colocar "use client" boundary no componente MAIS BAIXO possivel
+- Dados vem do servidor, nao de useEffect no cliente
+
+## 7. Type-Safety Absoluta
+- TypeScript strict mode obrigatorio
+- NUNCA usar any — usar unknown + type guard se necessario
+- NUNCA usar @ts-ignore ou @ts-expect-error
+- Zod para validacao de TODA entrada de usuario (forms, API params, env vars)
+- Tipos exportados em arquivo separado (types.ts por feature)
+
+## 8. OKLCH para Cores
+- Todas as cores definidas em OKLCH: oklch(L% C H)
+- L = Lightness (0-100%), C = Chroma (colorfulness), H = Hue (0-360)
+- Perceptualmente uniforme: mudancas iguais = percepcao igual
+- Facilita calculos de contraste WCAG
+- Suporte wide gamut (P3, HDR) automatico
+
+## 9. Fluid Typography
+- Toda escala tipografica usa clamp(min, preferred, max)
+- Ratio: Major Third (1.25)
+- Body: coeficiente lento (0.5vw)
+- Headlines: coeficiente agressivo (3-4vw)
+- NUNCA usar media queries para font-size
+- line-height: 1.1-1.2 headings, 1.5-1.6 body
+
+## 10. GPU-Only Animations
+- Animar APENAS: transform (translate, scale, rotate) e opacity
+- NUNCA animar: width, height, margin, padding, top, left (causam layout reflow)
+- Spring physics preferida sobre duration-based (mais natural)
+- Timing: micro-interacoes 120-220ms, entradas 300-600ms, saidas 200-400ms
+- prefers-reduced-motion: animation-duration: 0.01ms !important

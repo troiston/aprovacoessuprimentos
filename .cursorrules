@@ -1,0 +1,29 @@
+# VibeCoding + Web Excellence (repositorio unificado)
+
+## VibeCoding (produto)
+1. `/using-superpowers` antes de acoes com skills.
+2. Fases e gates: `docs/DOCS_INDEX.md`, `WORKFLOW.md`, `docs/S03_SKILLS_INDEX.md`.
+3. Skills Cursor (87 pastas): `.cursor/skills/*/SKILL.md` — invocacao `/nome` ou `@.cursor/skills/...`
+
+## Web Excellence (paginas / UI / SEO)
+1. Skills com grafo (71): `.cursor/skills-web-excellence/**/*.md` — ver `SKILLS_INDEX.md` nessa pasta.
+2. Agents pipeline: `.cursor/agents/AGENTS_INDEX.md` (01-architect … 07-deploy-manager + agents VibeCoding).
+3. Commands: `.cursor/commands/COMMANDS_INDEX.md` (`project/`, `build/`, `generate/`, `audit/` + comandos raiz PRO).
+4. Docs de referencia: `docs/web-excellence/DOCS_INDEX.md` (complementam, nao substituem PRD/spec).
+
+## Hierarquia de rules (ordem de leitura)
+1. `.cursor/rules/core/00-constitution.mdc`
+2. `.cursor/rules/core/01-typescript.mdc`, `02-code-style.mdc`, `project.mdc`, `vibecoding-phases.mdc`
+3. `.cursor/rules/stack/*`, `.cursor/rules/quality/*`, `.cursor/rules/design/*`
+4. `.cursor/rules/domain/*`, `.cursor/rules/security/*`, `.cursor/rules/framework/*`
+5. Indice completo: `.cursor/rules/RULES_INDEX.md`
+
+## Principios Web (resumo)
+- Semantic HTML, mobile-first, budgets de performance, SEO e a11y (WCAG 2.2 AA).
+- Server Components por defeito; TypeScript strict; Zod em entradas externas.
+- Stack real = o que esta em `package.json` + `06_SPECIFICATION`; Framer Motion e opcional (ver `stack/framer-motion.mdc`).
+
+## Verificacao
+- `bash scripts/verify-docs.sh` — gates VibeCoding
+- `bash scripts/verify-docs-integrity.sh` — frontmatter/links scoped (web-excellence)
+- `npm run verify:framework` — grafo skills Web Excellence

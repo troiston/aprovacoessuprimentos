@@ -1,0 +1,85 @@
+---
+description: VibeCoding — instrução de fase. Ativar ao iniciar nova fase de desenvolvimento
+alwaysApply: true
+---
+
+# VibeCoding: Ordem de Fases e Documentos
+
+## Passo 0 em toda sessão (obrigatório)
+1. `/using-superpowers` — ativar antes de qualquer ação
+2. `docs/DOCS_INDEX.md` — identificar fase atual
+3. `docs/S03_SKILLS_INDEX.md` — ver skills a ativar na fase atual
+
+---
+
+## Fase 0 — Validação
+Gera: `docs/00_VALIDATION.md`
+Lê: nada (ponto de entrada)
+Prompt: `/validate`
+Skills: `/using-superpowers` `/brainstorming` `/validate` `/market`
+
+## Fase 1a — PRD
+Gera: `docs/01_PRD.md` (+ `docs/03_RESEARCH.md` se houver integrações)
+Lê: `docs/00_VALIDATION.md`
+Prompt: `/prd`
+Skills: `/using-superpowers` `/prd` `/context-driven-development` `/writing-plans`
+
+## Fase 1b — Monetização (Gate Obrigatório)
+Gera: `docs/02_MONETIZATION.md`
+Lê: `docs/01_PRD.md`
+Prompt: `/monetization-check`
+Skills: `/using-superpowers` `/brainstorming` `/writing-plans`
+
+## Fase 1c — Pesquisa de Mercado e Referências
+Gera: `docs/04_MARKET_AND_REFERENCES.md`
+Lê: `docs/00_VALIDATION.md`, `docs/01_PRD.md`
+Prompt: `/market`
+Skills: `/using-superpowers` `/market` `/brainstorming` `/architecture-decision-records`
+
+## Fase 1D — Design System
+Gera: `docs/05_DESIGN.md` + `app/styleguide`
+Lê: `docs/01_PRD.md`, `docs/04_MARKET_AND_REFERENCES.md`
+Prompt: `/design`
+Skills: `/using-superpowers` `/design` `/frontend-design` `/tailwind-design-system` `/accessibility-compliance`
+
+## Fase 2 — Especificação Técnica
+Gera: `docs/06_SPECIFICATION.md`
+Lê: `docs/01_PRD.md`, `docs/05_DESIGN.md`
+Prompt: `/spec`
+Skills: `/using-superpowers` `/spec` `/api-design-principles` `/openapi-spec-generation` `/postgresql-table-design`
+
+## Fase 3 — Implementação
+Gera: `docs/07_IMPLEMENTATION.md` + código
+Lê: `docs/06_SPECIFICATION.md`
+Prompts: `/implement-backend`, `/implement-frontend`
+Skills backend: `/using-superpowers` `/implement-backend` `/test-driven-development` `/secrets-management`
+Skills frontend: `/using-superpowers` `/implement-frontend` `/react-state-management` `/accessibility-compliance`
+TDD: ciclo RED → GREEN → REFACTOR por vertical slice da SPEC. Refatoração só com suite verde.
+
+## Fase 4 — Qualidade
+Gera: `docs/08_SECURITY.md`, `docs/09_TESTS.md`, `docs/10_DEBUG.md`, `docs/11_UX_AUDIT.md`, `docs/12_THREAT_MODEL.md`
+Lê: todos os anteriores
+Skills: ver `docs/S03_SKILLS_INDEX.md` → Fases 4a, 4b, 4c, 4d, 4e
+
+## Fase Final — PR e Release
+Gera: PR + `docs/13_RELEASE_READINESS.md`
+Skills: `/using-superpowers` `/verification-before-completion` `/finishing-a-development-branch` `/changelog-automation` `/release` `/pr`
+
+---
+
+## Regra de Ouro
+- NUNCA implemente código sem `docs/06_SPECIFICATION.md` completa.
+- NUNCA inicie Spec ou Implementação sem preview de design aprovado.
+- NUNCA avance de fase sem documento da fase anterior gerado e aprovado.
+- SEMPRE rodar `bash scripts/verify-docs.sh` antes de fechar fase.
+- SEMPRE atualizar `docs/DOCS_INDEX.md` após cada fase.
+
+## Gates de transição
+- 0 → 1a: validação nota >= 7 e veredito GO
+- 1a → 1b: PRD aprovado com requisitos testáveis
+- 1b → 1c: Modelo de monetização definido e aprovado
+- 1c → 1D: `04_MARKET` preenchido (4 frentes) e aprovado
+- 1D → 2: preview de design aprovado; `05_DESIGN.md` completo
+- 2 → 3: SPEC sem ambiguidades; `docs/06_SPECIFICATION.md`
+- 3 → 4: typecheck/lint/test verdes nos fluxos alterados
+- 4 → final: segurança/testes/debug sem bloqueio crítico; `docs/13_RELEASE_READINESS.md` com GO ou GO WITH RISK

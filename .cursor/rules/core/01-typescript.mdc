@@ -1,0 +1,53 @@
+---
+description: "Padroes TypeScript strict para todo o projeto — tipos, validacao, imports e convencoes"
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: true
+---
+
+# Padroes TypeScript
+
+## Configuracao Obrigatoria (tsconfig.json)
+- strict: true
+- noUncheckedIndexedAccess: true
+- exactOptionalPropertyTypes: true
+- noImplicitReturns: true
+- noFallthroughCasesInSwitch: true
+- forceConsistentCasingInFileNames: true
+
+## Tipos
+- Union types sobre enums: `type Status = "active" | "inactive" | "pending"`
+- `satisfies` sobre `as` para type narrowing seguro
+- Tipos exportados em types.ts por feature: `src/features/auth/types.ts`
+- Generics para componentes reutilizaveis com constraints: `<T extends Record<string, unknown>>`
+- Inferencia quando obvio, anotacao explicita em funcoes publicas
+- Discriminated unions para estados complexos: `type State = { status: "loading" } | { status: "success"; data: T } | { status: "error"; error: Error }`
+
+## Validacao Runtime
+- Zod para TODA entrada externa (forms, API params, env vars, webhook payloads)
+- Schema Zod ao lado do tipo TypeScript:
+  ```typescript
+  const UserSchema = z.object({ name: z.string().min(1), email: z.string().email() });
+  type User = z.infer<typeof UserSchema>;
+  ```
+- NUNCA confiar em dados do cliente sem validacao Zod
+- Env vars: usar createEnv do @t3-oss/env-nextjs
+
+## Imports
+- Paths absolutos com @/ alias: `import { Button } from "@/components/ui/button"`
+- Ordem: 1) React/Next, 2) Libs externas, 3) @/ internos, 4) Tipos (type imports)
+- Type-only imports: `import type { User } from "@/types"`
+- Barrel exports (index.ts) APENAS em pastas de components/ui
+
+## Funcoes
+- Funcoes nomeadas sobre arrow functions para componentes React
+- Arrow functions para handlers e callbacks inline
+- Async/await sobre .then() chains
+- Early returns para reducir nesting
+- Parametros de funcao: max 3, depois usar objeto
+
+## Proibido
+- any (usar unknown + type guard)
+- @ts-ignore e @ts-expect-error
+- Non-null assertion (!) sem justificativa
+- Type casting com as (usar satisfies ou type guards)
+- console.log em producao (usar logger)

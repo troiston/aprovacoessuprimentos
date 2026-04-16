@@ -1,0 +1,252 @@
+---
+description: "Regras de acessibilidade WCAG 2.2 AA — contraste, keyboard, ARIA, screen readers"
+globs: ["src/**/*.tsx"]
+alwaysApply: false
+---
+
+# Acessibilidade — WCAG 2.2 AA
+
+94.8% dos top 1M sites têm falhas WCAG. 4600+ processos judiciais nos EUA em 2025. European Accessibility Act em vigor desde junho 2025. Acessibilidade é requisito legal, não feature opcional.
+
+## Contraste
+
+| Tipo de Texto | Ratio Mínimo | Exemplos |
+|---------------|-------------|----------|
+| Normal (<18pt) | **4.5:1** | Body text, labels, links |
+| Large (>=18pt ou bold >=14pt) | **3:1** | Headings, botões grandes |
+| UI components e gráficos | **3:1** | Bordas de input, ícones informativos |
+
+- Usar OKLCH para garantir contraste perceptualmente uniforme
+- Testar com simulador de daltonismo (protanopia, deuteranopia, tritanopia)
+- NUNCA confiar apenas em cor para transmitir informação — combinar com ícone, texto ou padrão
+
+```tsx
+// Erro: apenas cor
+<span className="text-red-500">Campo obrigatório</span>
+
+// Correto: cor + ícone + texto
+<span className="text-red-500 flex items-center gap-1" role="alert">
+  <AlertCircle className="size-4" aria-hidden="true" />
+  Campo obrigatório
+</span>
+```
+
+## Navegação por Teclado
+
+### Tab Order
+
+- Ordem lógica de leitura (top-to-bottom, left-to-right)
+- `tabIndex={0}` APENAS para elementos custom interativos
+- `tabIndex={-1}` para focus programático (modais, erros)
+- NUNCA `tabIndex > 0` — quebra a ordem natural
+
+### Focus Visible
+
+```css
+/* NUNCA remover outline sem alternativa */
+:focus-visible {
+  outline: 2px solid oklch(0.7 0.15 250);
+  outline-offset: 2px;
+}
+```
+
+- PROIBIDO `outline: none` ou `outline: 0` sem `:focus-visible` substituto
+- Focus ring deve ter contraste 3:1 contra o background
+- Usar `focus-visible` (não `focus`) para evitar ring em cliques de mouse
+
+### Skip Navigation
+
+```tsx
+// Primeiro elemento focável da página
+<a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:rounded">
+  Pular para o conteúdo
+</a>
+
+<main id="main-content" tabIndex={-1}>
+  {children}
+</main>
+```
+
+Obrigatório em TODA página.
+
+## Focus Management — Modais e Overlays
+
+```tsx
+// Modal DEVE:
+// 1. Trap focus dentro (Tab e Shift+Tab circular)
+// 2. Escape fecha
+// 3. Restaurar focus ao elemento que abriu
+
+function Modal({ isOpen, onClose, triggerRef, children }) {
+  const modalRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isOpen) return
+    const prev = document.activeElement as HTMLElement
+    modalRef.current?.focus()
+
+    return () => prev?.focus()  // restaura focus
+  }, [isOpen])
+
+  return isOpen ? (
+    <div
+      ref={modalRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      tabIndex={-1}
+      onKeyDown={(e) => e.key === 'Escape' && onClose()}
+    >
+      {children}
+    </div>
+  ) : null
+}
+```
+
+## Imagens e Mídia
+
+- Imagens informativas: `alt` descritivo e contextual
+  - `alt="Gráfico de barras mostrando crescimento de 40% nas vendas Q3 2025"`
+- Imagens decorativas: `alt=""` (string vazia, NÃO omitir o atributo)
+- Ícones interativos: `aria-label` no botão, `aria-hidden="true"` no SVG
+- Vídeos: legendas (captions) obrigatórias, transcrição recomendada
+
+```tsx
+// Ícone como botão
+<button aria-label="Fechar menu">
+  <XIcon aria-hidden="true" className="size-5" />
+</button>
+
+// Imagem decorativa
+<Image src={divider} alt="" role="presentation" />
+```
+
+## Formulários
+
+```tsx
+// TODA input precisa de label associado
+<div>
+  <label htmlFor="email">Email</label>
+  <input
+    id="email"
+    type="email"
+    aria-required="true"
+    aria-invalid={!!errors.email}
+    aria-describedby={errors.email ? 'email-error' : 'email-help'}
+  />
+  <p id="email-help" className="text-sm text-muted">Usado para login e notificações</p>
+  {errors.email && (
+    <p id="email-error" role="alert" className="text-sm text-red-500">
+      {errors.email.message}
+    </p>
+  )}
+</div>
+```
+
+### Regras de Formulários
+
+- `<label>` associado a TODA input via `htmlFor`/`id`
+- `aria-required="true"` para campos obrigatórios
+- `aria-invalid="true"` quando campo tem erro
+- `aria-describedby` para dicas de preenchimento e mensagens de erro
+- Erros anunciados com `role="alert"` (assertive) ou `aria-live="polite"`
+- Autocomplete apropriado: `name`, `email`, `tel`, `address-line1`, etc.
+- Group de radio/checkbox em `<fieldset>` com `<legend>`
+
+## ARIA Live Regions
+
+```tsx
+// Notificação não-urgente
+<div role="status" aria-live="polite">
+  {message && <p>{message}</p>}
+</div>
+
+// Erro crítico
+<div role="alert" aria-live="assertive">
+  {error && <p>{error}</p>}
+</div>
+```
+
+- `aria-live="polite"` para updates de status (items no carrinho, filtros aplicados)
+- `aria-live="assertive"` APENAS para erros críticos
+- Conteúdo dentro da region deve mudar para trigger o anúncio
+- NUNCA anunciar atualizações cosméticas (contadores rápidos, progress bars)
+
+## Landmarks
+
+```tsx
+<header role="banner">        {/* 1 por page */}
+  <nav aria-label="Principal"> {/* label para distinguir múltiplos nav */}
+    ...
+  </nav>
+</header>
+<main role="main">             {/* 1 por page, conteúdo principal */}
+  ...
+</main>
+<aside aria-label="Relacionados"> {/* sidebar */}
+  ...
+</aside>
+<footer role="contentinfo">    {/* 1 por page */}
+  ...
+</footer>
+```
+
+## Touch Targets
+
+- Mínimo **44x44px** para TODOS os alvos de toque
+- Espaçamento mínimo de 8px entre targets adjacentes
+- Botões inline pequenos: usar padding para atingir 44px
+
+```tsx
+<button className="min-h-11 min-w-11 px-4 py-2">
+  Ação
+</button>
+```
+
+## Reduced Motion
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+```
+
+- TODA animação decorativa desabilitada com `prefers-reduced-motion: reduce`
+- Animações essenciais (loading spinner, progress) podem manter versão simplificada
+- Framer Motion: usar `useReducedMotion()` hook
+
+```tsx
+const prefersReduced = useReducedMotion()
+const variants = prefersReduced
+  ? { hidden: { opacity: 0 }, visible: { opacity: 1 } }
+  : { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }
+```
+
+## Idioma
+
+- `<html lang="pt-BR">` OBRIGATÓRIO
+- `hreflang` para sites multilíngues
+- Trechos em outro idioma: `<span lang="en">feedback</span>`
+
+## Testes
+
+- **axe-core** em CI: `@axe-core/playwright` ou `jest-axe` automatizado
+- Manual: navegar com TAB, testar com VoiceOver (macOS) ou NVDA (Windows)
+- Testar zoom 200% — conteúdo deve reflow sem scroll horizontal
+- Testar com alto contraste do OS
+
+```tsx
+// Playwright + axe-core
+import { checkA11y } from '@axe-core/playwright'
+
+test('página acessível', async ({ page }) => {
+  await page.goto('/')
+  const results = await checkA11y(page)
+  expect(results.violations).toEqual([])
+})
+```

@@ -1,0 +1,80 @@
+---
+description: "Next.js 16+ App Router — Server Components, Metadata API, rendering, src/app, API routes"
+globs: ["src/app/**/*", "next.config.*", "src/**/*.tsx", "src/**/*.ts"]
+alwaysApply: false
+---
+
+# Padroes Next.js App Router
+
+## Rendering Strategy
+- SSG (Static Site Generation): conteudo que nao muda. Melhor para SEO. `export const dynamic = "force-static"`
+- ISR (Incremental Static Regeneration): conteudo que muda raramente. `export const revalidate = 3600`
+- SSR (Server-Side Rendering): conteudo real-time. `export const dynamic = "force-dynamic"`
+- NUNCA usar CSR (Client-Side Rendering) para conteudo indexavel
+
+## Server Components (padrao)
+- Todo componente e Server Component por padrao
+- "use client" APENAS para: event handlers, browser APIs, useState, useEffect, useRef com DOM
+- Colocar boundary "use client" no componente MAIS BAIXO possivel
+- Fetch de dados no servidor, NUNCA em useEffect para dados que o SEO precisa ver
+- Componentes async sao permitidos: `async function Page() { const data = await fetch(...) }`
+
+## Route Groups (este repositorio)
+- `(marketing)/` — paginas publicas, landing, pricing
+- `(app)/` — area autenticada, dashboard
+- `(auth)/` — login, register, reset password
+
+## Layout Hierarchy
+```
+src/app/
+  layout.tsx          # Root layout: html, body, fonts, metadata global
+  (marketing)/
+    layout.tsx
+    page.tsx
+  (app)/
+    layout.tsx
+    dashboard/page.tsx
+  (auth)/
+    layout.tsx
+    login/page.tsx
+  api/
+    route.ts          # Route handlers (ex.: webhooks/stripe)
+```
+
+## Route Handlers (src/app/api/)
+- Um arquivo `route.ts` por recurso
+- Zod para validacao de input
+- Delegar logica para services em `src/lib/`
+- Nunca acessar Prisma diretamente no route handler (usar camada de servico)
+
+## Metadata API
+- metadataBase no root layout: `new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://example.com")`
+- title.template onde fizer sentido
+- generateMetadata para paginas dinamicas
+- TODA pagina publica deve exportar metadata ou generateMetadata
+- alternates.canonical onde aplicavel
+
+## Error Handling
+- error.tsx em cada route group quando fizer sentido
+- not-found.tsx customizado
+- loading.tsx com skeleton UI em rotas com dados async
+- global-error.tsx no root para erros criticos
+
+## Images
+- SEMPRE usar next/image (nunca img nativo para conteudo principal)
+- priority={true} no hero image (LCP) — maximo 1-2 por pagina
+- sizes prop conforme layout real
+- remotePatterns em next.config.ts para imagens externas
+
+## Fonts
+- next/font/google ou next/font/local
+- Variable fonts preferidas
+- display: "swap" para body
+- Aplicar via CSS variable no layout root
+
+## Sitemap e SEO tecnico
+- Preferir `src/app/sitemap.ts` (Metadata API) alinhado ao dominio real
+
+## Performance
+- LCP < 2.5s como meta
+- Implementar loading em componentes pesados

@@ -1,0 +1,185 @@
+---
+description: "Regras SEO obrigatórias — metadata, JSON-LD, headings, OG tags, sitemap"
+globs: ["src/app/**/page.tsx", "src/app/**/layout.tsx"]
+alwaysApply: false
+---
+
+# SEO — Regras Obrigatórias
+
+## Metadata API (Next.js 15+)
+
+Toda page.tsx DEVE exportar `metadata` ou `generateMetadata`.
+
+```tsx
+// layout.tsx raiz — define metadataBase e template
+export const metadata: Metadata = {
+  metadataBase: new URL('https://example.com'),
+  title: {
+    default: 'Nome do Site',
+    template: '%s | Nome do Site',
+  },
+  description: 'Descrição padrão do site com até 160 caracteres.',
+  alternates: { canonical: '/' },
+}
+```
+
+```tsx
+// page.tsx dinâmica — generateMetadata
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const data = await getData(params.slug)
+  return {
+    title: data.title,           // max 60 chars
+    description: data.excerpt,   // max 160 chars
+    alternates: { canonical: `/blog/${data.slug}` },
+    openGraph: {
+      title: data.title,
+      description: data.excerpt,
+      images: [{ url: `/api/og?title=${encodeURIComponent(data.title)}`, width: 1200, height: 630 }],
+      type: 'article',
+      url: `/blog/${data.slug}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: data.title,
+      description: data.excerpt,
+    },
+  }
+}
+```
+
+### Regras de Metadata
+
+- `title`: único por página, máximo 60 caracteres, palavra-chave no início
+- `description`: único por página, máximo 160 caracteres, inclui CTA
+- `canonical`: obrigatório em TODA página, evita conteúdo duplicado
+- `metadataBase`: definido UMA vez no root layout
+- `title.template`: padrão `%s | NomeSite` no root layout
+- Páginas estáticas usam `export const metadata`; dinâmicas usam `generateMetadata`
+
+## JSON-LD Estruturado
+
+Usar `schema-dts` para tipos TypeScript-safe do Schema.org.
+
+```tsx
+import type { Organization, BreadcrumbList, WithContext } from 'schema-dts'
+
+function JsonLd<T>({ data }: { data: WithContext<T> }) {
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  )
+}
+```
+
+### Schemas Obrigatórios
+
+| Schema | Onde | Impacto CTR |
+|--------|------|-------------|
+| `Organization` | Root layout | Identidade da marca no Knowledge Panel |
+| `BreadcrumbList` | Todas as páginas | +5-10% CTR com breadcrumbs no SERP |
+| `Article` | Blog posts | Rich results com data e autor |
+| `Product` | Páginas de produto | +30-35% CTR com preço e avaliação |
+| `FAQPage` | Páginas FAQ | +20-30% CTR com accordion no SERP |
+| `LocalBusiness` | Negócios locais | Maps pack + horários |
+| `HowTo` | Tutoriais | Steps visíveis no SERP |
+
+```tsx
+// BreadcrumbList — TODA página exceto home
+const breadcrumb: WithContext<BreadcrumbList> = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: segments.map((seg, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: seg.label,
+    item: `${baseUrl}${seg.href}`,
+  })),
+}
+```
+
+## OG Tags
+
+Obrigatórias em TODA página:
+- `og:title` — igual ao title ou versão social
+- `og:description` — igual ao meta description
+- `og:image` — 1200x630px, texto legível em thumbnail
+- `og:type` — website (home), article (blog), product
+- `og:url` — URL canônica
+
+### OG Dinâmico com next/og
+
+```tsx
+// src/app/api/og/route.tsx
+import { ImageResponse } from 'next/og'
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const title = searchParams.get('title') ?? 'Default Title'
+
+  return new ImageResponse(
+    (
+      <div style={{ display: 'flex', width: '100%', height: '100%', background: '#0a0a0a', color: '#fff', padding: 60 }}>
+        <h1 style={{ fontSize: 64, fontWeight: 700, lineHeight: 1.2 }}>{title}</h1>
+      </div>
+    ),
+    { width: 1200, height: 630 }
+  )
+}
+```
+
+Usar OG dinâmico via Satori para: blog posts, páginas de produto, qualquer conteúdo variável.
+
+## Sitemap e Robots
+
+```tsx
+// src/app/sitemap.ts — NUNCA hardcode XML
+import type { MetadataRoute } from 'next'
+
+export default async function sitemap(): MetadataRoute.Sitemap {
+  const pages = await getAllPages()
+  return pages.map((page) => ({
+    url: `${BASE_URL}${page.slug}`,
+    lastModified: page.updatedAt,
+    changeFrequency: page.type === 'blog' ? 'weekly' : 'monthly',
+    priority: page.slug === '/' ? 1 : 0.8,
+  }))
+}
+```
+
+```tsx
+// src/app/robots.ts
+import type { MetadataRoute } from 'next'
+
+export default function robots(): MetadataRoute.Robots {
+  const isProduction = process.env.NODE_ENV === 'production'
+  return {
+    rules: { userAgent: '*', allow: '/', disallow: isProduction ? '/api/' : '/' },
+    sitemap: `${BASE_URL}/sitemap.xml`,
+  }
+}
+```
+
+## Heading Hierarchy
+
+- Exatamente **1 `<h1>` por página** — título principal
+- `<h2>` para seções principais
+- `<h3>-<h6>` em ordem estrita, NUNCA pular nível (h2→h4 proibido)
+- Palavra-chave principal no `<h1>`, secundárias nos `<h2>`
+- Componentes reutilizáveis recebem heading level como prop para evitar conflitos
+
+## Links Internos
+
+- 3-5 links internos por página no mínimo
+- Anchor text descritivo (NUNCA "clique aqui")
+- Links contextuais no corpo do texto valem mais que links de navegação
+- Orphan pages = zero links internos = invisíveis para crawlers
+
+## Imagens
+
+- `alt` descritivo e relevante para imagens informativas
+- `alt=""` para imagens puramente decorativas
+- NUNCA keyword stuffing no alt
+- Formato: `alt="Dashboard mostrando métricas de vendas mensais"`
+- Nomes de arquivo descritivos: `dashboard-vendas-mensais.webp`

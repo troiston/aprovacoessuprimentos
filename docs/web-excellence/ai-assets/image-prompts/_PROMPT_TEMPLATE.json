@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "id": "prompt-template",
+    "version": "1.0",
+    "description": "Template base para prompts de imagem estruturados — adaptar por nicho",
+    "compatible_tools": ["flux-2", "midjourney-v7", "dall-e-3"]
+  },
+  "template": {
+    "subject": {
+      "description": "Descricao do sujeito principal",
+      "position": "center | left-third | right-third | foreground | background",
+      "details": "Texturas, materiais, cores especificas"
+    },
+    "setting": {
+      "environment": "Studio | outdoor | indoor | abstract",
+      "background": "Descricao do fundo",
+      "props": "Elementos adicionais na cena"
+    },
+    "camera": {
+      "lens": "35mm | 50mm | 85mm | 100mm macro | 24mm wide",
+      "aperture": "f/1.4 | f/1.8 | f/2.8 | f/4 | f/8 | f/11",
+      "angle": "eye-level | low-angle | high-angle | bird-eye | dutch-angle",
+      "distance": "extreme-close-up | close-up | medium-shot | full-shot | wide-shot"
+    },
+    "lighting": {
+      "type": "natural-window | studio-softbox | golden-hour | neon | dramatic-rim | overcast | candlelight",
+      "direction": "front | side | back | top | bottom | camera-left | camera-right",
+      "mood": "warm | cool | neutral | dramatic | ethereal | moody",
+      "color_temperature": "2700K warm | 4000K neutral | 5500K daylight | 6500K cool"
+    },
+    "style": "commercial-photography | editorial | lifestyle | fine-art | documentary | product | fashion",
+    "color_palette": {
+      "primary": "#hexcode",
+      "secondary": "#hexcode",
+      "accent": "#hexcode",
+      "dominant_tone": "warm | cool | neutral"
+    },
+    "aspect_ratio": "16:9 | 4:3 | 1:1 | 9:16 | 3:2 | 2:3",
+    "prompt_en": "Full prompt in English combining all fields above",
+    "prompt_midjourney": "Optimized version for Midjourney with style references",
+    "negative_prompt": "Elements to avoid: blurry, distorted, low quality, text, watermark"
+  }
+}

@@ -1,0 +1,243 @@
+---
+description: "Princípios de animação e movimento — timing, easing, propósito, acessibilidade"
+globs: []
+alwaysApply: false
+---
+
+# Motion Design — Princípios e Padrões
+
+## Três Leis do Movimento
+
+1. **PROPÓSITO**: toda animação DEVE comunicar algo — estado, hierarquia, relação espacial, feedback. Animação sem propósito é ruído visual.
+2. **SUTILEZA**: animações devem ser sentidas, não notadas. Exceção: hero/showcase onde o movimento é o conteúdo.
+3. **GPU-ONLY**: animar APENAS `transform` e `opacity`. Essas propriedades rodam no compositor, sem triggerar layout ou paint.
+
+### Propriedades Permitidas vs Proibidas
+
+| Permitido (GPU) | Proibido (CPU, causa reflow) |
+|-----------------|------------------------------|
+| `transform: translateX/Y/Z` | `width`, `height` |
+| `transform: scale` | `top`, `left`, `right`, `bottom` |
+| `transform: rotate` | `margin`, `padding` |
+| `opacity` | `border-width` |
+| `filter` (com cuidado) | `font-size` |
+| `clip-path` | `box-shadow` (animar opacity de overlay) |
+
+## Spring Physics — Framer Motion
+
+Springs produzem movimento natural. NUNCA usar `duration` + `ease` quando spring é adequado.
+
+```tsx
+// Configurações de spring por contexto
+const springs = {
+  snappy: { type: 'spring', stiffness: 300, damping: 30, mass: 0.5 },
+  gentle: { type: 'spring', stiffness: 150, damping: 20, mass: 0.8 },
+  bouncy: { type: 'spring', stiffness: 200, damping: 15, mass: 1 },
+}
+```
+
+### Guia de Parâmetros Spring
+
+| Parâmetro | Range | Efeito |
+|-----------|-------|--------|
+| `stiffness` | 100-300 | Mais alto = mais rápido para posição final |
+| `damping` | 15-30 | Mais alto = menos oscilação |
+| `mass` | 0.5-1 | Mais alto = mais inércia, mais lento |
+
+- Botões/micro-interações: stiffness alta (250-300), damping alto (25-30)
+- Entradas de conteúdo: stiffness média (150-200), damping médio (18-22)
+- Elementos grandes/hero: stiffness baixa (100-150), mass alta (0.8-1)
+
+## Timing
+
+| Tipo | Duração | Uso |
+|------|---------|-----|
+| Micro-interação | 120-220ms | Hover, press, toggle, tooltip |
+| Entrada | 300-600ms | Componente aparecendo na viewport |
+| Saída | 150-300ms | Componente saindo (mais rápido que entrada) |
+| Stagger | 50-100ms | Delay entre items de lista |
+| Page transition | 300-500ms | Navegação entre páginas |
+
+Regra: saída é sempre mais rápida que entrada (percepção de responsividade).
+
+## Easing (para animações não-spring)
+
+```css
+/* Definidos em @theme */
+--ease-out: cubic-bezier(0.16, 1, 0.3, 1);      /* Entrada: rápido-lento */
+--ease-in: cubic-bezier(0.7, 0, 0.84, 0);        /* Saída: lento-rápido */
+--ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);   /* Simétrico */
+```
+
+| Easing | Quando usar |
+|--------|-------------|
+| `ease-out` | Elemento entrando em cena |
+| `ease-in` | Elemento saindo de cena |
+| `ease-in-out` | Loop contínuo, estado intermediário |
+| `spring` | Qualquer interação do usuário |
+
+## Scroll Animations — whileInView
+
+```tsx
+<motion.div
+  initial={{ opacity: 0, y: 30 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, margin: '-100px', amount: 0.3 }}
+  transition={{ type: 'spring', stiffness: 150, damping: 20 }}
+>
+  Conteúdo
+</motion.div>
+```
+
+### Regras de whileInView
+
+- `once: true` SEMPRE para conteúdo estático (anima uma vez, não repete no scroll up)
+- `amount: 0.2-0.5` — trigger quando 20-50% do elemento é visível
+- `margin: "-100px"` — trigger 100px antes de entrar no viewport
+- Stagger em listas com delay incremental:
+
+```tsx
+const container = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+  },
+}
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 22 } },
+}
+
+<motion.ul variants={container} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+  {items.map((i) => (
+    <motion.li key={i.id} variants={item}>{i.label}</motion.li>
+  ))}
+</motion.ul>
+```
+
+## Reduced Motion — OBRIGATÓRIO
+
+```tsx
+'use client'
+import { useReducedMotion } from 'framer-motion'
+
+function AnimatedSection({ children }: { children: React.ReactNode }) {
+  const prefersReduced = useReducedMotion()
+
+  return (
+    <motion.div
+      initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 30 }}
+      whileInView={prefersReduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={prefersReduced
+        ? { duration: 0.2 }
+        : { type: 'spring', stiffness: 150, damping: 20 }
+      }
+    >
+      {children}
+    </motion.div>
+  )
+}
+```
+
+### Regras de Reduced Motion
+
+- Quando `prefers-reduced-motion: reduce`: matar TODA animação decorativa
+- Permitir: fade simples (opacity only, <200ms), loading spinners estáticos
+- Proibir: translate, scale, rotate, parallax, stagger, scroll-driven
+- Testar: OS > Acessibilidade > Reduzir Movimento
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+```
+
+## Padrões Comuns — Código Pronto
+
+### fadeUp (uso mais comum)
+
+```tsx
+const fadeUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { type: 'spring', stiffness: 200, damping: 22 },
+}
+```
+
+### fadeIn (sem movimento)
+
+```tsx
+const fadeIn = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+}
+```
+
+### scaleIn (modais, popovers)
+
+```tsx
+const scaleIn = {
+  initial: { opacity: 0, scale: 0.95 },
+  animate: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.95 },
+  transition: { type: 'spring', stiffness: 300, damping: 28 },
+}
+```
+
+### slideInLeft (sidebars, drawers)
+
+```tsx
+const slideInLeft = {
+  initial: { x: '-100%' },
+  animate: { x: 0 },
+  exit: { x: '-100%' },
+  transition: { type: 'spring', stiffness: 300, damping: 30 },
+}
+```
+
+### AnimatePresence (mount/unmount)
+
+```tsx
+<AnimatePresence mode="wait">
+  {isOpen && (
+    <motion.div
+      key="modal"
+      {...scaleIn}
+    >
+      {content}
+    </motion.div>
+  )}
+</AnimatePresence>
+```
+
+`mode="wait"` espera a saída terminar antes da entrada. Usar para transições de página e modais.
+
+## Regras Fundamentais
+
+- PROPÓSITO > decoração — se não comunica, remova
+- GPU-only: `transform` + `opacity` exclusivamente
+- Spring para interações, easing para decorativas
+- Saída mais rápida que entrada
+- `once: true` em whileInView para conteúdo estático
+- Reduced motion respeitar SEMPRE — é requisito legal (EAA 2025)
+- Máximo ~400ms para micro-interações, ~600ms para entradas
+- Stagger de 50-100ms entre itens (mais que isso parece lento)
+
+## Rubric de revisao (QA)
+
+| Criterio | Passa se |
+|----------|----------|
+| Duracao | Micro ≤400ms; entrada de secao ≤600ms |
+| Propriedades | So `transform` / `opacity` em layout critico |
+| Reduced motion | Variante estatica ou `useReducedMotion` |
+| whileInView | `once: true` em conteudo editorial longo |
+| Modal/dialog | `AnimatePresence` com `mode="wait"` quando troca de vista |

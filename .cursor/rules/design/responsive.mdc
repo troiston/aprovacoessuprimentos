@@ -1,0 +1,267 @@
+---
+description: "Estratégia de responsividade mobile-first — breakpoints, container queries, fluid spacing"
+globs: []
+alwaysApply: false
+---
+
+# Responsividade — Mobile-First
+
+## Princípio
+
+Design para 320px PRIMEIRO. Cada breakpoint ADICIONA complexidade. O layout mobile é o padrão; breakpoints maiores são progressive enhancements.
+
+```tsx
+// Mobile-first: classes base são mobile, prefixos expandem
+<div className="flex flex-col gap-4 md:flex-row md:gap-8 lg:gap-12">
+  <main className="w-full md:w-2/3 lg:w-3/4">{content}</main>
+  <aside className="w-full md:w-1/3 lg:w-1/4">{sidebar}</aside>
+</div>
+```
+
+## Breakpoints — Tailwind v4
+
+| Token | Width | Dispositivo Típico |
+|-------|-------|---------------------|
+| (base) | 0-639px | Smartphones (320-639px) |
+| `sm` | 640px | Smartphones grandes, landscape |
+| `md` | 768px | Tablets portrait |
+| `lg` | 1024px | Tablets landscape, laptops |
+| `xl` | 1280px | Desktops |
+| `2xl` | 1536px | Telas grandes, ultrawide |
+
+### Uso correto
+
+```tsx
+// CORRETO: mobile-first, expandindo
+<h1 className="text-3xl md:text-4xl lg:text-5xl">Título</h1>
+
+// ERRADO: desktop-first, reduzindo
+<h1 className="text-5xl md:text-4xl sm:text-3xl">Título</h1>
+```
+
+## Container Queries
+
+Para componentes que mudam baseado no tamanho do CONTAINER, não do viewport:
+
+```tsx
+// Container parent
+<div className="@container">
+  {/* Componente que responde ao container */}
+  <div className="flex flex-col @md:flex-row @lg:grid @lg:grid-cols-3 gap-4">
+    <Card />
+    <Card />
+    <Card />
+  </div>
+</div>
+```
+
+### Quando Usar Container Queries
+
+- Componentes reutilizáveis em contextos de largura diferente (sidebar vs main)
+- Cards que aparecem em grids de 1, 2, 3 ou 4 colunas
+- Widgets que vivem em áreas de tamanho variável
+- QUALQUER componente que precisa ser context-aware
+
+### Quando Usar Viewport Breakpoints
+
+- Layout da página (grid principal, sidebar toggle)
+- Navegação (hamburger vs horizontal)
+- Espaçamento da página (padding lateral)
+- Decisões globais de layout
+
+## Tipografia Fluida
+
+Já definida em `design/typography.mdc` com `clamp()`. NUNCA media queries para font-size.
+
+```tsx
+// Correto — clamp() fluido
+<h1 className="text-5xl">Título</h1>  {/* text-5xl já é clamp() */}
+
+// Errado — saltos discretos
+<h1 className="text-2xl md:text-3xl lg:text-5xl">Título</h1>
+```
+
+## Espaçamento Fluido
+
+Gaps e paddings com `clamp()` para transição suave:
+
+```css
+@theme {
+  --spacing-fluid-sm: clamp(0.75rem, 0.5rem + 1vw, 1.5rem);
+  --spacing-fluid-md: clamp(1.5rem, 1rem + 2vw, 3rem);
+  --spacing-fluid-lg: clamp(2rem, 1rem + 4vw, 5rem);
+  --spacing-fluid-xl: clamp(3rem, 1.5rem + 6vw, 8rem);
+  --spacing-fluid-section: clamp(4rem, 2rem + 8vw, 10rem);
+}
+```
+
+```tsx
+// Seção com padding fluido
+<section style={{ paddingBlock: 'var(--spacing-fluid-section)' }} className="px-4 md:px-8">
+  <div className="mx-auto max-w-7xl">
+    {content}
+  </div>
+</section>
+```
+
+## Grid System
+
+```tsx
+// Grid responsivo: 4 cols mobile → 8 tablet → 12 desktop
+<div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4 md:gap-6 lg:gap-8">
+  {/* Span se adapta */}
+  <div className="col-span-4 md:col-span-4 lg:col-span-6">{main}</div>
+  <div className="col-span-4 md:col-span-4 lg:col-span-6">{secondary}</div>
+</div>
+
+// Auto-fill para grids dinâmicos
+<div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
+  {items.map((item) => <Card key={item.id} {...item} />)}
+</div>
+```
+
+### Colunas por Breakpoint
+
+| Breakpoint | Colunas | Uso |
+|------------|---------|-----|
+| base (mobile) | 4 | Stack vertical, 1-2 itens por linha |
+| md (tablet) | 8 | Side-by-side, 2-3 itens por linha |
+| lg (desktop) | 12 | Layout completo, sidebar + content |
+
+## Touch Targets
+
+```tsx
+// Mínimo 44x44px para TODOS os alvos de toque
+<button className="min-h-11 min-w-11 px-4 py-2">Ação</button>
+
+// Link em lista — área de toque expandida
+<a href={href} className="block py-3 -mx-2 px-2">
+  {label}
+</a>
+
+// Ícone botão — padding para atingir 44px
+<button className="p-2.5" aria-label="Menu">
+  <MenuIcon className="size-5" />  {/* 20px + 10px padding cada lado = 40px ~= 44px */}
+</button>
+```
+
+- Mínimo **44x44px** (WCAG 2.2 Target Size)
+- 8px mínimo entre targets adjacentes
+- Links inline: line-height suficiente para toque
+
+## Navegação Responsiva
+
+```tsx
+// Mobile: hamburger + drawer
+// Desktop: horizontal ou sidebar
+
+function Navigation() {
+  return (
+    <nav aria-label="Principal">
+      {/* Mobile: hamburger button */}
+      <button className="md:hidden" aria-label="Abrir menu">
+        <MenuIcon />
+      </button>
+
+      {/* Desktop: links horizontais */}
+      <ul className="hidden md:flex md:items-center md:gap-6">
+        {links.map((link) => (
+          <li key={link.href}>
+            <a href={link.href}>{link.label}</a>
+          </li>
+        ))}
+      </ul>
+
+      {/* Mobile: drawer overlay */}
+      <AnimatePresence>
+        {isOpen && <MobileDrawer links={links} onClose={close} />}
+      </AnimatePresence>
+    </nav>
+  )
+}
+```
+
+## Imagens Responsivas — Art Direction
+
+```tsx
+// Aspect ratio diferente por viewport
+<picture>
+  <source
+    media="(min-width: 1024px)"
+    srcSet="/hero-wide.avif"
+    type="image/avif"
+    width={1920}
+    height={800}
+  />
+  <source
+    media="(min-width: 768px)"
+    srcSet="/hero-medium.avif"
+    type="image/avif"
+    width={1024}
+    height={768}
+  />
+  <Image
+    src="/hero-mobile.avif"
+    alt="Hero image descritivo"
+    width={640}
+    height={640}
+    sizes="100vw"
+    priority
+  />
+</picture>
+
+// next/image com sizes responsivo (mesma imagem, tamanhos diferentes)
+<Image
+  src={photo}
+  alt="..."
+  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+  className="w-full h-auto"
+/>
+```
+
+## Container Width
+
+```tsx
+// Max width com padding lateral
+<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+  {content}
+</div>
+
+// Ou com clamp para fluid
+<div className="mx-auto w-full" style={{ maxWidth: '80rem', paddingInline: 'clamp(1rem, 2vw, 2rem)' }}>
+  {content}
+</div>
+```
+
+## Testes — Viewports Obrigatórios
+
+Testar em dispositivos reais ou emuladores nestas larguras:
+
+| Largura | Dispositivo |
+|---------|-------------|
+| 320px | iPhone SE, smartphones pequenos |
+| 375px | iPhone 14, Android padrão |
+| 768px | iPad portrait |
+| 1024px | iPad landscape, laptops |
+| 1440px | Desktop padrão |
+| 1920px | Desktop grande |
+
+### Checklist por Viewport
+
+- [ ] Texto legível sem zoom
+- [ ] Nenhum scroll horizontal
+- [ ] Touch targets >= 44px
+- [ ] Imagens proporcionais (sem esticar/cortar mal)
+- [ ] Navegação acessível e funcional
+- [ ] Forms usáveis (labels visíveis, inputs alcançáveis)
+
+## Regras Fundamentais
+
+- **Mobile-first**: classes base = mobile, breakpoints expandem
+- Container queries para componentes, viewport breakpoints para layout
+- `clamp()` para tipografia e espaçamento — NUNCA media queries para font-size
+- Touch targets 44x44px mínimo
+- Testar em 320px SEMPRE — se funciona lá, funciona em tudo
+- `auto-fill` + `minmax()` para grids que se adaptam automaticamente
+- NUNCA scroll horizontal em nenhum viewport
+- PROIBIDO ocultar conteúdo essencial em mobile — reorganizar, não esconder

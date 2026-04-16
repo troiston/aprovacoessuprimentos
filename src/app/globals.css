@@ -1,0 +1,293 @@
+@import "tailwindcss";
+
+/* ── Design Tokens ─ AprovaçõesSuprimentos ─────────────────────────────── */
+/* Domínio: Incorporação imobiliária · Manaus · Processos regulatórios       */
+/* Estratégia de profundidade: Borders-only (ferramenta densa e técnica)     */
+
+@theme {
+  /* Fontes */
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Cores — OKLCH (perceptualmente uniformes, wide-gamut) */
+
+  /* Blueprint Blue — azul de plantas técnicas de engenharia */
+  --color-primary:           oklch(32% 0.09 253);
+  --color-primary-foreground: oklch(97% 0.006 85);
+  --color-primary-hover:     oklch(27% 0.09 253);
+
+  /* Terracota Amazônica — solo, terra, Manaus */
+  --color-accent:            oklch(55% 0.14 42);
+  --color-accent-foreground: oklch(99% 0.004 85);
+  --color-accent-hover:      oklch(49% 0.14 42);
+
+  /* Superfícies — cimento claro, off-white quente */
+  --color-background:        oklch(97% 0.008 85);
+  --color-foreground:        oklch(14% 0.012 260);
+  --color-card:              oklch(99.5% 0.004 85);
+  --color-card-foreground:   oklch(14% 0.012 260);
+  --color-popover:           oklch(99.5% 0.004 85);
+  --color-popover-foreground: oklch(14% 0.012 260);
+
+  /* Secundário — cinza quente estrutural */
+  --color-secondary:         oklch(93% 0.012 85);
+  --color-secondary-foreground: oklch(28% 0.012 260);
+
+  /* Muted — textos e superfícies de apoio */
+  --color-muted:             oklch(94% 0.010 85);
+  --color-muted-foreground:  oklch(52% 0.010 260);
+
+  /* Bordas e inputs */
+  --color-border:            oklch(84% 0.010 85);
+  --color-input:             oklch(96% 0.010 85);
+  --color-ring:              oklch(32% 0.09 253);
+
+  /* Destrutivo — vermelho de prazo vencido */
+  --color-destructive:       oklch(52% 0.19 22);
+  --color-destructive-foreground: oklch(98% 0.004 85);
+
+  /* Feedback semântico */
+  --color-success:           oklch(40% 0.12 152);
+  --color-success-foreground: oklch(98% 0.004 85);
+  --color-warning:           oklch(72% 0.16 85);
+  --color-warning-foreground: oklch(14% 0.012 260);
+  --color-info:              oklch(46% 0.10 253);
+  --color-info-foreground:   oklch(98% 0.004 85);
+
+  /* Charts — paleta categórica para data viz */
+  --color-chart-1:           oklch(32% 0.09 253);   /* blueprint blue */
+  --color-chart-2:           oklch(55% 0.14 42);    /* terracota */
+  --color-chart-3:           oklch(40% 0.12 152);   /* verde aprovação */
+  --color-chart-4:           oklch(72% 0.16 85);    /* amarelo atenção */
+  --color-chart-5:           oklch(52% 0.19 22);    /* vermelho prazo */
+  --color-chart-6:           oklch(60% 0.08 253);   /* azul médio */
+  --color-chart-7:           oklch(75% 0.10 152);   /* verde claro */
+  --color-chart-8:           oklch(65% 0.06 85);    /* cinza quente */
+
+  /* Radius — 4px: técnico, preciso, não arredondado demais */
+  --radius: 0.25rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-full: 9999px;
+
+  /* Spacing base = 4px */
+  --spacing-px: 1px;
+
+  /* Layout containers */
+  --container-sm:   640px;
+  --container-md:   768px;
+  --container-lg:  1024px;
+  --container-xl:  1280px;
+  --container-2xl: 1536px;
+}
+
+/* ── Runtime tokens (não geram classes Tailwind) ─────────────────────────── */
+:root {
+  color-scheme: light;
+
+  /* Sombras — borders-only: sombra só em elevação real */
+  --shadow-sm:   0 1px 2px oklch(14% 0.012 260 / 0.06);
+  --shadow-base: 0 1px 3px oklch(14% 0.012 260 / 0.10), 0 1px 2px oklch(14% 0.012 260 / 0.06);
+  --shadow-md:   0 4px 6px oklch(14% 0.012 260 / 0.07), 0 2px 4px oklch(14% 0.012 260 / 0.06);
+  --shadow-lg:   0 10px 15px oklch(14% 0.012 260 / 0.08), 0 4px 6px oklch(14% 0.012 260 / 0.05);
+  --shadow-xl:   0 20px 25px oklch(14% 0.012 260 / 0.10), 0 8px 10px oklch(14% 0.012 260 / 0.06);
+
+  /* Motion */
+  --duration-fast:   120ms;
+  --duration-base:   220ms;
+  --duration-slow:   360ms;
+  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Z-index scale */
+  --z-base:     0;
+  --z-dropdown: 10;
+  --z-sticky:   20;
+  /* Modal acima de conteúdo com z-index local (ex.: gráficos); toast/tooltip acima do modal */
+  --z-overlay:  50;
+  --z-modal:    60;
+  --z-toast:    70;
+  --z-tooltip:  80;
+}
+
+/* ── Dark mode ───────────────────────────────────────────────────────────── */
+.dark {
+  color-scheme: dark;
+
+  --color-background:        oklch(13% 0.010 260);
+  --color-foreground:        oklch(93% 0.008 85);
+  --color-card:              oklch(16% 0.010 260);
+  --color-card-foreground:   oklch(93% 0.008 85);
+  --color-popover:           oklch(18% 0.010 260);
+  --color-popover-foreground: oklch(93% 0.008 85);
+
+  --color-primary:           oklch(60% 0.10 253);
+  --color-primary-foreground: oklch(13% 0.010 260);
+  --color-primary-hover:     oklch(66% 0.10 253);
+
+  --color-accent:            oklch(62% 0.12 42);
+  --color-accent-foreground: oklch(13% 0.010 260);
+
+  --color-secondary:         oklch(21% 0.010 260);
+  --color-secondary-foreground: oklch(75% 0.008 85);
+
+  --color-muted:             oklch(20% 0.010 260);
+  --color-muted-foreground:  oklch(58% 0.008 85);
+
+  --color-border:            oklch(26% 0.010 260);
+  --color-input:             oklch(18% 0.010 260);
+  --color-ring:              oklch(60% 0.10 253);
+
+  --color-destructive:       oklch(60% 0.17 22);
+  --color-destructive-foreground: oklch(98% 0.004 85);
+
+  --color-success:           oklch(52% 0.13 152);
+  --color-success-foreground: oklch(98% 0.004 85);
+  --color-warning:           oklch(75% 0.14 85);
+  --color-warning-foreground: oklch(14% 0.012 260);
+  --color-info:              oklch(58% 0.10 253);
+  --color-info-foreground:   oklch(98% 0.004 85);
+
+  /* Sombras dark: border first */
+  --shadow-sm:   0 1px 2px oklch(0% 0 0 / 0.30);
+  --shadow-base: 0 1px 3px oklch(0% 0 0 / 0.40);
+  --shadow-md:   0 4px 6px oklch(0% 0 0 / 0.40);
+  --shadow-lg:   0 10px 15px oklch(0% 0 0 / 0.50);
+  --shadow-xl:   0 20px 25px oklch(0% 0 0 / 0.60);
+}
+
+/* ── Base styles ─────────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    border-color: var(--color-border);
+    outline-color: var(--color-ring);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Seleção de texto */
+  ::selection {
+    background-color: oklch(32% 0.09 253 / 0.20);
+    color: var(--color-foreground);
+  }
+
+  /* Focus-visible padrão */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  /* Scrollbar sutil */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-muted-foreground);
+  }
+
+  /* Tipografia — escala fluida */
+  h1 { font-size: clamp(1.5rem, 2.5vw + 0.5rem, 2.25rem); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; }
+  h2 { font-size: clamp(1.25rem, 2vw + 0.25rem, 1.75rem); font-weight: 600; line-height: 1.2; letter-spacing: -0.015em; }
+  h3 { font-size: clamp(1.1rem, 1.5vw + 0.1rem, 1.375rem); font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; }
+  h4 { font-size: 1.0625rem; font-weight: 500; line-height: 1.3; }
+
+  /* Reduzir motion para usuários que preferem */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ── Utilitários do domínio ───────────────────────────────────────────────── */
+@layer utilities {
+  /* Barra de progresso segmentada — assinatura visual do produto */
+  .progress-blueprint {
+    display: flex;
+    height: 0.375rem;
+    gap: 2px;
+    border-radius: var(--radius-sm);
+    overflow: visible;
+  }
+
+  /* Números tabulares para porcentagens e valores de peso */
+  .tabular {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8125rem;
+  }
+
+  /* Status pill — verde/amarelo/cinza para etapas */
+  .status-finalizado {
+    background-color: oklch(40% 0.12 152 / 0.12);
+    color: oklch(32% 0.10 152);
+    border: 1px solid oklch(40% 0.12 152 / 0.30);
+  }
+  .status-em-andamento {
+    background-color: oklch(72% 0.16 85 / 0.15);
+    color: oklch(52% 0.14 78);
+    border: 1px solid oklch(72% 0.16 85 / 0.40);
+  }
+  .status-nao-iniciado {
+    background-color: transparent;
+    color: var(--color-muted-foreground);
+    border: 1px solid var(--color-border);
+  }
+
+  /* Prazo vencido */
+  .deadline-overdue {
+    color: oklch(52% 0.19 22);
+    font-weight: 500;
+  }
+
+  /* Sidebar active item */
+  .nav-item-active {
+    background-color: oklch(32% 0.09 253 / 0.08);
+    color: oklch(32% 0.09 253);
+    border-left: 2px solid oklch(32% 0.09 253);
+  }
+
+  /* Hover neutro para navegação */
+  .nav-item-hover:hover {
+    background-color: var(--color-muted);
+    color: var(--color-foreground);
+  }
+
+  /** Nativos `<select>` / busca com contraste WCAG sobre fundo claro */
+  .select-app {
+    min-height: 2.25rem;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+    box-shadow: 0 1px 2px oklch(14% 0.012 260 / 0.06);
+  }
+  .select-app:hover {
+    border-color: oklch(52% 0.010 260);
+  }
+  .select-app:focus-visible {
+    outline: none;
+    border-color: var(--color-ring);
+    box-shadow:
+      0 0 0 2px var(--color-background),
+      0 0 0 4px oklch(32% 0.09 253 / 0.35);
+  }
+}

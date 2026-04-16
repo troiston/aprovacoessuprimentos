@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "id": "product-reveal",
+    "version": "1.0",
+    "description": "3 prompts para reveals dramaticos de produto — spotlight, unbox, lifestyle integration",
+    "compatible_tools": ["runway-gen3-turbo", "sora-2", "kling-3"]
+  },
+  "prompts": [
+    {
+      "id": "spotlight-reveal",
+      "name": "Spotlight — Reveal Dramatico",
+      "description": "Do escuro para iluminado, reveal dramatico com dolly-in, 5s, cinematografico",
+      "scene": "Product reveal starting in complete darkness, single spotlight dramatically fading up to illuminate the product from above, camera slowly dollying in as light intensifies, lens flare building, product details becoming progressively visible, dramatic shadows creating depth and dimension",
+      "motion": {
+        "subject_action": "Product remains still as light reveals it progressively from top",
+        "background_movement": "Light gradually fills the space, subtle dust particles become visible in beam",
+        "speed": "slow-motion"
+      },
+      "camera": {
+        "movement": "dolly-in",
+        "speed": "moderate(3)",
+        "framing": "medium-shot",
+        "depth_of_field": "shallow"
+      },
+      "duration": 5,
+      "style": "cinematic",
+      "atmosphere": {
+        "lighting": "dramatic",
+        "mood": "luxurious",
+        "color_grade": "high-contrast"
+      },
+      "runway_json": {
+        "model": "gen3_alpha_turbo",
+        "promptText": "Dramatic product reveal from complete darkness, single spotlight fading up from above illuminating premium product, camera slowly dollying in as light intensifies, lens flare building, product details becoming visible progressively, dramatic high-contrast shadows, dust particles in light beam, luxurious cinematic reveal",
+        "duration": 5,
+        "ratio": "16:9",
+        "camera_motion": {
+          "pan": 0,
+          "zoom": 4,
+          "tilt": 0,
+          "roll": 0
+        }
+      },
+      "sora_prompt": "Beginning: Complete darkness, absolute black frame with faint hint of form barely visible at center. Middle: Single overhead spotlight slowly fades up, dramatically illuminating product from above, dust particles become visible in the light beam, camera begins steady dolly-in, product surface details emerge with strong highlights and deep shadows, lens flare subtly builds. End: Product fully revealed in dramatic spotlight, camera close to product showing texture detail, luxurious presentation complete.",
+      "kling_prompt": "VISUAL: Dramatic product reveal from complete darkness, single spotlight fading up from above, premium product illuminated progressively, camera dolly-in, lens flare, dust particles in beam, high-contrast shadows, 5 seconds, cinematic | AUDIO: Deep bass rumble building from silence, rising tension tone, soft impact when light hits full intensity, subtle shimmer resonance"
+    },
+    {
+      "id": "unbox-hands",
+      "name": "Unbox — Maos em Close-Up",
+      "description": "Close-up de maos abrindo embalagem, antecipacao, 5s, estilo lifestyle",
+      "scene": "Close-up of elegant hands carefully opening a premium product box, pulling ribbon, lifting lid to reveal tissue-wrapped product inside, warm natural lighting creating inviting atmosphere, shallow depth of field focusing on hands and box interaction",
+      "motion": {
+        "subject_action": "Hands untie ribbon, fingers lift box lid, pull back tissue paper to reveal product",
+        "background_movement": "Soft ambient light shifts slightly, background remains calm and still",
+        "speed": "slow-motion"
+      },
+      "camera": {
+        "movement": "static",
+        "speed": "subtle(0.5)",
+        "framing": "close-up",
+        "depth_of_field": "shallow"
+      },
+      "duration": 5,
+      "style": "lifestyle",
+      "atmosphere": {
+        "lighting": "natural",
+        "mood": "luxurious",
+        "color_grade": "warm"
+      },
+      "runway_json": {
+        "model": "gen3_alpha_turbo",
+        "promptText": "Close-up of elegant hands carefully opening premium product box, untying satin ribbon, lifting lid revealing tissue-wrapped product inside, warm natural window lighting, shallow depth of field, warm color grading, lifestyle unboxing moment of anticipation and delight",
+        "duration": 5,
+        "ratio": "16:9",
+        "camera_motion": {
+          "pan": 0,
+          "zoom": 1,
+          "tilt": 0,
+          "roll": 0
+        }
+      },
+      "sora_prompt": "Beginning: Close-up of elegant hands resting on beautifully packaged premium box, soft warm natural light, fingers begin to pull satin ribbon. Middle: Hands carefully lift the box lid, anticipation builds, shallow depth of field keeps focus on the interaction, tissue paper visible inside. End: Fingers pull back tissue paper to reveal the product nestled inside, warm satisfaction in the moment, natural light catches product surface.",
+      "kling_prompt": "VISUAL: Close-up elegant hands opening premium product box, pulling satin ribbon, lifting lid, tissue paper pulled back to reveal product, warm natural lighting, shallow depth of field, lifestyle 5 seconds | AUDIO: Soft ribbon sliding sound, gentle cardboard opening, tissue paper crinkling, satisfied exhale, warm ambient tone"
+    },
+    {
+      "id": "lifestyle-integration",
+      "name": "Lifestyle — Produto em Uso",
+      "description": "Produto sendo usado em contexto real, tracking shot, 5s, luz natural",
+      "scene": "Tracking shot following person using product naturally in their daily environment, natural daylight streaming through space, product seamlessly integrated into real-life moment, authentic movement and interaction, warm inviting color palette",
+      "motion": {
+        "subject_action": "Person interacts naturally with product in daily routine, natural movements",
+        "background_movement": "Environment elements move naturally — curtains sway, light shifts, ambient life",
+        "speed": "normal"
+      },
+      "camera": {
+        "movement": "tracking",
+        "speed": "moderate(3)",
+        "framing": "medium-shot",
+        "depth_of_field": "medium"
+      },
+      "duration": 5,
+      "style": "lifestyle",
+      "atmosphere": {
+        "lighting": "natural",
+        "mood": "calm",
+        "color_grade": "warm"
+      },
+      "runway_json": {
+        "model": "gen3_alpha_turbo",
+        "promptText": "Smooth tracking shot following person using product naturally in daily environment, natural daylight, product seamlessly integrated into authentic moment, warm color grading, lifestyle commercial feel, calm inviting atmosphere, medium depth of field",
+        "duration": 5,
+        "ratio": "16:9",
+        "camera_motion": {
+          "pan": 3,
+          "zoom": 0,
+          "tilt": 0,
+          "roll": 0
+        }
+      },
+      "sora_prompt": "Beginning: Camera begins tracking person in bright naturally-lit space, they reach for the product on a surface, morning daylight fills the room warmly. Middle: Smooth tracking follows person as they use the product naturally, authentic relaxed movement, product clearly visible and integrated into the moment, background environment alive with subtle ambient motion. End: Camera settles as person completes interaction with product, satisfied natural expression, warm inviting atmosphere, product remains in frame.",
+      "kling_prompt": "VISUAL: Tracking shot person using product naturally in bright daily environment, natural daylight, authentic movement, product seamlessly integrated, warm color grading, 5 seconds, lifestyle commercial | AUDIO: Soft ambient room tone, subtle product interaction sounds, gentle music swell, natural environment sounds like birds or distant traffic"
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+---
+description: "Padroes de banco de dados com Prisma — schema, queries, migrations, performance"
+globs: ["prisma/**/*", "src/lib/db.*", "src/server/**/*"]
+alwaysApply: false
+---
+
+# Padroes de Banco de Dados com Prisma
+
+## Prisma Client — Singleton
+NUNCA instanciar PrismaClient multiplas vezes. Em dev, o hot reload cria conexoes vazadas.
+
+```tsx
+import { PrismaClient } from "@prisma/client";
+
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({
+  log: process.env.NODE_ENV === "development" ? ["query", "warn", "error"] : ["error"],
+});
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+```
+
+Colocar em `src/lib/db.ts` e importar de la em todo o projeto.
+
+## Schema Conventions
+- Models em PascalCase: `model User`, `model BlogPost`
+- Fields em camelCase: `firstName`, `createdAt`, `deletedAt`
+- Relations explicitas com nome: `@relation("UserPosts")`
+- IDs como cuid2 por padrao (menores, URL-safe, sem colisao):
+```prisma
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      Role     @default(USER)
+  posts     Post[]   @relation("UserPosts")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  @@index([email])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+```
+- @@map("table_name") para snake_case no banco
+- @map("column_name") para campos individuais se necessario
+- Timestamps createdAt/updatedAt em TODA tabela
+- Enums para valores fixos (Role, Status, etc.)
+
+## Queries — Select Only What You Need
+```tsx
+// ✅ Correto: selecionar apenas campos necessarios
+const users = await prisma.user.findMany({
+  select: { id: true, name: true, email: true },
+  where: { deletedAt: null },
+});
+
+// ❌ Errado: trazer tudo
+const users = await prisma.user.findMany();
+
+// ❌ Errado: include sem necessidade
+const users = await prisma.user.findMany({ include: { posts: true } });
+```
+
+## Include com Cuidado — Prevenir N+1
+```tsx
+// ✅ Include quando PRECISA dos dados relacionados
+const usersWithPosts = await prisma.user.findMany({
+  select: {
+    id: true,
+    name: true,
+    posts: {
+      select: { id: true, title: true },
+      where: { published: true },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    },
+  },
+});
+
+// ❌ N+1: buscar users e depois loop buscando posts
+const users = await prisma.user.findMany();
+for (const user of users) {
+  const posts = await prisma.post.findMany({ where: { authorId: user.id } });
+}
+```
+
+## Transactions — Operacoes Atomicas
+```tsx
+// Transaction sequencial (resultado de uma operacao alimenta a proxima)
+const [user, profile] = await prisma.$transaction(async (tx) => {
+  const user = await tx.user.create({ data: { email, name } });
+  const profile = await tx.profile.create({ data: { userId: user.id, bio } });
+  return [user, profile];
+});
+
+// Batch transaction (independentes, executam em paralelo interno)
+const [updatedUser, newLog] = await prisma.$transaction([
+  prisma.user.update({ where: { id }, data: { lastLoginAt: new Date() } }),
+  prisma.auditLog.create({ data: { userId: id, action: "LOGIN" } }),
+]);
+```
+- Usar interactive transactions ($transaction com callback) quando operacoes dependem entre si
+- Usar batch transactions (array) quando sao independentes
+- Timeout padrao de 5s — aumentar se necessario: `$transaction(fn, { timeout: 10000 })`
+
+## Soft Delete Pattern
+```tsx
+// Middleware global para filtrar deletados
+prisma.$use(async (params, next) => {
+  if (params.action === "findMany" || params.action === "findFirst") {
+    params.args.where = { ...params.args.where, deletedAt: null };
+  }
+  if (params.action === "delete") {
+    params.action = "update";
+    params.args.data = { deletedAt: new Date() };
+  }
+  return next(params);
+});
+```
+- Campo `deletedAt DateTime?` em modelos que precisam de soft delete
+- Index em deletedAt para queries performaticas
+- Considerar hard delete para dados sem requisito de retencao
+
+## Migration Workflow
+```bash
+# Desenvolvimento: cria migration e aplica
+npx prisma migrate dev --name descricao-curta
+
+# Producao: APENAS aplica migrations existentes (nunca gera novas)
+npx prisma migrate deploy
+
+# Reset completo (APENAS em dev)
+npx prisma migrate reset
+
+# Ver status das migrations
+npx prisma migrate status
+```
+- NUNCA editar migrations ja aplicadas em producao
+- Nomes descritivos: `add-user-role`, `create-posts-table`, `add-index-email`
+- Testar migration em staging antes de producao
+- Migrations destrutivas (drop column) em duas fases: deploy sem uso → migration
+
+## Index Strategy
+```prisma
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  authorId  String
+  status    Status
+  createdAt DateTime @default(now())
+
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([authorId])              // FK sempre indexada
+  @@index([status, createdAt])     // Composite para queries frequentes
+  @@index([authorId, status])      // Composite para filtros combinados
+}
+```
+- TODA foreign key deve ter index
+- Composite indexes para queries com WHERE + ORDER BY
+- Unique constraints geram index automaticamente
+- Monitorar queries lentas e criar index sob demanda
+- Nao criar indexes demais — cada index custa em writes
+
+## Connection Pooling
+```
+# .env — connection com pooling
+DATABASE_URL="postgresql://user:pass@host:5432/db?connection_limit=10&pool_timeout=30"
+```
+- connection_limit: numero maximo de conexoes no pool (10-20 para serverless)
+- pool_timeout: tempo maximo esperando conexao livre
+- Em serverless (Vercel), usar Prisma Accelerate ou PgBouncer
+- Monitorar conexoes ativas com `SELECT count(*) FROM pg_stat_activity`
+
+## Error Handling
+```tsx
+import { Prisma } from "@prisma/client";
+
+try {
+  await prisma.user.create({ data: { email } });
+} catch (error) {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error.code === "P2002") {
+      // Unique constraint violation
+      throw new ConflictError("Email ja cadastrado");
+    }
+    if (error.code === "P2025") {
+      // Record not found
+      throw new NotFoundError("Usuario nao encontrado");
+    }
+  }
+  throw error;
+}
+```
+- P2002: unique constraint violation (duplicata)
+- P2025: record not found (update/delete inexistente)
+- P2003: foreign key constraint violation
+- P2024: timeout (connection pool esgotado)
+- SEMPRE capturar PrismaClientKnownRequestError e traduzir para erros de dominio
+- Log de erros desconhecidos para monitoramento
