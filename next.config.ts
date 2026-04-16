@@ -12,6 +12,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+  outputFileTracingIncludes: {
+    "/*": ["./prisma/**/*", "./src/generated/prisma/**/*"],
+  },
   async redirects() {
     return [
       {

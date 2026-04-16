@@ -1,0 +1,35 @@
+# Exemplo para `docker stack deploy -c docker-stack.example.yml aprovacoes`
+# Ajuste: imagem, rede Traefik, Host(), entrypoint TLS e certresolver ao seu ambiente.
+
+version: "3.8"
+
+networks:
+  traefik-public:
+    external: true
+
+services:
+  web:
+    image: registry.example.com/aprovacoes-suprimentos:latest
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-AprovacoesSuprimentos}
+      NODE_ENV: production
+      # Opcionais (Stripe, cifra SMTP, etc.) — ver .env.example
+      # STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      # SETTINGS_ENCRYPTION_KEY: ${SETTINGS_ENCRYPTION_KEY}
+    networks:
+      - traefik-public
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.routers.aprovacoes.rule=Host(`aprovacoes.exemplo.com`)
+        - traefik.http.routers.aprovacoes.entrypoints=websecure
+        - traefik.http.routers.aprovacoes.tls.certresolver=letsencrypt
+        - traefik.http.routers.aprovacoes.service=aprovacoes
+        - traefik.http.services.aprovacoes.loadbalancer.server.port=3000
