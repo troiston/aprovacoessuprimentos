@@ -23,7 +23,8 @@ WORKDIR /app
 ENV NODE_ENV=production \
   NEXT_TELEMETRY_DISABLED=1 \
   PORT=3000 \
-  HOSTNAME=0.0.0.0
+  HOSTNAME=0.0.0.0 \
+  NODE_PATH=/usr/local/lib/node_modules
 
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
