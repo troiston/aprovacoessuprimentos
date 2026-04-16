@@ -1,5 +1,11 @@
 node_modules
+
+# Next.js build / dev (nunca versionar — ficheiros enormes e cache Turbopack)
+.next/
+out/
+
 # Keep environment variables out of version control
 .env
 
+# Prisma client gerado (regenerar com `npx prisma generate`)
 /src/generated/prisma
