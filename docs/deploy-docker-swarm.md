@@ -22,35 +22,31 @@ O `docker-compose.yml` declara **`network_swarm_public`** como **external** (igu
 
 4. Volta a fazer deploy da stack no Portainer (ou `docker stack deploy`).
 
-## 1. Build, push e variável `APP_IMAGE`
+## 1. Build, push e imagem
 
-O compose usa **`image: ${APP_IMAGE}`**. No Portainer, em **Stack → Environment**, tens de definir **`APP_IMAGE`** com uma tag **que já exista** no registry (senão o erro é *No such image* / tarefas **rejected**).
+O compose usa **`image: ${APP_IMAGE:-troiston/aprovasuprimentos:latest}`**: há sempre uma referência válida (evita *Invalid image reference: no image specified* quando `APP_IMAGE` não está definida ou o Portainer não interpola variáveis vazias no redeploy).
 
-Exemplo (Docker Hub):
+1. Faz **build e push** para a mesma referência que o compose vai puxar (por omissão **`troiston/aprovasuprimentos:latest`** no Docker Hub — ajusta o default no `docker-compose.yml` se o teu user/registry for outro).
 
 ```bash
-docker build -t teuusuario/aprovasuprimentos:latest .
-docker push teuusuario/aprovasuprimentos:latest
+docker build -t troiston/aprovasuprimentos:latest .
+docker push troiston/aprovasuprimentos:latest
 ```
 
-No Portainer:
+2. **Opcional:** no Portainer → **Stack → Environment**, define **`APP_IMAGE`** para sobrescrever sem editar o Git (ex.: `ghcr.io/troiston/aprovasuprimentos:v1.0.0`).
 
-| Nome | Valor (exemplo) |
-|------|------------------|
-| `APP_IMAGE` | `docker.io/teuusuario/aprovasuprimentos:latest` ou `teuusuario/aprovasuprimentos:latest` |
-
-Deploy na CLI (com variável exportada):
+Deploy na CLI:
 
 ```bash
-export APP_IMAGE=teuusuario/aprovasuprimentos:latest
 docker stack deploy -c docker-compose.yml aprovasuprimentos
+# ou: export APP_IMAGE=outro/repo:tag && docker stack deploy ...
 ```
 
 ## 2. Variáveis obrigatórias em runtime
 
 | Variável | Descrição |
 |----------|-----------|
-| `APP_IMAGE` | Imagem Docker publicada (obrigatória — ver secção 1) |
+| `APP_IMAGE` | Opcional: sobrescreve a imagem do serviço `web` (por omissão no compose: `troiston/aprovasuprimentos:latest`) |
 | `DATABASE_URL` | URL Postgres (ex.: `postgresql://user:pass@postgres:5432/db?schema=public`) |
 | `NEXT_PUBLIC_APP_URL` | URL pública HTTPS (ex.: `https://aprovasuprimentos.digaola.com`) |
 | `NEXT_PUBLIC_APP_NAME` | Nome exibido (opcional) |
@@ -61,7 +57,7 @@ Stripe, `SETTINGS_ENCRYPTION_KEY`, etc.: ver `.env.example`.
 
 Edite `docker-compose.yml` na raiz do repositório:
 
-- `image` — sua imagem/tag (build + push antes).
+- `image` — ver secção 1 (default no YAML + opcional `APP_IMAGE`).
 - `traefik.docker.network` — hoje `network_swarm_public` (alinhado ao n8n no mesmo servidor).
 - `traefik.http.routers.aprovasuprimentos.rule` — produção: `Host(\`aprovasuprimentos.digaola.com\`)`.
 - `traefik.http.routers.aprovasuprimentos.entrypoints` — `websecure` (como no exemplo n8n).
@@ -78,7 +74,7 @@ docker stack deploy -c docker-compose.yml aprovacoes
 1. **Stacks** → **Add stack** → método **Repository**.
 2. **Compose path** deve ser exatamente `docker-compose.yml` (ficheiro na raiz do Git). Se o ficheiro não existir no branch, o Portainer falha com *Open /data/compose/…/docker-compose.yml: no such file or directory*.
 3. Faça **commit e push** de `docker-compose.yml` para o branch configurado (ex.: `main`).
-4. Em **Environment**, defina **`APP_IMAGE`** (obrigatório), `DATABASE_URL`, `NEXT_PUBLIC_APP_URL=https://aprovasuprimentos.digaola.com`, `SETTINGS_ENCRYPTION_KEY` se aplicável, etc.
+4. Em **Environment**, defina `DATABASE_URL`, `NEXT_PUBLIC_APP_URL=https://aprovasuprimentos.digaola.com`, `SETTINGS_ENCRYPTION_KEY` se aplicável, e **`APP_IMAGE`** só se quiseres uma imagem diferente do default no `docker-compose.yml`.
 5. A rede overlay tem de existir antes do deploy — ver secção **Rede overlay** acima.
 
 ## 5. Migrações Prisma
