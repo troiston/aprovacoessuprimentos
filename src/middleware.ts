@@ -2,16 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { SESSION_COOKIE_NAME } from "@/lib/auth/constants";
 
-function createNonce(): string {
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
-  let binary = "";
-  for (const b of bytes) {
-    binary += String.fromCharCode(b);
-  }
-  return btoa(binary);
-}
-
 /** Rotas que não exigem sessão. */
 function isPublicPath(pathname: string): boolean {
   if (pathname === "/login") {
@@ -87,20 +77,22 @@ export function middleware(request: NextRequest) {
   return applyCsp(request, isDev);
 }
 
-function applyCsp(request: NextRequest, isDev: boolean): NextResponse {
-  const requestHeaders = new Headers(request.headers);
-
+function applyCsp(_request: NextRequest, isDev: boolean): NextResponse {
   if (isDev) {
-    return NextResponse.next({ request: { headers: requestHeaders } });
+    return NextResponse.next();
   }
 
-  const nonce = createNonce();
+  /**
+   * CSP compatível com Next.js (chunks em /_next) + Google Fonts no layout.
+   * Não usar `strict-dynamic` sem nonce em todos os scripts: desativa o efeito de
+   * `self` e bloqueia os bundles da app (visto como `blocked:csp` no DevTools).
+   */
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
-    "style-src 'self' 'unsafe-inline'",
+    "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
-    "font-src 'self' data:",
+    "font-src 'self' data: https://fonts.gstatic.com",
     "connect-src 'self' https://api.stripe.com https://*.stripe.com",
     "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
     "object-src 'none'",
@@ -110,11 +102,7 @@ function applyCsp(request: NextRequest, isDev: boolean): NextResponse {
     "upgrade-insecure-requests",
   ].join("; ");
 
-  requestHeaders.set("x-nonce", nonce);
-
-  const response = NextResponse.next({
-    request: { headers: requestHeaders },
-  });
+  const response = NextResponse.next();
   response.headers.set("Content-Security-Policy", csp);
   return response;
 }
