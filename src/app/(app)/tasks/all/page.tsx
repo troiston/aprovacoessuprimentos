@@ -8,49 +8,45 @@ import { TasksGanttView } from "@/components/tasks/tasks-gantt-view";
 import { TasksKanbanBoard } from "@/components/tasks/tasks-kanban-board";
 import { TasksListTable, TasksListTableFooterAll } from "@/components/tasks/tasks-list-table";
 import { getCurrentUser } from "@/lib/auth/get-session";
-import { canEditStagesOrTasks } from "@/lib/domain/permissions";
+import { canEditStagesOrTasks, canManageUsers } from "@/lib/domain/permissions";
 import { db } from "@/lib/db";
 import { taskRowToBoardItem } from "@/lib/tasks/task-board-mapper";
 import { findAllTasks } from "@/lib/services/tasks-queries";
+import { listKanbanColumnsOrdered } from "@/lib/services/kanban-columns";
 import { formatDatePtBR } from "@/lib/services/developments-list";
 import { listAssignableUsers, formatUserLabel } from "@/lib/services/users-queries";
 import { parseTaskView } from "@/types/task-board";
-import type { TaskStatus } from "@/generated/prisma/enums";
 
 export const metadata: Metadata = {
   title: "Todas as Tarefas",
 };
 
-const STATUS_OPTIONS: { value: string; label: string }[] = [
-  { value: "all", label: "Todos" },
-  { value: "OPEN", label: "Em aberto" },
-  { value: "IN_PROGRESS", label: "Em progresso" },
-  { value: "BLOCKED", label: "Bloqueadas" },
-  { value: "DONE", label: "Concluídas" },
-];
-
-function parseStatus(raw: string | undefined): TaskStatus | undefined {
+function parseColumnId(
+  raw: string | undefined,
+  validIds: Set<string>,
+): string | undefined {
   if (!raw || raw === "all") {
     return undefined;
   }
-  if (raw === "OPEN" || raw === "IN_PROGRESS" || raw === "BLOCKED" || raw === "DONE") {
-    return raw;
-  }
-  return undefined;
+  return validIds.has(raw) ? raw : undefined;
 }
 
 type PageProps = {
-  searchParams: Promise<{ dev?: string; status?: string; view?: string }>;
+  searchParams: Promise<{ dev?: string; column?: string; view?: string }>;
 };
 
 export default async function AllTasksPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const devFilter = sp.dev && sp.dev !== "all" ? sp.dev : undefined;
-  const statusFilter = parseStatus(sp.status);
   const view = parseTaskView(sp.view);
 
   const user = await getCurrentUser();
   const canEdit = canEditStagesOrTasks(user);
+  const showStagesCatalogLink = canManageUsers(user);
+
+  const kanbanColumns = await listKanbanColumnsOrdered();
+  const columnIdSet = new Set(kanbanColumns.map((c) => c.id));
+  const columnFilter = parseColumnId(sp.column, columnIdSet);
 
   const [developments, tasks, assignableRows] = await Promise.all([
     db.development.findMany({
@@ -58,7 +54,7 @@ export default async function AllTasksPage({ searchParams }: PageProps) {
       select: { slug: true, name: true },
       orderBy: { name: "asc" },
     }),
-    findAllTasks({ developmentSlug: devFilter, status: statusFilter }),
+    findAllTasks({ developmentSlug: devFilter, kanbanColumnId: columnFilter }),
     listAssignableUsers(),
   ]);
   const usersForTask = assignableRows.map((u) => ({
@@ -69,7 +65,8 @@ export default async function AllTasksPage({ searchParams }: PageProps) {
   const now = new Date();
   const rows = tasks.map((t) => {
     const deadlineLabel = t.deadline ? formatDatePtBR(t.deadline) : "—";
-    const isOverdue = t.deadline !== null && t.deadline < now && t.status !== "DONE";
+    const isOverdue =
+      t.deadline !== null && t.deadline < now && !t.kanbanColumn.isTerminal;
     const assignee =
       t.assignee?.displayName ?? t.assignee?.name ?? t.assignee?.email ?? "—";
     return {
@@ -90,7 +87,7 @@ export default async function AllTasksPage({ searchParams }: PageProps) {
 
   const navQuery: Record<string, string | undefined> = {
     dev: sp.dev,
-    status: sp.status,
+    column: sp.column,
   };
 
   return (
@@ -129,18 +126,19 @@ export default async function AllTasksPage({ searchParams }: PageProps) {
             ))}
           </select>
 
-          <label className="sr-only" htmlFor="filter-status">
-            Status
+          <label className="sr-only" htmlFor="filter-column">
+            Coluna Kanban
           </label>
           <select
-            id="filter-status"
-            name="status"
-            defaultValue={sp.status ?? "all"}
-            className="select-app h-9 min-w-[9rem] rounded-[--radius] px-2 text-xs"
+            id="filter-column"
+            name="column"
+            defaultValue={sp.column && columnIdSet.has(sp.column) ? sp.column : "all"}
+            className="select-app h-9 min-w-[11rem] max-w-[20rem] rounded-[--radius] px-2 text-xs"
           >
-            {STATUS_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
+            <option value="all">Todas as colunas</option>
+            {kanbanColumns.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
               </option>
             ))}
           </select>
@@ -151,13 +149,29 @@ export default async function AllTasksPage({ searchParams }: PageProps) {
         </form>
 
         {view === "kanban" ? (
-          <TasksKanbanBoard items={boardItems} canEdit={canEdit} users={usersForTask} />
+          <TasksKanbanBoard
+            items={boardItems}
+            canEdit={canEdit}
+            users={usersForTask}
+            showStagesCatalogLink={showStagesCatalogLink}
+            columns={kanbanColumns}
+          />
         ) : null}
         {view === "calendar" ? (
-          <TasksCalendarView items={boardItems} users={usersForTask} canEdit={canEdit} />
+          <TasksCalendarView
+            items={boardItems}
+            users={usersForTask}
+            canEdit={canEdit}
+            showStagesCatalogLink={showStagesCatalogLink}
+          />
         ) : null}
         {view === "gantt" ? (
-          <TasksGanttView items={boardItems} users={usersForTask} canEdit={canEdit} />
+          <TasksGanttView
+            items={boardItems}
+            users={usersForTask}
+            canEdit={canEdit}
+            showStagesCatalogLink={showStagesCatalogLink}
+          />
         ) : null}
 
         {view === "list" ? (
@@ -166,6 +180,7 @@ export default async function AllTasksPage({ searchParams }: PageProps) {
             users={usersForTask}
             canEdit={canEdit}
             showDevelopment
+            showStagesCatalogLink={showStagesCatalogLink}
             listFooter={<TasksListTableFooterAll total={rows.length} overdue={overdue.length} />}
           />
         ) : null}

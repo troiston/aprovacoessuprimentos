@@ -11,6 +11,9 @@ const ACTION_LABELS: Record<string, string> = {
   "task.create": "Criação de tarefa",
   "task.update": "Atualização de tarefa",
   "task.soft_delete": "Remoção de tarefa",
+  "stage.catalog.create": "Nova etapa no catálogo",
+  "stage.catalog.delete": "Remoção de etapa do catálogo",
+  "stage.catalog.patch": "Alteração ao catálogo de etapas",
   "mail.test": "Teste de envio de e-mail",
   "mail.send": "Envio de e-mail",
   "settings.mail.create": "Configuração de e-mail (SMTP) criada",
@@ -20,6 +23,7 @@ const ACTION_LABELS: Record<string, string> = {
 const ENTITY_TYPE_LABELS: Record<string, string> = {
   Development: "Empreendimento",
   DevelopmentStage: "Etapa do empreendimento",
+  Stage: "Etapa (catálogo global)",
   Task: "Tarefa",
   SystemSetting: "Definição do sistema",
 };

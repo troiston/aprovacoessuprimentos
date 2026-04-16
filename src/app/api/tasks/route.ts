@@ -4,9 +4,9 @@ import { requireEditorForApi } from "@/lib/api/route-auth";
 import { appendAuditLog } from "@/lib/audit/audit-log.service";
 import { AuditEntity } from "@/lib/audit/constants";
 import { db } from "@/lib/db";
-import { createTaskBodySchema, taskStatusSchema } from "@/lib/validations/task";
+import { createTaskBodySchema } from "@/lib/validations/task";
 import { findAllTasks } from "@/lib/services/tasks-queries";
-import type { TaskStatus } from "@/generated/prisma/enums";
+import { getDefaultKanbanColumnIdForNewTask } from "@/lib/services/kanban-columns";
 
 export async function GET(request: Request) {
   const user = await getCurrentUser();
@@ -16,17 +16,20 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const developmentSlug = searchParams.get("developmentSlug") ?? undefined;
-  const statusRaw = searchParams.get("status");
-  let status: TaskStatus | undefined;
-  if (statusRaw) {
-    const p = taskStatusSchema.safeParse(statusRaw);
-    if (!p.success) {
-      return NextResponse.json({ error: "status inválido" }, { status: 400 });
+  const columnRaw = searchParams.get("column");
+  let kanbanColumnId: string | undefined;
+  if (columnRaw && columnRaw !== "all") {
+    const exists = await db.kanbanColumn.findFirst({
+      where: { id: columnRaw },
+      select: { id: true },
+    });
+    if (!exists) {
+      return NextResponse.json({ error: "column inválido" }, { status: 400 });
     }
-    status = p.data;
+    kanbanColumnId = columnRaw;
   }
 
-  const tasks = await findAllTasks({ developmentSlug, status });
+  const tasks = await findAllTasks({ developmentSlug, kanbanColumnId });
   return NextResponse.json({ tasks });
 }
 
@@ -76,6 +79,22 @@ export async function POST(request: Request) {
     }
   }
 
+  let kanbanColumnId = parsed.data.kanbanColumnId ?? null;
+  if (kanbanColumnId) {
+    const col = await db.kanbanColumn.findFirst({ where: { id: kanbanColumnId } });
+    if (!col) {
+      return NextResponse.json({ error: "Coluna Kanban inválida" }, { status: 422 });
+    }
+  } else {
+    kanbanColumnId = await getDefaultKanbanColumnIdForNewTask();
+    if (!kanbanColumnId) {
+      return NextResponse.json(
+        { error: "Não há colunas Kanban configuradas." },
+        { status: 500 },
+      );
+    }
+  }
+
   let deadline: Date | null = null;
   if (parsed.data.deadline !== undefined && parsed.data.deadline !== null) {
     deadline = new Date(parsed.data.deadline);
@@ -85,11 +104,11 @@ export async function POST(request: Request) {
     data: {
       developmentId: dev.id,
       stageId: parsed.data.stageId,
+      kanbanColumnId,
       description: parsed.data.description.trim(),
       assigneeId: parsed.data.assigneeId ?? null,
       deadline,
       notes: parsed.data.notes?.trim() ?? null,
-      status: parsed.data.status ?? "OPEN",
     },
   });
 
@@ -101,6 +120,7 @@ export async function POST(request: Request) {
     metadata: {
       developmentSlug: dev.slug,
       stageId: task.stageId,
+      kanbanColumnId: task.kanbanColumnId,
     },
   });
 

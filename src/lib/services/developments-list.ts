@@ -89,6 +89,7 @@ export async function getDevelopmentsList(): Promise<DevelopmentListItem[]> {
       },
       tasks: {
         where: { deletedAt: null },
+        include: { kanbanColumn: { select: { isTerminal: true } } },
       },
     },
   });
@@ -115,10 +116,10 @@ export async function getDevelopmentsList(): Promise<DevelopmentListItem[]> {
       })),
     );
 
-    const pendingCount = d.tasks.filter((t) => t.status !== "DONE").length;
+    const pendingCount = d.tasks.filter((t) => !t.kanbanColumn.isTerminal).length;
     const overdueCount = d.tasks.filter(
       (t) =>
-        t.status !== "DONE" &&
+        !t.kanbanColumn.isTerminal &&
         t.deadline !== null &&
         t.deadline < now,
     ).length;

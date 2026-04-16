@@ -65,8 +65,14 @@ export async function PATCH(request: Request, context: RouteContext) {
   if (parsed.data.notes !== undefined) {
     data.notes = parsed.data.notes;
   }
-  if (parsed.data.status !== undefined) {
-    data.status = parsed.data.status;
+  if (parsed.data.kanbanColumnId !== undefined) {
+    const col = await db.kanbanColumn.findFirst({
+      where: { id: parsed.data.kanbanColumnId },
+    });
+    if (!col) {
+      return NextResponse.json({ error: "Coluna Kanban inválida" }, { status: 422 });
+    }
+    data.kanbanColumn = { connect: { id: parsed.data.kanbanColumnId } };
   }
 
   if (Object.keys(data).length === 0) {

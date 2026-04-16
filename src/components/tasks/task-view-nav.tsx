@@ -14,8 +14,8 @@ function buildHref(pathname: string, view: TaskViewId, query: Record<string, str
   if (query.dev && query.dev !== "all") {
     q.set("dev", query.dev);
   }
-  if (query.status && query.status !== "all") {
-    q.set("status", query.status);
+  if (query.column && query.column !== "all") {
+    q.set("column", query.column);
   }
   if (view !== "list") {
     q.set("view", view);

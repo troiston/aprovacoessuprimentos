@@ -19,13 +19,6 @@ enum StageStatus {
   COMPLETED
 }
 
-enum TaskStatus {
-  OPEN
-  IN_PROGRESS
-  BLOCKED
-  DONE
-}
-
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -171,24 +164,37 @@ model DevelopmentStage {
   @@index([stageId])
 }
 
+/// Colunas do quadro Kanban de tarefas (nome, ordem e coluna «terminal» concluída).
+model KanbanColumn {
+  id         String @id @default(cuid())
+  name       String
+  sortOrder  Int
+  /// Uma coluna terminal (ex.: concluídas): tarefas aqui não aparecem em «em aberto» / notificações de atraso.
+  isTerminal Boolean @default(false)
+  tasks      Task[]
+
+  @@index([sortOrder])
+}
+
 model Task {
-  id            String     @id @default(cuid())
-  developmentId String
-  stageId       String
-  assigneeId    String?
-  description   String     @db.Text
-  deadline      DateTime?
-  status        TaskStatus @default(OPEN)
-  notes         String?    @db.Text
-  deletedAt     DateTime?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  id               String       @id @default(cuid())
+  developmentId    String
+  stageId          String
+  kanbanColumnId   String
+  assigneeId       String?
+  description      String       @db.Text
+  deadline         DateTime?
+  notes            String?      @db.Text
+  deletedAt        DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
-  development Development @relation(fields: [developmentId], references: [id], onDelete: Cascade)
-  stage       Stage       @relation(fields: [stageId], references: [id], onDelete: Restrict)
-  assignee    User?       @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  development  Development  @relation(fields: [developmentId], references: [id], onDelete: Cascade)
+  stage        Stage        @relation(fields: [stageId], references: [id], onDelete: Restrict)
+  kanbanColumn KanbanColumn @relation(fields: [kanbanColumnId], references: [id], onDelete: Restrict)
+  assignee     User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
 
-  @@index([developmentId, status])
+  @@index([developmentId, kanbanColumnId])
   @@index([assigneeId, deadline])
 }
 

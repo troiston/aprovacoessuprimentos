@@ -1,9 +1,10 @@
-import type { TaskStatus } from "@/generated/prisma/enums";
-
 /** Dados serializáveis para vistas de tarefas (lista, Kanban, calendário, Gantt). */
 export type TaskBoardItem = {
   id: string;
-  status: TaskStatus;
+  kanbanColumnId: string;
+  kanbanColumnName: string;
+  /** Coluna «concluída» — afeta atraso e filtros «em aberto». */
+  isTerminalColumn: boolean;
   development: string;
   developmentSlug: string;
   /** ID da etapa no catálogo (`Stage.id`) */

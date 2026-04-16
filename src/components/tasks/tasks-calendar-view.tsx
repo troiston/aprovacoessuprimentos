@@ -14,7 +14,7 @@ import {
 import { TaskKanbanEditDialog } from "@/components/tasks/task-kanban-edit-dialog";
 import { cn } from "@/lib/utils";
 import type { TaskBoardItem } from "@/types/task-board";
-import type { TaskStatus } from "@/generated/prisma/enums";
+import { taskCalendarOverdueRing, taskCalendarRowClass } from "@/lib/tasks/calendar-task-styles";
 
 type UserOption = { id: string; label: string };
 
@@ -22,6 +22,7 @@ type Props = {
   items: TaskBoardItem[];
   users?: UserOption[];
   canEdit?: boolean;
+  showStagesCatalogLink?: boolean;
 };
 
 function startOfMonth(d: Date): Date {
@@ -67,14 +68,12 @@ function buildMonthGrid(anchor: Date): { date: Date; inMonth: boolean; key: stri
   return cells;
 }
 
-const statusRowClass: Record<TaskStatus, string> = {
-  OPEN: "bg-warning/15 text-foreground border-warning/25",
-  IN_PROGRESS: "bg-primary/12 text-foreground border-primary/25",
-  BLOCKED: "bg-destructive/12 text-destructive border-destructive/25",
-  DONE: "bg-success/12 text-foreground border-success/25 line-through opacity-80",
-};
-
-export function TasksCalendarView({ items, users = [], canEdit = false }: Props) {
+export function TasksCalendarView({
+  items,
+  users = [],
+  canEdit = false,
+  showStagesCatalogLink = false,
+}: Props) {
   const [cursor, setCursor] = useState(() => startOfMonth(new Date()));
   const [dayDialog, setDayDialog] = useState<{ key: string; label: string; tasks: TaskBoardItem[] } | null>(
     null,
@@ -119,7 +118,13 @@ export function TasksCalendarView({ items, users = [], canEdit = false }: Props)
 
   return (
     <div className="space-y-4">
-      <TaskKanbanEditDialog item={editItem} users={users} onClose={() => setEditItem(null)} />
+      <TaskKanbanEditDialog
+        item={editItem}
+        users={users}
+        onClose={() => setEditItem(null)}
+        canEdit={canEdit}
+        showStagesCatalogLink={showStagesCatalogLink}
+      />
 
       <Dialog open={dayDialog !== null} onOpenChange={(open) => !open && setDayDialog(null)}>
         <DialogContent className="max-w-md">
@@ -142,7 +147,7 @@ export function TasksCalendarView({ items, users = [], canEdit = false }: Props)
                         className={cn(
                           "w-full rounded-[--radius] border px-3 py-2.5 text-left text-xs transition-colors",
                           "min-h-11 cursor-pointer hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                          statusRowClass[t.status],
+                          taskCalendarRowClass(t),
                         )}
                         onClick={() => {
                           setEditItem(t);
@@ -160,7 +165,7 @@ export function TasksCalendarView({ items, users = [], canEdit = false }: Props)
                         className={cn(
                           "flex min-h-11 w-full flex-col rounded-[--radius] border px-3 py-2.5 text-left text-xs transition-colors",
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                          statusRowClass[t.status],
+                          taskCalendarRowClass(t),
                         )}
                       >
                         <span className="font-medium line-clamp-2">{t.description}</span>
@@ -212,24 +217,9 @@ export function TasksCalendarView({ items, users = [], canEdit = false }: Props)
         <h2 className="text-sm font-semibold capitalize text-foreground">{monthLabel(cursor)}</h2>
       </div>
 
-      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-muted-foreground" aria-label="Legenda de estados">
-        <li className="inline-flex items-center gap-1.5">
-          <span className="size-2 rounded-sm bg-warning/50" aria-hidden="true" />
-          Aberta
-        </li>
-        <li className="inline-flex items-center gap-1.5">
-          <span className="size-2 rounded-sm bg-primary/50" aria-hidden="true" />
-          Em progresso
-        </li>
-        <li className="inline-flex items-center gap-1.5">
-          <span className="size-2 rounded-sm bg-destructive/50" aria-hidden="true" />
-          Bloqueada
-        </li>
-        <li className="inline-flex items-center gap-1.5">
-          <span className="size-2 rounded-sm bg-success/50" aria-hidden="true" />
-          Concluída
-        </li>
-      </ul>
+      <p className="text-[10px] text-muted-foreground">
+        Cores por coluna do Kanban (concluídas em verde tracejado). Configure colunas na vista Kanban.
+      </p>
 
       <div className="grid grid-cols-7 gap-px rounded-[--radius-md] border border-border bg-border overflow-hidden">
         {weekdays.map((w) => (
@@ -275,8 +265,8 @@ export function TasksCalendarView({ items, users = [], canEdit = false }: Props)
                       href={`/developments/${t.developmentSlug}`}
                       className={cn(
                         "flex min-h-7 items-center truncate rounded px-1 py-1 text-[11px] leading-tight border",
-                        statusRowClass[t.status],
-                        t.isOverdue && t.status !== "DONE" && "ring-1 ring-destructive/40",
+                        taskCalendarRowClass(t),
+                        taskCalendarOverdueRing(t) && "ring-1 ring-destructive/40",
                       )}
                       title={t.description}
                       onClick={(e) => e.stopPropagation()}

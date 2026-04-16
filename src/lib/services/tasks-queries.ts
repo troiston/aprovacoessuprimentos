@@ -1,28 +1,27 @@
 import type { Prisma } from "@/generated/prisma/client";
-import type { TaskStatus } from "@/generated/prisma/enums";
 import { db } from "@/lib/db";
 
 export type TaskListRow = {
   id: string;
   description: string;
-  status: TaskStatus;
   deadline: Date | null;
   notes: string | null;
   updatedAt: Date;
   development: { slug: string; name: string };
   stage: { id: string; name: string };
+  kanbanColumn: { id: string; name: string; isTerminal: boolean };
   assignee: { id: string; displayName: string | null; name: string | null; email: string } | null;
 };
 
 function toRow(t: {
   id: string;
   description: string;
-  status: TaskStatus;
   deadline: Date | null;
   notes: string | null;
   updatedAt: Date;
   development: { slug: string; name: string };
   stage: { id: string; name: string };
+  kanbanColumn: { id: string; name: string; isTerminal: boolean };
   assignee: {
     id: string;
     displayName: string | null;
@@ -33,12 +32,12 @@ function toRow(t: {
   return {
     id: t.id,
     description: t.description,
-    status: t.status,
     deadline: t.deadline,
     notes: t.notes,
     updatedAt: t.updatedAt,
     development: t.development,
     stage: t.stage,
+    kanbanColumn: t.kanbanColumn,
     assignee: t.assignee,
   };
 }
@@ -46,6 +45,7 @@ function toRow(t: {
 const taskInclude = {
   development: { select: { slug: true, name: true } },
   stage: { select: { id: true, name: true } },
+  kanbanColumn: { select: { id: true, name: true, isTerminal: true } },
   assignee: {
     select: { id: true, displayName: true, name: true, email: true },
   },
@@ -56,7 +56,7 @@ export async function findTasksForUser(assigneeId: string): Promise<TaskListRow[
     where: {
       deletedAt: null,
       assigneeId,
-      status: { not: "DONE" },
+      kanbanColumn: { isTerminal: false },
     },
     orderBy: [{ deadline: "asc" }, { updatedAt: "desc" }],
     include: taskInclude,
@@ -66,14 +66,14 @@ export async function findTasksForUser(assigneeId: string): Promise<TaskListRow[
 
 export async function findAllTasks(filters: {
   developmentSlug?: string;
-  status?: TaskStatus;
+  kanbanColumnId?: string;
 }): Promise<TaskListRow[]> {
   const where: Prisma.TaskWhereInput = { deletedAt: null };
   if (filters.developmentSlug) {
     where.development = { slug: filters.developmentSlug, deletedAt: null };
   }
-  if (filters.status) {
-    where.status = filters.status;
+  if (filters.kanbanColumnId) {
+    where.kanbanColumnId = filters.kanbanColumnId;
   }
   const rows = await db.task.findMany({
     where,

@@ -9,10 +9,11 @@ import { TasksKanbanBoard } from "@/components/tasks/tasks-kanban-board";
 import { TasksListTable } from "@/components/tasks/tasks-list-table";
 import { cn } from "@/lib/utils";
 import { getCurrentUser } from "@/lib/auth/get-session";
-import { canEditStagesOrTasks } from "@/lib/domain/permissions";
+import { canEditStagesOrTasks, canManageUsers } from "@/lib/domain/permissions";
 import { db } from "@/lib/db";
 import { taskRowToBoardItem } from "@/lib/tasks/task-board-mapper";
 import { findTasksForUser } from "@/lib/services/tasks-queries";
+import { listKanbanColumnsOrdered } from "@/lib/services/kanban-columns";
 import { formatDatePtBR } from "@/lib/services/developments-list";
 import { listAssignableUsers, formatUserLabel } from "@/lib/services/users-queries";
 import { parseTaskView } from "@/types/task-board";
@@ -35,7 +36,8 @@ export default async function MyTasksPage({ searchParams }: PageProps) {
   }
 
   const canEdit = canEditStagesOrTasks(user);
-  const [rows, developments, assignableRows] = await Promise.all([
+  const showStagesCatalogLink = canManageUsers(user);
+  const [rows, developments, assignableRows, kanbanColumns] = await Promise.all([
     findTasksForUser(user.id),
     db.development.findMany({
       where: { deletedAt: null, isActive: true },
@@ -43,6 +45,7 @@ export default async function MyTasksPage({ searchParams }: PageProps) {
       orderBy: { name: "asc" },
     }),
     listAssignableUsers(),
+    listKanbanColumnsOrdered(),
   ]);
   const usersForTask = assignableRows.map((u) => ({
     id: u.id,
@@ -61,7 +64,8 @@ export default async function MyTasksPage({ searchParams }: PageProps) {
 
   const myTasks = rows.map((t) => {
     const deadlineLabel = t.deadline ? formatDatePtBR(t.deadline) : "—";
-    const isOverdue = t.deadline !== null && t.deadline < now;
+    const isOverdue =
+      t.deadline !== null && t.deadline < now && !t.kanbanColumn.isTerminal;
     let daysOverdue: number | undefined;
     if (isOverdue && t.deadline) {
       daysOverdue = Math.ceil((now.getTime() - t.deadline.getTime()) / (1000 * 60 * 60 * 24));
@@ -104,13 +108,29 @@ export default async function MyTasksPage({ searchParams }: PageProps) {
         </div>
 
         {view === "kanban" ? (
-          <TasksKanbanBoard items={boardItems} canEdit={canEdit} users={usersForTask} />
+          <TasksKanbanBoard
+            items={boardItems}
+            canEdit={canEdit}
+            users={usersForTask}
+            showStagesCatalogLink={showStagesCatalogLink}
+            columns={kanbanColumns}
+          />
         ) : null}
         {view === "calendar" ? (
-          <TasksCalendarView items={boardItems} users={usersForTask} canEdit={canEdit} />
+          <TasksCalendarView
+            items={boardItems}
+            users={usersForTask}
+            canEdit={canEdit}
+            showStagesCatalogLink={showStagesCatalogLink}
+          />
         ) : null}
         {view === "gantt" ? (
-          <TasksGanttView items={boardItems} users={usersForTask} canEdit={canEdit} />
+          <TasksGanttView
+            items={boardItems}
+            users={usersForTask}
+            canEdit={canEdit}
+            showStagesCatalogLink={showStagesCatalogLink}
+          />
         ) : null}
 
         {view === "list" ? (
@@ -164,6 +184,7 @@ export default async function MyTasksPage({ searchParams }: PageProps) {
               users={usersForTask}
               canEdit={canEdit}
               showDevelopment={false}
+              showStagesCatalogLink={showStagesCatalogLink}
               emptyMessage="Nenhuma tarefa atribuída a si. Quando lhe forem atribuídas tarefas em aberto, elas aparecem aqui."
             />
           </>

@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 type ApiTask = {
   deadline: string | null;
-  status: string;
+  kanbanColumn?: { isTerminal: boolean };
 };
 
 function isApiTask(value: unknown): value is ApiTask {
@@ -24,12 +24,25 @@ function isApiTask(value: unknown): value is ApiTask {
     return false;
   }
   const o = value as Record<string, unknown>;
-  return typeof o.status === "string" && (o.deadline === null || typeof o.deadline === "string");
+  if (!(o.deadline === null || typeof o.deadline === "string")) {
+    return false;
+  }
+  const kc = o.kanbanColumn;
+  if (kc !== undefined) {
+    if (!kc || typeof kc !== "object") {
+      return false;
+    }
+    const t = (kc as { isTerminal?: unknown }).isTerminal;
+    if (typeof t !== "boolean") {
+      return false;
+    }
+  }
+  return true;
 }
 
 function countOverdue(tasks: ApiTask[], now: Date): number {
   return tasks.filter((t) => {
-    if (t.status === "DONE") {
+    if (t.kanbanColumn?.isTerminal === true) {
       return false;
     }
     if (!t.deadline) {

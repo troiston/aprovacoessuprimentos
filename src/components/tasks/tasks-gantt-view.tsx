@@ -16,6 +16,7 @@ type Props = {
   items: TaskBoardItem[];
   users?: UserOption[];
   canEdit?: boolean;
+  showStagesCatalogLink?: boolean;
 };
 
 function monthTicks(startMs: number, endMs: number): { leftPct: number; label: string }[] {
@@ -42,7 +43,12 @@ function monthTicks(startMs: number, endMs: number): { leftPct: number; label: s
   return ticks;
 }
 
-export function TasksGanttView({ items, users = [], canEdit = false }: Props) {
+export function TasksGanttView({
+  items,
+  users = [],
+  canEdit = false,
+  showStagesCatalogLink = false,
+}: Props) {
   const [editItem, setEditItem] = useState<TaskBoardItem | null>(null);
   /** Instantâneo da montagem — suficiente para posicionar "hoje" na linha do tempo. */
   const [mountedAtMs] = useState(() => Date.now());
@@ -210,7 +216,13 @@ export function TasksGanttView({ items, users = [], canEdit = false }: Props) {
         </section>
       ) : null}
 
-      <TaskKanbanEditDialog item={editItem} users={users} onClose={() => setEditItem(null)} />
+      <TaskKanbanEditDialog
+        item={editItem}
+        users={users}
+        onClose={() => setEditItem(null)}
+        canEdit={canEdit}
+        showStagesCatalogLink={showStagesCatalogLink}
+      />
     </div>
   );
 }

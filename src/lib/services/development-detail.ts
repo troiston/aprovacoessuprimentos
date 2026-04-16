@@ -32,6 +32,7 @@ export async function getDevelopmentDetailBySlug(
         include: {
           stage: true,
           assignee: true,
+          kanbanColumn: { select: { isTerminal: true } },
         },
       },
     },
@@ -84,7 +85,7 @@ export async function getDevelopmentDetailBySlug(
     };
   });
 
-  const openTasks = development.tasks.filter((t) => t.status !== "DONE");
+  const openTasks = development.tasks.filter((t) => !t.kanbanColumn.isTerminal);
   const pendingCount = openTasks.length;
   const overdueCount = openTasks.filter(
     (t) => t.deadline !== null && t.deadline < now,

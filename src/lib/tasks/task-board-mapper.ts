@@ -4,12 +4,15 @@ import type { TaskBoardItem } from "@/types/task-board";
 
 export function taskRowToBoardItem(t: TaskListRow, now: Date): TaskBoardItem {
   const deadlineLabel = t.deadline ? formatDatePtBR(t.deadline) : "—";
-  const isOverdue = t.deadline !== null && t.deadline < now && t.status !== "DONE";
+  const isOverdue =
+    t.deadline !== null && t.deadline < now && !t.kanbanColumn.isTerminal;
   const assignee =
     t.assignee?.displayName ?? t.assignee?.name ?? t.assignee?.email ?? "—";
   return {
     id: t.id,
-    status: t.status,
+    kanbanColumnId: t.kanbanColumn.id,
+    kanbanColumnName: t.kanbanColumn.name,
+    isTerminalColumn: t.kanbanColumn.isTerminal,
     development: t.development.name,
     developmentSlug: t.development.slug,
     stageId: t.stage.id,

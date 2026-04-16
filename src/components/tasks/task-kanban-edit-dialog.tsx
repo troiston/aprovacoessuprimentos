@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { TaskBoardItem } from "@/types/task-board";
+import type { KanbanColumnDto } from "@/types/kanban-column";
 
 type UserOption = { id: string; label: string };
 
@@ -53,21 +55,33 @@ type Props = {
   item: TaskBoardItem | null;
   users: UserOption[];
   onClose: () => void;
+  canEdit?: boolean;
+  showStagesCatalogLink?: boolean;
 };
 
-export function TaskKanbanEditDialog({ item, users, onClose }: Props) {
+export function TaskKanbanEditDialog({
+  item,
+  users,
+  onClose,
+  canEdit = false,
+  showStagesCatalogLink = false,
+}: Props) {
   const router = useRouter();
   const open = item !== null;
 
   const [description, setDescription] = useState("");
   const [notes, setNotes] = useState("");
   const [stageId, setStageId] = useState("");
+  const [kanbanColumnId, setKanbanColumnId] = useState("");
   const [assigneeId, setAssigneeId] = useState("");
   const [deadlineLocal, setDeadlineLocal] = useState("");
   const [stages, setStages] = useState<StageOption[]>([]);
+  const [kanbanColumns, setKanbanColumns] = useState<KanbanColumnDto[]>([]);
   const [stagesError, setStagesError] = useState<string | null>(null);
+  const [columnsError, setColumnsError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [deletePending, setDeletePending] = useState(false);
 
   useEffect(() => {
     if (!item) {
@@ -76,12 +90,73 @@ export function TaskKanbanEditDialog({ item, users, onClose }: Props) {
     setDescription(item.description);
     setNotes(item.notes ?? "");
     setStageId(item.stageId);
+    setKanbanColumnId(item.kanbanColumnId);
     setAssigneeId(item.assigneeId ?? "");
     setDeadlineLocal(isoToDatetimeLocalValue(item.deadlineIso));
     setStages([]);
+    setKanbanColumns([]);
     setStagesError(null);
+    setColumnsError(null);
     setSubmitError(null);
   }, [item]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    let cancelled = false;
+    setColumnsError(null);
+    void (async () => {
+      try {
+        const res = await fetch("/api/kanban-columns", { credentials: "same-origin" });
+        const data: unknown = await res.json().catch(() => null);
+        if (cancelled) {
+          return;
+        }
+        if (!res.ok) {
+          setColumnsError("Não foi possível carregar as colunas do quadro.");
+          return;
+        }
+        if (!data || typeof data !== "object" || !("columns" in data)) {
+          setColumnsError("Resposta inválida.");
+          return;
+        }
+        const raw = (data as { columns: unknown }).columns;
+        if (!Array.isArray(raw)) {
+          setColumnsError("Lista de colunas inválida.");
+          return;
+        }
+        const cols: KanbanColumnDto[] = [];
+        for (const c of raw) {
+          if (c && typeof c === "object" && "id" in c && "name" in c && "sortOrder" in c && "isTerminal" in c) {
+            const o = c as Record<string, unknown>;
+            if (
+              typeof o.id === "string" &&
+              typeof o.name === "string" &&
+              typeof o.sortOrder === "number" &&
+              typeof o.isTerminal === "boolean"
+            ) {
+              cols.push({
+                id: o.id,
+                name: o.name,
+                sortOrder: o.sortOrder,
+                isTerminal: o.isTerminal,
+              });
+            }
+          }
+        }
+        cols.sort((a, b) => a.sortOrder - b.sortOrder);
+        setKanbanColumns(cols);
+      } catch {
+        if (!cancelled) {
+          setColumnsError("Erro de rede ao carregar colunas.");
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open || !item) {
@@ -152,6 +227,7 @@ export function TaskKanbanEditDialog({ item, users, onClose }: Props) {
         description: description.trim(),
         notes: notes.trim() === "" ? null : notes.trim(),
         stageId,
+        kanbanColumnId,
         assigneeId: assigneeId === "" ? null : assigneeId,
         deadline: deadlinePayload,
       };
@@ -179,6 +255,42 @@ export function TaskKanbanEditDialog({ item, users, onClose }: Props) {
     }
   }
 
+  async function handleDelete() {
+    if (!item || !canEdit) {
+      return;
+    }
+    const ok = window.confirm(
+      "Eliminar esta tarefa? Será removida das listas (arquivo). Esta ação não pode ser anulada aqui.",
+    );
+    if (!ok) {
+      return;
+    }
+    setSubmitError(null);
+    setDeletePending(true);
+    try {
+      const res = await fetch(`/api/tasks/${encodeURIComponent(item.id)}`, {
+        method: "DELETE",
+        credentials: "same-origin",
+      });
+      const data: unknown = await res.json().catch(() => null);
+      if (!res.ok) {
+        const msg =
+          data &&
+          typeof data === "object" &&
+          "error" in data &&
+          typeof (data as { error: unknown }).error === "string"
+            ? (data as { error: string }).error
+            : "Não foi possível eliminar.";
+        setSubmitError(msg);
+        return;
+      }
+      onClose();
+      router.refresh();
+    } finally {
+      setDeletePending(false);
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-md">
@@ -187,7 +299,8 @@ export function TaskKanbanEditDialog({ item, users, onClose }: Props) {
             <DialogHeader>
               <DialogTitle>Editar tarefa</DialogTitle>
               <DialogDescription>
-                {item.development} — alterações aplicam-se imediatamente após guardar.
+                {item.development} — alterações aplicam-se após guardar. A coluna do quadro corresponde ao Kanban; a
+                etapa do empreendimento é o pipeline do projeto.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 pt-2 max-h-[70vh] overflow-y-auto pr-1">
@@ -196,20 +309,47 @@ export function TaskKanbanEditDialog({ item, users, onClose }: Props) {
                   {submitError}
                 </p>
               ) : null}
+              {columnsError ? (
+                <p className="text-xs text-destructive" role="alert">
+                  {columnsError}
+                </p>
+              ) : null}
               {stagesError ? (
                 <p className="text-xs text-destructive" role="alert">
                   {stagesError}
                 </p>
               ) : null}
               <div className="space-y-1.5">
-                <Label htmlFor="kanban-edit-stage">Etapa</Label>
+                <Label htmlFor="kanban-edit-column">Coluna do quadro (Kanban)</Label>
+                <select
+                  id="kanban-edit-column"
+                  className={selectClass}
+                  value={kanbanColumnId}
+                  onChange={(e) => setKanbanColumnId(e.target.value)}
+                  required
+                  disabled={pending || deletePending}
+                >
+                  {kanbanColumns.length === 0 ? (
+                    <option value={item.kanbanColumnId}>{item.kanbanColumnName}</option>
+                  ) : (
+                    kanbanColumns.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                        {c.isTerminal ? " (concluídas)" : ""}
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="kanban-edit-stage">Etapa do empreendimento (pipeline)</Label>
                 <select
                   id="kanban-edit-stage"
                   className={selectClass}
                   value={stageId}
                   onChange={(e) => setStageId(e.target.value)}
                   required
-                  disabled={pending}
+                  disabled={pending || deletePending}
                 >
                   {stages.length === 0 ? (
                     <option value={item.stageId}>{item.stage}</option>
@@ -221,6 +361,14 @@ export function TaskKanbanEditDialog({ item, users, onClose }: Props) {
                     ))
                   )}
                 </select>
+                {showStagesCatalogLink ? (
+                  <p className="text-[11px] text-muted-foreground">
+                    <Link href="/settings/stages" className="text-primary underline-offset-2 hover:underline">
+                      Gerir nomes do catálogo de etapas
+                    </Link>{" "}
+                    (administradores).
+                  </p>
+                ) : null}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="kanban-edit-desc">Descrição</Label>
@@ -230,7 +378,7 @@ export function TaskKanbanEditDialog({ item, users, onClose }: Props) {
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  disabled={pending}
+                  disabled={pending || deletePending}
                 />
               </div>
               <div className="space-y-1.5">
@@ -240,7 +388,7 @@ export function TaskKanbanEditDialog({ item, users, onClose }: Props) {
                   rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  disabled={pending}
+                  disabled={pending || deletePending}
                 />
               </div>
               <div className="space-y-1.5">
@@ -250,7 +398,7 @@ export function TaskKanbanEditDialog({ item, users, onClose }: Props) {
                   className={selectClass}
                   value={assigneeId}
                   onChange={(e) => setAssigneeId(e.target.value)}
-                  disabled={pending}
+                  disabled={pending || deletePending}
                 >
                   <option value="">— Sem responsável</option>
                   {users.map((u) => (
@@ -268,18 +416,31 @@ export function TaskKanbanEditDialog({ item, users, onClose }: Props) {
                   className={selectClass}
                   value={deadlineLocal}
                   onChange={(e) => setDeadlineLocal(e.target.value)}
-                  disabled={pending}
+                  disabled={pending || deletePending}
                 />
                 <p className="text-[11px] text-muted-foreground">
                   Limpe o campo e guarde para remover o prazo.
                 </p>
               </div>
+              {canEdit ? (
+                <div className="border-t border-border pt-3 mt-1">
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    className="w-full sm:w-auto"
+                    disabled={pending || deletePending}
+                    onClick={() => void handleDelete()}
+                  >
+                    {deletePending ? "A eliminar…" : "Eliminar tarefa"}
+                  </Button>
+                </div>
+              ) : null}
             </div>
             <DialogFooter className="gap-2 sm:gap-0 pt-4">
-              <Button type="button" variant="outline" onClick={onClose} disabled={pending}>
+              <Button type="button" variant="outline" onClick={onClose} disabled={pending || deletePending}>
                 Cancelar
               </Button>
-              <Button type="submit" disabled={pending}>
+              <Button type="submit" disabled={pending || deletePending}>
                 {pending ? "A guardar…" : "Guardar"}
               </Button>
             </DialogFooter>

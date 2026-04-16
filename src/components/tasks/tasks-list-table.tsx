@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { TaskKanbanEditDialog } from "@/components/tasks/task-kanban-edit-dialog";
 import { cn } from "@/lib/utils";
 import type { TaskBoardItem } from "@/types/task-board";
-import type { TaskStatus } from "@/generated/prisma/enums";
 
 type UserOption = { id: string; label: string };
 
@@ -22,22 +21,8 @@ type Props = {
   emptyMessage?: string;
   /** Rodapé opcional (ex.: contagens em Todas as tarefas). */
   listFooter?: ReactNode;
+  showStagesCatalogLink?: boolean;
 };
-
-function statusLabel(status: TaskStatus): string {
-  switch (status) {
-    case "OPEN":
-      return "Aberta";
-    case "IN_PROGRESS":
-      return "Em progresso";
-    case "BLOCKED":
-      return "Bloqueada";
-    case "DONE":
-      return "Concluída";
-    default:
-      return status;
-  }
-}
 
 function sortTaskBoardItems(items: TaskBoardItem[]): TaskBoardItem[] {
   return [...items].sort((a, b) => {
@@ -58,6 +43,7 @@ export function TasksListTable({
   showDevelopment = true,
   emptyMessage = "Nenhuma tarefa com os filtros selecionados.",
   listFooter,
+  showStagesCatalogLink = false,
 }: Props) {
   const router = useRouter();
   const [editItem, setEditItem] = useState<TaskBoardItem | null>(null);
@@ -89,7 +75,13 @@ export function TasksListTable({
 
   return (
     <div className="rounded-[--radius-md] border border-border bg-card overflow-hidden">
-      <TaskKanbanEditDialog item={editItem} users={users} onClose={() => setEditItem(null)} />
+      <TaskKanbanEditDialog
+        item={editItem}
+        users={users}
+        onClose={() => setEditItem(null)}
+        canEdit={canEdit}
+        showStagesCatalogLink={showStagesCatalogLink}
+      />
       <table className="w-full text-left">
         <thead>
           <tr className="border-b border-border bg-muted/50">
@@ -103,7 +95,7 @@ export function TasksListTable({
             </th>
             {!showDevelopment ? (
               <th className="py-2.5 px-3 text-[11px] font-medium uppercase tracking-wide text-muted-foreground w-28">
-                Estado
+                Coluna
               </th>
             ) : null}
             <th className="py-2.5 px-3 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
@@ -155,7 +147,7 @@ export function TasksListTable({
               {!showDevelopment ? (
                 <td className="py-2.5 px-3">
                   <Badge variant="outline" className="text-[10px]">
-                    {statusLabel(task.status)}
+                    {task.kanbanColumnName}
                   </Badge>
                 </td>
               ) : null}

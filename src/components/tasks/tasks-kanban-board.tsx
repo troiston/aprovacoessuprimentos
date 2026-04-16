@@ -15,37 +15,48 @@ import {
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import Link from "next/link";
-import { Pencil } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pencil, Plus, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { TaskKanbanEditDialog } from "@/components/tasks/task-kanban-edit-dialog";
 import { cn } from "@/lib/utils";
 import type { TaskBoardItem } from "@/types/task-board";
-import type { TaskStatus } from "@/generated/prisma/enums";
+import type { KanbanColumnDto } from "@/types/kanban-column";
 
-const COLUMNS: { status: TaskStatus; label: string }[] = [
-  { status: "OPEN", label: "Abertas" },
-  { status: "IN_PROGRESS", label: "Em progresso" },
-  { status: "BLOCKED", label: "Bloqueadas" },
-  { status: "DONE", label: "Concluídas" },
-];
+type UserOption = { id: string; label: string };
 
-function statusLabel(status: TaskStatus): string {
-  return COLUMNS.find((c) => c.status === status)?.label ?? status;
-}
-
-function KanbanColumn({
-  status,
+function KanbanColumnDrop({
+  columnId,
   label,
   itemCount,
+  editMode,
+  nameDraft,
+  onNameChange,
+  onNameCommit,
+  onMoveLeft,
+  onMoveRight,
+  onDelete,
+  canMoveLeft,
+  canMoveRight,
   children,
 }: {
-  status: TaskStatus;
+  columnId: string;
   label: string;
   itemCount: number;
+  editMode: boolean;
+  nameDraft: string;
+  onNameChange: (v: string) => void;
+  onNameCommit: () => void;
+  onMoveLeft: () => void;
+  onMoveRight: () => void;
+  onDelete: () => void;
+  canMoveLeft: boolean;
+  canMoveRight: boolean;
   children: React.ReactNode;
 }) {
-  const { setNodeRef, isOver } = useDroppable({ id: status });
+  const { setNodeRef, isOver } = useDroppable({ id: columnId });
   return (
     <div
       ref={setNodeRef}
@@ -54,16 +65,65 @@ function KanbanColumn({
         isOver && "border-primary/50 bg-primary/5",
       )}
     >
-      <div className="mb-2 flex items-center justify-between gap-2 px-1">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground">{label}</h2>
-        <span className="tabular text-[10px] text-muted-foreground">{itemCount}</span>
+      <div className="mb-2 flex flex-col gap-1.5 px-1">
+        {editMode ? (
+          <div className="space-y-1">
+            <Label className="sr-only" htmlFor={`col-name-${columnId}`}>
+              Nome da coluna
+            </Label>
+            <Input
+              id={`col-name-${columnId}`}
+              value={nameDraft}
+              onChange={(e) => onNameChange(e.target.value)}
+              onBlur={() => onNameCommit()}
+              className="h-8 text-xs font-semibold"
+            />
+            <div className="flex flex-wrap gap-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon-sm"
+                className="size-8"
+                aria-label="Mover coluna para a esquerda"
+                disabled={!canMoveLeft}
+                onClick={onMoveLeft}
+              >
+                <ChevronLeft className="size-4" aria-hidden="true" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon-sm"
+                className="size-8"
+                aria-label="Mover coluna para a direita"
+                disabled={!canMoveRight}
+                onClick={onMoveRight}
+              >
+                <ChevronRight className="size-4" aria-hidden="true" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon-sm"
+                className="size-8 text-destructive hover:text-destructive"
+                aria-label="Remover coluna"
+                onClick={onDelete}
+              >
+                <Trash2 className="size-4" aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground">{label}</h2>
+            <span className="tabular text-[10px] text-muted-foreground">{itemCount}</span>
+          </div>
+        )}
       </div>
       <div className="flex flex-1 flex-col gap-2 overflow-y-auto">{children}</div>
     </div>
   );
 }
-
-type UserOption = { id: string; label: string };
 
 function KanbanCard({
   item,
@@ -138,32 +198,58 @@ type Props = {
   items: TaskBoardItem[];
   canEdit: boolean;
   users?: UserOption[];
+  showStagesCatalogLink?: boolean;
+  columns: KanbanColumnDto[];
 };
 
-export function TasksKanbanBoard({ items: initialItems, canEdit, users = [] }: Props) {
+export function TasksKanbanBoard({
+  items: initialItems,
+  canEdit,
+  users = [],
+  showStagesCatalogLink = false,
+  columns: columnsProp,
+}: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [items, setItems] = useState(initialItems);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [editItem, setEditItem] = useState<TaskBoardItem | null>(null);
+  const [editColumns, setEditColumns] = useState(false);
+  const [localColumns, setLocalColumns] = useState<KanbanColumnDto[]>(() =>
+    [...columnsProp].sort((a, b) => a.sortOrder - b.sortOrder),
+  );
+  const [nameDrafts, setNameDrafts] = useState<Record<string, string>>({});
+  const [newColName, setNewColName] = useState("");
+  const [colBusy, setColBusy] = useState(false);
 
   useEffect(() => {
     setItems(initialItems);
   }, [initialItems]);
 
-  const byStatus = useMemo(() => {
-    const map = new Map<TaskStatus, TaskBoardItem[]>();
-    for (const c of COLUMNS) {
-      map.set(c.status, []);
+  useEffect(() => {
+    const sorted = [...columnsProp].sort((a, b) => a.sortOrder - b.sortOrder);
+    setLocalColumns(sorted);
+    setNameDrafts(Object.fromEntries(sorted.map((c) => [c.id, c.name])));
+  }, [columnsProp]);
+
+  const sortedCols = useMemo(
+    () => [...localColumns].sort((a, b) => a.sortOrder - b.sortOrder),
+    [localColumns],
+  );
+
+  const byColumn = useMemo(() => {
+    const map = new Map<string, TaskBoardItem[]>();
+    for (const c of sortedCols) {
+      map.set(c.id, []);
     }
     for (const t of items) {
-      const list = map.get(t.status);
+      const list = map.get(t.kanbanColumnId);
       if (list) {
         list.push(t);
       }
     }
     return map;
-  }, [items]);
+  }, [items, sortedCols]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -171,12 +257,12 @@ export function TasksKanbanBoard({ items: initialItems, canEdit, users = [] }: P
     }),
   );
 
-  const persistStatus = useCallback(
-    async (taskId: string, status: TaskStatus) => {
+  const persistColumn = useCallback(
+    async (taskId: string, kanbanColumnId: string) => {
       const res = await fetch(`/api/tasks/${encodeURIComponent(taskId)}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ kanbanColumnId }),
       });
       if (!res.ok) {
         const data: unknown = await res.json().catch(() => null);
@@ -186,7 +272,7 @@ export function TasksKanbanBoard({ items: initialItems, canEdit, users = [] }: P
           "error" in data &&
           typeof (data as { error: unknown }).error === "string"
             ? (data as { error: string }).error
-            : "Não foi possível atualizar o estado.";
+            : "Não foi possível atualizar a coluna.";
         throw new Error(msg);
       }
     },
@@ -200,24 +286,36 @@ export function TasksKanbanBoard({ items: initialItems, canEdit, users = [] }: P
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     setActiveId(null);
-    if (!over || !canEdit) {
+    if (!over || !canEdit || editColumns) {
       return;
     }
     const taskId = String(active.id);
-    const newStatus = over.id as TaskStatus;
-    if (!COLUMNS.some((c) => c.status === newStatus)) {
+    const newColId = String(over.id);
+    if (!sortedCols.some((c) => c.id === newColId)) {
       return;
     }
     const task = items.find((i) => i.id === taskId);
-    if (!task || task.status === newStatus) {
+    if (!task || task.kanbanColumnId === newColId) {
       return;
     }
+    const col = sortedCols.find((c) => c.id === newColId);
     const prev = items;
-    setItems((list) => list.map((i) => (i.id === taskId ? { ...i, status: newStatus } : i)));
+    setItems((list) =>
+      list.map((i) =>
+        i.id === taskId
+          ? {
+              ...i,
+              kanbanColumnId: newColId,
+              kanbanColumnName: col?.name ?? i.kanbanColumnName,
+              isTerminalColumn: col?.isTerminal ?? i.isTerminalColumn,
+            }
+          : i,
+      ),
+    );
     startTransition(() => {
       void (async () => {
         try {
-          await persistStatus(taskId, newStatus);
+          await persistColumn(taskId, newColId);
           router.refresh();
         } catch {
           setItems(prev);
@@ -226,40 +324,237 @@ export function TasksKanbanBoard({ items: initialItems, canEdit, users = [] }: P
     });
   }
 
+  async function postReorder(orderedIds: string[]) {
+    setColBusy(true);
+    try {
+      const res = await fetch("/api/kanban-columns/reorder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderedIds }),
+      });
+      const data: unknown = await res.json().catch(() => null);
+      if (!res.ok) {
+        const msg =
+          data &&
+          typeof data === "object" &&
+          "error" in data &&
+          typeof (data as { error: unknown }).error === "string"
+            ? (data as { error: string }).error
+            : "Falha ao reordenar";
+        window.alert(msg);
+        return;
+      }
+      if (
+        data &&
+        typeof data === "object" &&
+        "columns" in data &&
+        Array.isArray((data as { columns: unknown }).columns)
+      ) {
+        const next = (data as { columns: KanbanColumnDto[] }).columns;
+        setLocalColumns([...next].sort((a, b) => a.sortOrder - b.sortOrder));
+        setNameDrafts(Object.fromEntries(next.map((c) => [c.id, c.name])));
+      }
+      router.refresh();
+    } finally {
+      setColBusy(false);
+    }
+  }
+
+  function moveColumn(columnId: string, delta: -1 | 1) {
+    const order = sortedCols.map((c) => c.id);
+    const i = order.indexOf(columnId);
+    const j = i + delta;
+    if (i < 0 || j < 0 || j >= order.length) {
+      return;
+    }
+    const next = [...order];
+    const t = next[i];
+    const u = next[j];
+    if (t === undefined || u === undefined) {
+      return;
+    }
+    next[i] = u;
+    next[j] = t;
+    void postReorder(next);
+  }
+
+  async function commitName(columnId: string) {
+    const name = (nameDrafts[columnId] ?? "").trim();
+    const orig = sortedCols.find((c) => c.id === columnId)?.name ?? "";
+    if (!name || name === orig) {
+      return;
+    }
+    setColBusy(true);
+    try {
+      const res = await fetch(`/api/kanban-columns/${encodeURIComponent(columnId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      if (!res.ok) {
+        const data: unknown = await res.json().catch(() => null);
+        const msg =
+          data &&
+          typeof data === "object" &&
+          "error" in data &&
+          typeof (data as { error: unknown }).error === "string"
+            ? (data as { error: string }).error
+            : "Falha ao guardar nome";
+        window.alert(msg);
+        return;
+      }
+      setLocalColumns((prev) => prev.map((c) => (c.id === columnId ? { ...c, name } : c)));
+      router.refresh();
+    } finally {
+      setColBusy(false);
+    }
+  }
+
+  async function deleteColumn(column: KanbanColumnDto) {
+    const ok = window.confirm(
+      `Remover a coluna «${column.name}»? Só é permitido se não houver tarefas nesta coluna.`,
+    );
+    if (!ok) {
+      return;
+    }
+    setColBusy(true);
+    try {
+      const res = await fetch(`/api/kanban-columns/${encodeURIComponent(column.id)}`, {
+        method: "DELETE",
+      });
+      const data: unknown = await res.json().catch(() => null);
+      if (!res.ok) {
+        const msg =
+          data &&
+          typeof data === "object" &&
+          "error" in data &&
+          typeof (data as { error: unknown }).error === "string"
+            ? (data as { error: string }).error
+            : "Não foi possível remover";
+        window.alert(msg);
+        return;
+      }
+      router.refresh();
+    } finally {
+      setColBusy(false);
+    }
+  }
+
+  async function addColumn() {
+    const name = newColName.trim() || "Nova coluna";
+    setColBusy(true);
+    try {
+      const res = await fetch("/api/kanban-columns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      if (!res.ok) {
+        const data: unknown = await res.json().catch(() => null);
+        const msg =
+          data &&
+          typeof data === "object" &&
+          "error" in data &&
+          typeof (data as { error: unknown }).error === "string"
+            ? (data as { error: string }).error
+            : "Falha ao criar coluna";
+        window.alert(msg);
+        return;
+      }
+      setNewColName("");
+      router.refresh();
+    } finally {
+      setColBusy(false);
+    }
+  }
+
   const activeTask = activeId ? items.find((i) => i.id === activeId) : null;
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <TaskKanbanEditDialog item={editItem} users={users} onClose={() => setEditItem(null)} />
+      <TaskKanbanEditDialog
+        item={editItem}
+        users={users}
+        onClose={() => setEditItem(null)}
+        canEdit={canEdit}
+        showStagesCatalogLink={showStagesCatalogLink}
+      />
       <div className="flex flex-col gap-2">
+        {canEdit ? (
+          <div className="flex flex-wrap items-end gap-2">
+            <Button
+              type="button"
+              variant={editColumns ? "secondary" : "outline"}
+              size="sm"
+              className="h-8 text-xs"
+              disabled={colBusy}
+              onClick={() => setEditColumns((v) => !v)}
+            >
+              {editColumns ? "Fechar edição de colunas" : "Editar colunas do quadro"}
+            </Button>
+            {editColumns ? (
+              <div className="flex flex-wrap items-end gap-2">
+                <div className="space-y-1">
+                  <Label htmlFor="new-kanban-col" className="text-[10px] text-muted-foreground">
+                    Nova coluna
+                  </Label>
+                  <Input
+                    id="new-kanban-col"
+                    value={newColName}
+                    onChange={(e) => setNewColName(e.target.value)}
+                    placeholder="Nome"
+                    className="h-8 w-40 text-xs"
+                    disabled={colBusy}
+                  />
+                </div>
+                <Button type="button" size="sm" className="h-8" disabled={colBusy} onClick={() => void addColumn()}>
+                  <Plus className="size-4" aria-hidden="true" />
+                  Adicionar
+                </Button>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
         {!canEdit && (
           <p className="text-xs text-muted-foreground">
             Vista só leitura: apenas editores ou administradores podem arrastar cartões.
           </p>
         )}
-        <div
-          className="flex flex-col gap-3 lg:flex-row lg:items-start"
-          aria-busy={pending}
-        >
-          {COLUMNS.map((col) => {
-            const colItems = byStatus.get(col.status) ?? [];
+        {editColumns && canEdit ? (
+          <p className="text-[11px] text-muted-foreground">
+            Altere nomes, reordene com as setas ou remova colunas vazias. Uma coluna «concluída» (terminal) transfere-se
+            automaticamente se remover a atual.
+          </p>
+        ) : null}
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start" aria-busy={pending || colBusy}>
+          {sortedCols.map((col, idx) => {
+            const colItems = byColumn.get(col.id) ?? [];
             return (
-              <KanbanColumn
-                key={col.status}
-                status={col.status}
-                label={col.label}
+              <KanbanColumnDrop
+                key={col.id}
+                columnId={col.id}
+                label={col.name}
                 itemCount={colItems.length}
+                editMode={editColumns && canEdit}
+                nameDraft={nameDrafts[col.id] ?? col.name}
+                onNameChange={(v) => setNameDrafts((d) => ({ ...d, [col.id]: v }))}
+                onNameCommit={() => void commitName(col.id)}
+                onMoveLeft={() => moveColumn(col.id, -1)}
+                onMoveRight={() => moveColumn(col.id, 1)}
+                onDelete={() => void deleteColumn(col)}
+                canMoveLeft={idx > 0}
+                canMoveRight={idx < sortedCols.length - 1}
               >
                 {colItems.map((item) => (
                   <KanbanCard
                     key={item.id}
                     item={item}
-                    dragDisabled={!canEdit}
+                    dragDisabled={!canEdit || editColumns}
                     canEdit={canEdit}
                     onEdit={setEditItem}
                   />
                 ))}
-              </KanbanColumn>
+              </KanbanColumnDrop>
             );
           })}
         </div>
@@ -268,7 +563,7 @@ export function TasksKanbanBoard({ items: initialItems, canEdit, users = [] }: P
         {activeTask ? (
           <div className="rounded-[--radius] border border-primary/30 bg-card p-2.5 shadow-lg">
             <p className="text-xs font-medium text-foreground">{activeTask.description}</p>
-            <p className="mt-1 text-[10px] text-muted-foreground">{statusLabel(activeTask.status)}</p>
+            <p className="mt-1 text-[10px] text-muted-foreground">{activeTask.kanbanColumnName}</p>
           </div>
         ) : null}
       </DragOverlay>
