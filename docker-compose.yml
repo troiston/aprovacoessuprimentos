@@ -3,7 +3,9 @@
 # Alinhado à convenção deste cluster: rede overlay `network_swarm_public`,
 # entrypoint `websecure`, certresolver `letsencryptresolver` (como n8n no mesmo servidor).
 #
-# Ajusta: image e variáveis em Portainer (NEXT_PUBLIC_APP_URL = https://aprovasuprimentos.digaola.com).
+# Portainer → Stack → Environment:
+#   APP_IMAGE = imagem existente no registry (ex.: docker.io/teuuser/aprovasuprimentos:latest)
+#   NEXT_PUBLIC_APP_URL = https://aprovasuprimentos.digaola.com
 
 version: "3.8"
 
@@ -14,7 +16,7 @@ networks:
 
 services:
   web:
-    image: registry.example.com/aprovacoes-suprimentos:latest
+    image: ${APP_IMAGE}
     hostname: "{{.Service.Name}}.{{.Task.Slot}}"
     networks:
       - network_swarm_public

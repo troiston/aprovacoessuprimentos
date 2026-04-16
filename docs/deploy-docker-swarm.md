@@ -22,21 +22,37 @@ O `docker-compose.yml` declara **`network_swarm_public`** como **external** (igu
 
 4. Volta a fazer deploy da stack no Portainer (ou `docker stack deploy`).
 
-## 1. Build e push da imagem
+## 1. Build, push e variável `APP_IMAGE`
 
-Na máquina de CI ou local (com Docker):
+O compose usa **`image: ${APP_IMAGE}`**. No Portainer, em **Stack → Environment**, tens de definir **`APP_IMAGE`** com uma tag **que já exista** no registry (senão o erro é *No such image* / tarefas **rejected**).
+
+Exemplo (Docker Hub):
 
 ```bash
-docker build -t registry.example.com/aprovacoes-suprimentos:latest .
-docker push registry.example.com/aprovacoes-suprimentos:latest
+docker build -t teuusuario/aprovasuprimentos:latest .
+docker push teuusuario/aprovasuprimentos:latest
+```
+
+No Portainer:
+
+| Nome | Valor (exemplo) |
+|------|------------------|
+| `APP_IMAGE` | `docker.io/teuusuario/aprovasuprimentos:latest` ou `teuusuario/aprovasuprimentos:latest` |
+
+Deploy na CLI (com variável exportada):
+
+```bash
+export APP_IMAGE=teuusuario/aprovasuprimentos:latest
+docker stack deploy -c docker-compose.yml aprovasuprimentos
 ```
 
 ## 2. Variáveis obrigatórias em runtime
 
 | Variável | Descrição |
 |----------|-----------|
+| `APP_IMAGE` | Imagem Docker publicada (obrigatória — ver secção 1) |
 | `DATABASE_URL` | URL Postgres (ex.: `postgresql://user:pass@postgres:5432/db?schema=public`) |
-| `NEXT_PUBLIC_APP_URL` | URL pública HTTPS do site (igual ao domínio no Traefik, sem barra final opcional) |
+| `NEXT_PUBLIC_APP_URL` | URL pública HTTPS (ex.: `https://aprovasuprimentos.digaola.com`) |
 | `NEXT_PUBLIC_APP_NAME` | Nome exibido (opcional) |
 
 Stripe, `SETTINGS_ENCRYPTION_KEY`, etc.: ver `.env.example`.
@@ -62,7 +78,7 @@ docker stack deploy -c docker-compose.yml aprovacoes
 1. **Stacks** → **Add stack** → método **Repository**.
 2. **Compose path** deve ser exatamente `docker-compose.yml` (ficheiro na raiz do Git). Se o ficheiro não existir no branch, o Portainer falha com *Open /data/compose/…/docker-compose.yml: no such file or directory*.
 3. Faça **commit e push** de `docker-compose.yml` para o branch configurado (ex.: `main`).
-4. Em **Environment**, defina `DATABASE_URL`, `NEXT_PUBLIC_APP_URL=https://aprovasuprimentos.digaola.com` (URL pública HTTPS, alinhada ao `Host()` do Traefik), `SETTINGS_ENCRYPTION_KEY` se usar cifra de definições, etc.
+4. Em **Environment**, defina **`APP_IMAGE`** (obrigatório), `DATABASE_URL`, `NEXT_PUBLIC_APP_URL=https://aprovasuprimentos.digaola.com`, `SETTINGS_ENCRYPTION_KEY` se aplicável, etc.
 5. A rede overlay tem de existir antes do deploy — ver secção **Rede overlay** acima.
 
 ## 5. Migrações Prisma
